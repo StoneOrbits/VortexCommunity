@@ -137,3 +137,20 @@ router.post('/upload', (req, res) => {
     // Handle mode upload logic here
     res.redirect('/');  // Redirect to homepage after successful upload
 });
+router.get('/search', (req, res) => {
+    const searchTerm = req.query.q;
+    // Fetch modes from the database that match the search term
+    // Render search results page
+    res.render('searchResults', { modes: searchResults });
+});
+router.get('/modes/page/:pageNumber', (req, res) => {
+    const pageNumber = req.params.pageNumber;
+    // Fetch a specific page of modes from the database
+    // Render modes page with pagination
+    res.render('modesPage', { modes: paginatedModes });
+});
+router.get('/mode/:id', (req, res) => {
+    const modeId = req.params.id;
+    // Fetch mode details from the database
+    res.render('modeDetails', { mode: modeData });
+});

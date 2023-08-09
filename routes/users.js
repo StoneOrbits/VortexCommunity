@@ -109,3 +109,20 @@ router.get('/user/:username', (req, res) => {
     // Render user profile page
     res.render('userProfile', { user: userData });
 });
+router.get('/register', (req, res) => {
+    res.render('register');
+});
+
+router.post('/register', (req, res) => {
+    // Handle user registration logic here
+    res.redirect('/login');
+});
+
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
+router.post('/login', (req, res) => {
+    // Handle user login logic here
+    res.redirect('/');
+});

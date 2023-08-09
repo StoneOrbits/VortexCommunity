@@ -1,2 +1,7 @@
 <h1>Search Results</h1>
-<!-- Display search results here -->
+<% modes.forEach(mode => { %>
+    <div>
+        <h2><%= mode.name %></h2>
+        <!-- Display mode details here -->
+    </div>
+<% }); %>
