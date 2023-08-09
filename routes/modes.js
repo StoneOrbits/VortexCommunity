@@ -45,3 +45,21 @@ router.get('/search', (req, res) => {
     // Render the search results page
     res.render('search-results', { query: query });
 });
+router.post('/mode/:id/upvote', (req, res) => {
+    const modeId = req.params.id;
+    // Handle upvoting logic here
+    // Redirect back to the mode details page
+    res.redirect('/mode/' + modeId);
+});
+router.post('/mode/:id/favorite', (req, res) => {
+    const modeId = req.params.id;
+    // Handle adding to favorites logic here
+    // Redirect back to the mode details page
+    res.redirect('/mode/' + modeId);
+});
+router.get('/search', (req, res) => {
+    const searchTerm = req.query.q;
+    // Handle search logic here
+    // Render search results page
+    res.render('search-results', { searchTerm: searchTerm });
+});
