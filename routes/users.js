@@ -25,6 +25,18 @@ router.post('/register', (req, res) => {
         email: req.body.email,
         password: req.body.password
     });
+const bcrypt = require('bcryptjs');
+bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(newUser.password, salt, (err, hash) => {
+        if (err) throw err;
+        newUser.password = hash;
+        newUser.save()
+            .then(user => {
+                res.redirect('/users/login');
+            })
+            .catch(err => console.log(err));
+    });
+});
     // TODO: Add password hashing and save user to database
     res.redirect('/users/login');
 });
