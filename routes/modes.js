@@ -6,6 +6,10 @@ router.get('/', (req, res) => {
 });
 
 router.get('/upload', (req, res) => {
+router.post('/upload', ensureAuthenticated, (req, res) => {
+    // TODO: Handle mode upload logic here
+    res.redirect('/modes');
+});
     res.render('modes/upload');
 });
 
@@ -14,3 +18,4 @@ router.get('/:id', (req, res) => {
 });
 
 module.exports = router;
+const { ensureAuthenticated } = require('../middleware/checkAuth');

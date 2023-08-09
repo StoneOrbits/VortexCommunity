@@ -11,10 +11,23 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/login', (req, res) => {
+router.post('/login', passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/users/login'
+}));
     res.render('login');
 });
 
 router.get('/register', (req, res) => {
+router.post('/register', (req, res) => {
+    const newUser = new User({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+    });
+    // TODO: Add password hashing and save user to database
+    res.redirect('/users/login');
+});
     res.render('register');
 });
 

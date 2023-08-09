@@ -43,3 +43,15 @@ const usersRouter = require('./routes/users');
 const modesRouter = require('./routes/modes');
 app.use('/users', usersRouter);
 app.use('/modes', modesRouter);
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const passport = require('passport');
+require('./config/passport')(passport);
+app.use(session({
+    secret: 'vortex-community-secret',
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
+}));
+app.use(passport.initialize());
+app.use(passport.session());
