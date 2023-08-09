@@ -48,3 +48,28 @@ router.get('/profile', (req, res) => {
 });
 
 module.exports = router;
+router.get('/profile/:username', (req, res) => {
+    const username = req.params.username;
+    // Fetch user details, uploaded modes, and favorites from the database
+    // Render the user profile page
+    res.render('user-profile', { username: username });
+});
+router.get('/register', (req, res) => {
+    res.render('register');
+});
+
+router.post('/register', (req, res) => {
+    // Handle user registration
+    // Redirect to login page
+    res.redirect('/login');
+});
+
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
+router.post('/login', (req, res) => {
+    // Handle user login
+    // Redirect to user profile page
+    res.redirect('/profile/' + req.body.username);
+});
