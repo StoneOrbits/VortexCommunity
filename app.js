@@ -39,3 +39,7 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+const usersRouter = require('./routes/users');
+const modesRouter = require('./routes/modes');
+app.use('/users', usersRouter);
+app.use('/modes', modesRouter);
