@@ -142,3 +142,8 @@ router.post('/register', (req, res) => {
 router.get('/logout', (req, res) => {
     // Handle logout logic here
 });
+router.get('/profile/:username', (req, res) => {
+    const username = req.params.username;
+    // Fetch user details and their uploaded modes from the database
+    res.render('userProfile', { user: userDetails, modes: userModes });
+});

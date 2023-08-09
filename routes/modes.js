@@ -180,3 +180,15 @@ router.get('/showcase', (req, res) => {
     // Fetch modes for the current page from the database
     res.render('showcase', { modes: paginatedModes });
 });
+router.post('/upload', (req, res) => {
+    // Handle mode upload logic here
+    // Validate the mode, save to database, and redirect to mode details page
+});
+router.post('/favorite/:modeId', (req, res) => {
+    const modeId = req.params.modeId;
+    // Handle adding mode to user's favorites
+});
+router.post('/upvote/:modeId', (req, res) => {
+    const modeId = req.params.modeId;
+    // Handle upvoting the mode
+});
