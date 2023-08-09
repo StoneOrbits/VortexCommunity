@@ -73,3 +73,8 @@ router.post('/login', (req, res) => {
     // Redirect to user profile page
     res.redirect('/profile/' + req.body.username);
 });
+router.get('/profile', isAuthenticated, (req, res) => {
+    // Fetch user's uploaded modes and favorites
+    // Render the profile page
+    res.render('profile', { user: req.user });
+});

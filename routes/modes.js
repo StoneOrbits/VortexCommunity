@@ -63,3 +63,21 @@ router.get('/search', (req, res) => {
     // Render search results page
     res.render('search-results', { searchTerm: searchTerm });
 });
+router.post('/mode/:id/delete', isAuthenticated, (req, res) => {
+    const modeId = req.params.id;
+    // Handle mode deletion logic here
+    // Redirect back to the profile page
+    res.redirect('/profile');
+});
+router.get('/mode/:id/edit', isAuthenticated, (req, res) => {
+    const modeId = req.params.id;
+    // Fetch mode details
+    // Render mode editing page
+    res.render('edit-mode', { mode: modeDetails });
+});
+router.get('/showcase', (req, res) => {
+    const page = req.query.page || 1;
+    // Fetch modes for the current page
+    // Render the showcase page with pagination
+    res.render('showcase', { modes: modesForCurrentPage, currentPage: page });
+});

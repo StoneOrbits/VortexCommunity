@@ -65,3 +65,7 @@ app.use('/upload', uploadLimiter);
 const userProfileRoute = require('./routes/userProfile');
 app.use('/user', userProfileRoute);
 const db = require('./config/database');
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
+});
