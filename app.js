@@ -62,3 +62,5 @@ const uploadLimiter = rateLimit({
     message: 'Too many uploads created from this IP, please try again after 15 minutes'
 });
 app.use('/upload', uploadLimiter);
+const userProfileRoute = require('./routes/userProfile');
+app.use('/user', userProfileRoute);
