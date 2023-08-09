@@ -10,3 +10,6 @@ db.serialize(() => {
 });
 
 module.exports = db;
+db.run('ALTER TABLE users ADD COLUMN profilePic TEXT');
+db.run('ALTER TABLE modes ADD COLUMN preview TEXT');
+db.run('ALTER TABLE modes ADD COLUMN upvotes INTEGER DEFAULT 0');

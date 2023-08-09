@@ -69,3 +69,14 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something went wrong!');
 });
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
+passport.use(new LocalStrategy(
+    (username, password, done) => {
+        // Handle user authentication logic here
+    }
+));
+
+app.use(passport.initialize());
+app.use(passport.session());

@@ -111,3 +111,15 @@ router.post('/mode/:id/upvote', (req, res) => {
     // Handle upvoting mode logic here
     res.redirect('/mode/' + modeId);
 });
+router.get('/mode/:id', (req, res) => {
+    const modeId = req.params.id;
+    // Fetch mode details from the database
+    // Render mode details page
+    res.render('modeDetails', { mode: modeData });
+});
+router.get('/search', (req, res) => {
+    const query = req.query.q;
+    // Handle search logic here
+    // Render search results page
+    res.render('searchResults', { modes: searchResults });
+});
