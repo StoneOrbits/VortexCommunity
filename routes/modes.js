@@ -81,3 +81,15 @@ router.get('/showcase', (req, res) => {
     // Render the showcase page with pagination
     res.render('showcase', { modes: modesForCurrentPage, currentPage: page });
 });
+router.get('/mode/:id', (req, res) => {
+    const modeId = req.params.id;
+    // Fetch mode details
+    // Render mode details page
+    res.render('mode-details', { mode: modeDetails });
+});
+router.get('/search', (req, res) => {
+    const searchTerm = req.query.q;
+    // Search for modes by name or description
+    // Render the search results
+    res.render('search-results', { modes: searchResults });
+});

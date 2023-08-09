@@ -78,3 +78,23 @@ router.get('/profile', isAuthenticated, (req, res) => {
     // Render the profile page
     res.render('profile', { user: req.user });
 });
+router.get('/register', (req, res) => {
+    res.render('register');
+});
+
+router.post('/register', (req, res) => {
+    // Handle user registration logic here
+    res.redirect('/login');
+});
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
+router.post('/login', (req, res) => {
+    // Handle user login logic here
+    res.redirect('/profile');
+});
+router.get('/logout', (req, res) => {
+    // Handle user logout logic here
+    res.redirect('/');
+});
