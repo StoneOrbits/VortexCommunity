@@ -203,3 +203,26 @@ router.get('/mode/:modeId', (req, res) => {
     // Fetch mode details from the database
     res.render('modeDetails', { mode: modeDetails });
 });
+router.post('/mode/:modeId/upvote', (req, res) => {
+    const modeId = req.params.modeId;
+    // Logic to upvote the mode
+    res.redirect('/mode/' + modeId);
+});
+router.post('/mode/:modeId/favorite', (req, res) => {
+    const modeId = req.params.modeId;
+    // Logic to favorite the mode
+    res.redirect('/mode/' + modeId);
+});
+router.get('/upload', (req, res) => {
+    res.render('uploadMode');
+});
+
+router.post('/upload', (req, res) => {
+    // Logic to handle mode upload
+    res.redirect('/showcase');
+});
+router.get('/showcase/:page', (req, res) => {
+    const page = req.params.page;
+    // Fetch modes for the given page from the database
+    res.render('showcase', { modes: pageModes });
+});

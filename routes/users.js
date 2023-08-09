@@ -162,3 +162,8 @@ router.get('/login', (req, res) => {
 router.post('/login', (req, res) => {
     // Login logic here
 });
+router.get('/user/:username', (req, res) => {
+    const username = req.params.username;
+    // Fetch user details and their modes from the database
+    res.render('userProfile', { user: userDetails, modes: userModes });
+});
