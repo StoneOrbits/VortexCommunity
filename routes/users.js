@@ -98,3 +98,8 @@ router.get('/logout', (req, res) => {
     // Handle user logout logic here
     res.redirect('/');
 });
+router.get('/profile', (req, res) => {
+    // Fetch user's uploaded modes and favorites
+    // Render user profile page
+    res.render('profile', { user: userData });
+});

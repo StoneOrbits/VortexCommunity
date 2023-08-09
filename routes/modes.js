@@ -93,3 +93,21 @@ router.get('/search', (req, res) => {
     // Render the search results
     res.render('search-results', { modes: searchResults });
 });
+router.get('/upload', (req, res) => {
+    res.render('upload');
+});
+
+router.post('/upload', (req, res) => {
+    // Handle mode upload logic here
+    res.redirect('/profile');
+});
+router.post('/mode/:id/favorite', (req, res) => {
+    const modeId = req.params.id;
+    // Handle adding mode to favorites logic here
+    res.redirect('/profile');
+});
+router.post('/mode/:id/upvote', (req, res) => {
+    const modeId = req.params.id;
+    // Handle upvoting mode logic here
+    res.redirect('/mode/' + modeId);
+});
