@@ -123,3 +123,17 @@ router.get('/search', (req, res) => {
     // Render search results page
     res.render('searchResults', { modes: searchResults });
 });
+router.post('/mode/:id/upvote', (req, res) => {
+    const modeId = req.params.id;
+    // Handle upvoting logic here
+    res.redirect('/mode/' + modeId);
+});
+router.post('/mode/:id/favorite', (req, res) => {
+    const modeId = req.params.id;
+    // Handle favoriting logic here
+    res.redirect('/mode/' + modeId);
+});
+router.post('/upload', (req, res) => {
+    // Handle mode upload logic here
+    res.redirect('/');  // Redirect to homepage after successful upload
+});

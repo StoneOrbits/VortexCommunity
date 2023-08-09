@@ -103,3 +103,9 @@ router.get('/profile', (req, res) => {
     // Render user profile page
     res.render('profile', { user: userData });
 });
+router.get('/user/:username', (req, res) => {
+    const username = req.params.username;
+    // Fetch user details from the database
+    // Render user profile page
+    res.render('userProfile', { user: userData });
+});
