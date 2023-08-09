@@ -147,3 +147,18 @@ router.get('/profile/:username', (req, res) => {
     // Fetch user details and their uploaded modes from the database
     res.render('userProfile', { user: userDetails, modes: userModes });
 });
+router.get('/register', (req, res) => {
+    res.render('register');
+});
+
+router.post('/register', (req, res) => {
+    // Registration logic here
+});
+
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
+router.post('/login', (req, res) => {
+    // Login logic here
+});

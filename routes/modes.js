@@ -192,3 +192,14 @@ router.post('/upvote/:modeId', (req, res) => {
     const modeId = req.params.modeId;
     // Handle upvoting the mode
 });
+router.get('/search', (req, res) => {
+    const searchTerm = req.query.q;
+    // Search logic here
+    // Fetch modes from the database that match the search term
+    res.render('searchResults', { modes: matchingModes });
+});
+router.get('/mode/:modeId', (req, res) => {
+    const modeId = req.params.modeId;
+    // Fetch mode details from the database
+    res.render('modeDetails', { mode: modeDetails });
+});
