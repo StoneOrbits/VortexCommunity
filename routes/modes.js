@@ -154,3 +154,19 @@ router.get('/mode/:id', (req, res) => {
     // Fetch mode details from the database
     res.render('modeDetails', { mode: modeData });
 });
+router.post('/mode/:id/upvote', (req, res) => {
+    const modeId = req.params.id;
+    // Handle upvoting logic here
+    res.redirect('/mode/' + modeId);
+});
+router.post('/mode/:id/favorite', (req, res) => {
+    const modeId = req.params.id;
+    // Handle favorite marking logic here
+    res.redirect('/mode/' + modeId);
+});
+router.post('/upload', (req, res) => {
+    // Validate the uploaded mode here
+    // If valid, save to the database
+    // Else, return an error
+    res.redirect('/');
+});

@@ -1,3 +1,7 @@
-<h1><%= user.username %></h1>
-<p><%= user.description %></p>
-<!-- Display user's uploaded modes and favorites here -->
+<h1><%= user.username %>'s Profile</h1>
+<% modes.forEach(mode => { %>
+    <div>
+        <h2><%= mode.name %></h2>
+        <!-- Display mode details here -->
+    </div>
+<% }); %>

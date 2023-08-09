@@ -126,3 +126,8 @@ router.post('/login', (req, res) => {
     // Handle user login logic here
     res.redirect('/');
 });
+router.get('/user/:username', (req, res) => {
+    const username = req.params.username;
+    // Fetch user details and their modes from the database
+    res.render('userProfile', { user: userData, modes: userModes });
+});
