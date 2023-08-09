@@ -64,3 +64,4 @@ const uploadLimiter = rateLimit({
 app.use('/upload', uploadLimiter);
 const userProfileRoute = require('./routes/userProfile');
 app.use('/user', userProfileRoute);
+const db = require('./config/database');

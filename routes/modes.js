@@ -27,3 +27,21 @@ router.post('/upload', upload.single('modeFile'), (req, res) => {
     // Generate a preview for the mode
     res.redirect('/modes');
 });
+router.post('/:modeId/vote', (req, res) => {
+    const modeId = req.params.modeId;
+    // Increment the vote count for the mode in the database
+    // Redirect back to the mode page
+    res.redirect('/modes/' + modeId);
+});
+router.post('/:modeId/favorite', (req, res) => {
+    const modeId = req.params.modeId;
+    // Add the mode to the user's favorites in the database
+    // Redirect back to the mode page
+    res.redirect('/modes/' + modeId);
+});
+router.get('/search', (req, res) => {
+    const query = req.query.q;
+    // Search for modes in the database based on the query
+    // Render the search results page
+    res.render('search-results', { query: query });
+});
