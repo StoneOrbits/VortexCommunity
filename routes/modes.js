@@ -170,3 +170,13 @@ router.post('/upload', (req, res) => {
     // Else, return an error
     res.redirect('/');
 });
+router.get('/search', (req, res) => {
+    const query = req.query.q;
+    // Fetch modes that match the search query from the database
+    res.render('searchResults', { modes: matchingModes });
+});
+router.get('/showcase', (req, res) => {
+    const page = req.query.page || 1;
+    // Fetch modes for the current page from the database
+    res.render('showcase', { modes: paginatedModes });
+});

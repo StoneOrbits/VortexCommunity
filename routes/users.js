@@ -131,3 +131,14 @@ router.get('/user/:username', (req, res) => {
     // Fetch user details and their modes from the database
     res.render('userProfile', { user: userData, modes: userModes });
 });
+router.post('/login', (req, res) => {
+    // Handle login logic here
+});
+
+router.post('/register', (req, res) => {
+    // Handle registration logic here
+});
+
+router.get('/logout', (req, res) => {
+    // Handle logout logic here
+});
