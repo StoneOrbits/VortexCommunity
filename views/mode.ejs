@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <section class="mode-profile">
+            <h2><%= mode.name %></h2>
+            <header>
+                <p><strong>Description:</strong> <%= mode.description %></p>
+            </header>
+            <div class="mode-details">
+                <p><strong>Creator:</strong> <%= mode.creator.username %></p>
+                <p><strong>Upload Date:</strong> <%= mode.uploadDate %></p>
+                <p><strong>Votes:</strong> <%= mode.votes %></p>
+            </div>
+            <div class="mode-actions">
+                <!-- Include buttons or links for actions such as upvoting, favoriting, downloading, etc. -->
+                <button>Upvote</button>
+                <button>Favorite</button>
+                <a href="<%= mode.downloadLink %>">Download</a>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>
+

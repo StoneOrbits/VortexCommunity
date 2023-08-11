@@ -1,3 +1,35 @@
-<h1><%= user.username %>'s Profile</h1>
-<p><%= user.description %></p>
-<!-- Display user's uploaded modes and favorites here -->
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <section class="profile-section">
+            <img src="<%= user.profilePicture || '/images/default-profile.png' %>" alt="Profile Picture">
+            <div class="profile-details">
+                <h2><%= user.username %></h2>
+                <p class="profile-blurb"><%= user.blurb %></p>
+            </div>
+        </section>
+        <section class="showcase">
+            <h3>Your Modes</h3>
+            <% if (user.modes) { %>
+                <div class="mode-list">
+                    <% user.modes.forEach(mode => { %>
+                        <article class="mode-item">
+                            <h4><%= mode.name %></h4>
+                            <p><%= mode.description %></p>
+                            <a href="/modes/<%= mode.id %>">View Details</a>
+                        </article>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <p>No modes available.</p>
+            <% } %>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>
+

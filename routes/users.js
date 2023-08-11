@@ -1,169 +1,28 @@
-var express = require('express');
-var router = express.Router();
-
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
-
-module.exports = router;
 const express = require('express');
 const router = express.Router();
 
-router.get('/login', (req, res) => {
-router.post('/login', passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/users/login'
-}));
-    res.render('login');
-});
+router.get('/:username', (req, res) => {
+  // Retrieve the user object, including the modes property
+  const user = {
+    username: 'exampleUser',
+    //profilePicture: 'images/default-profile.png',
+    blurb: 'This is a blurb about the user.',
+    modes: [
+      { name: 'Mode 1', description: 'Description of Mode 1' },
+      { name: 'Mode 2', description: 'Description of Mode 2' },
+      // ... other modes ...
+    ]
+  };
 
-router.get('/register', (req, res) => {
-router.post('/register', (req, res) => {
-    const newUser = new User({
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password
-    });
-const bcrypt = require('bcryptjs');
-bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(newUser.password, salt, (err, hash) => {
-        if (err) throw err;
-        newUser.password = hash;
-        newUser.save()
-            .then(user => {
-                res.redirect('/users/login');
-            })
-            .catch(err => console.log(err));
-    });
-});
-    // TODO: Add password hashing and save user to database
-    res.redirect('/users/login');
-});
-    res.render('register');
-});
+  if (!req.isAuthenticated()) {
+    const username = req.params.username;
+    // TODO: Fetch user details, uploaded modes, and favorites from the database
+    return res.render('user-profile', { username: username });
+  }
 
-router.get('/profile', (req, res) => {
-    res.render('profile');
+  // Render the profile view, passing the user object
+  res.render('profile', { user });
 });
 
 module.exports = router;
-router.get('/profile/:username', (req, res) => {
-    const username = req.params.username;
-    // Fetch user details, uploaded modes, and favorites from the database
-    // Render the user profile page
-    res.render('user-profile', { username: username });
-});
-router.get('/register', (req, res) => {
-    res.render('register');
-});
 
-router.post('/register', (req, res) => {
-    // Handle user registration
-    // Redirect to login page
-    res.redirect('/login');
-});
-
-router.get('/login', (req, res) => {
-    res.render('login');
-});
-
-router.post('/login', (req, res) => {
-    // Handle user login
-    // Redirect to user profile page
-    res.redirect('/profile/' + req.body.username);
-});
-router.get('/profile', isAuthenticated, (req, res) => {
-    // Fetch user's uploaded modes and favorites
-    // Render the profile page
-    res.render('profile', { user: req.user });
-});
-router.get('/register', (req, res) => {
-    res.render('register');
-});
-
-router.post('/register', (req, res) => {
-    // Handle user registration logic here
-    res.redirect('/login');
-});
-router.get('/login', (req, res) => {
-    res.render('login');
-});
-
-router.post('/login', (req, res) => {
-    // Handle user login logic here
-    res.redirect('/profile');
-});
-router.get('/logout', (req, res) => {
-    // Handle user logout logic here
-    res.redirect('/');
-});
-router.get('/profile', (req, res) => {
-    // Fetch user's uploaded modes and favorites
-    // Render user profile page
-    res.render('profile', { user: userData });
-});
-router.get('/user/:username', (req, res) => {
-    const username = req.params.username;
-    // Fetch user details from the database
-    // Render user profile page
-    res.render('userProfile', { user: userData });
-});
-router.get('/register', (req, res) => {
-    res.render('register');
-});
-
-router.post('/register', (req, res) => {
-    // Handle user registration logic here
-    res.redirect('/login');
-});
-
-router.get('/login', (req, res) => {
-    res.render('login');
-});
-
-router.post('/login', (req, res) => {
-    // Handle user login logic here
-    res.redirect('/');
-});
-router.get('/user/:username', (req, res) => {
-    const username = req.params.username;
-    // Fetch user details and their modes from the database
-    res.render('userProfile', { user: userData, modes: userModes });
-});
-router.post('/login', (req, res) => {
-    // Handle login logic here
-});
-
-router.post('/register', (req, res) => {
-    // Handle registration logic here
-});
-
-router.get('/logout', (req, res) => {
-    // Handle logout logic here
-});
-router.get('/profile/:username', (req, res) => {
-    const username = req.params.username;
-    // Fetch user details and their uploaded modes from the database
-    res.render('userProfile', { user: userDetails, modes: userModes });
-});
-router.get('/register', (req, res) => {
-    res.render('register');
-});
-
-router.post('/register', (req, res) => {
-    // Registration logic here
-});
-
-router.get('/login', (req, res) => {
-    res.render('login');
-});
-
-router.post('/login', (req, res) => {
-    // Login logic here
-});
-router.get('/user/:username', (req, res) => {
-    const username = req.params.username;
-    // Fetch user details and their modes from the database
-    res.render('userProfile', { user: userDetails, modes: userModes });
-});

@@ -1,228 +1,80 @@
 const express = require('express');
 const router = express.Router();
+const Mode = require('../models/Mode');
 
+// show the main modes showcase
 router.get('/', (req, res) => {
-    res.render('modes/index');
+    const page = req.query.page || 1;
+    const searchQuery = req.query.search;
+    var modesForCurrentPage = [ 
+      { id: 1, name: "Mode 1" },
+      { id: 2, name: "Mode 2" },
+    ];
+    // If search query is present, filter the modes based on the search criteria
+    if (searchQuery) {
+        modesForCurrentPage = modesForCurrentPage.filter(mode => {
+            return mode.name.toLowerCase().includes(searchQuery.toLowerCase());
+        });
+    }
+    // Fetch modes for the current page
+    res.render('modes', { modes: modesForCurrentPage, user: req.user, currentPage: page, search: req.query.search });
 });
 
-router.get('/upload', (req, res) => {
-router.post('/upload', ensureAuthenticated, (req, res) => {
-    // TODO: Handle mode upload logic here
-    res.redirect('/modes');
-});
-    res.render('modes/upload');
+// Mode details
+router.get('/:modeId', async (req, res) => {
+    try {
+        //const mode = await Mode.findOne({ id: parseInt(req.params.modeId, 10) });
+        var mode = { id: 1, name: "test", uploadDate: "today", votes:69, creator: { username: "dude" }};
+        if (!mode) {
+            return res.status(404).render('not-found');
+        }
+        res.render('mode', { mode: mode });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 });
 
-router.get('/:id', (req, res) => {
-    res.render('modes/show');
+// Upvote mode
+router.post('/:modeId/vote', async (req, res) => {
+    try {
+        const mode = await Mode.findOne({ id: parseInt(req.params.modeId, 10) });
+        if (!mode) {
+            return res.status(404).render('not-found');
+        }
+        res.render('modes/show', { mode });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 });
 
-module.exports = router;
-const { ensureAuthenticated } = require('../middleware/checkAuth');
-const multer = require('multer');
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-router.post('/upload', upload.single('modeFile'), (req, res) => {
-    // Save the uploaded mode file to the database
-    // Generate a preview for the mode
-    res.redirect('/modes');
-});
-router.post('/:modeId/vote', (req, res) => {
-    const modeId = req.params.modeId;
-    // Increment the vote count for the mode in the database
-    // Redirect back to the mode page
-    res.redirect('/modes/' + modeId);
-});
+// Favorite mode
 router.post('/:modeId/favorite', (req, res) => {
     const modeId = req.params.modeId;
     // Add the mode to the user's favorites in the database
-    // Redirect back to the mode page
     res.redirect('/modes/' + modeId);
 });
-router.get('/search', (req, res) => {
-    const query = req.query.q;
-    // Search for modes in the database based on the query
-    // Render the search results page
-    res.render('search-results', { query: query });
-});
-router.post('/mode/:id/upvote', (req, res) => {
-    const modeId = req.params.id;
-    // Handle upvoting logic here
-    // Redirect back to the mode details page
-    res.redirect('/mode/' + modeId);
-});
-router.post('/mode/:id/favorite', (req, res) => {
-    const modeId = req.params.id;
-    // Handle adding to favorites logic here
-    // Redirect back to the mode details page
-    res.redirect('/mode/' + modeId);
-});
-router.get('/search', (req, res) => {
-    const searchTerm = req.query.q;
-    // Handle search logic here
-    // Render search results page
-    res.render('search-results', { searchTerm: searchTerm });
-});
-router.post('/mode/:id/delete', isAuthenticated, (req, res) => {
-    const modeId = req.params.id;
-    // Handle mode deletion logic here
-    // Redirect back to the profile page
-    res.redirect('/profile');
-});
-router.get('/mode/:id/edit', isAuthenticated, (req, res) => {
-    const modeId = req.params.id;
-    // Fetch mode details
-    // Render mode editing page
-    res.render('edit-mode', { mode: modeDetails });
-});
-router.get('/showcase', (req, res) => {
-    const page = req.query.page || 1;
-    // Fetch modes for the current page
-    // Render the showcase page with pagination
-    res.render('showcase', { modes: modesForCurrentPage, currentPage: page });
-});
-router.get('/mode/:id', (req, res) => {
-    const modeId = req.params.id;
-    // Fetch mode details
-    // Render mode details page
-    res.render('mode-details', { mode: modeDetails });
-});
-router.get('/search', (req, res) => {
-    const searchTerm = req.query.q;
-    // Search for modes by name or description
-    // Render the search results
-    res.render('search-results', { modes: searchResults });
-});
-router.get('/upload', (req, res) => {
-    res.render('upload');
+
+router.post('/create', async (req, res) => {
+    try {
+        // ... (other code for handling file uploads, etc.)
+
+        const newMode = new Mode({
+            name: req.body.name,
+            description: req.body.description,
+            file: req.file.buffer, // Assuming you're using multer or similar for file uploads
+            thumbnail: req.thumbnail.buffer, // Similarly, handle thumbnail upload
+            createdBy: req.user._id // Assuming you have user info in req.user
+        });
+
+        await newMode.save();
+        res.redirect('/modes');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 });
 
-router.post('/upload', (req, res) => {
-    // Handle mode upload logic here
-    res.redirect('/profile');
-});
-router.post('/mode/:id/favorite', (req, res) => {
-    const modeId = req.params.id;
-    // Handle adding mode to favorites logic here
-    res.redirect('/profile');
-});
-router.post('/mode/:id/upvote', (req, res) => {
-    const modeId = req.params.id;
-    // Handle upvoting mode logic here
-    res.redirect('/mode/' + modeId);
-});
-router.get('/mode/:id', (req, res) => {
-    const modeId = req.params.id;
-    // Fetch mode details from the database
-    // Render mode details page
-    res.render('modeDetails', { mode: modeData });
-});
-router.get('/search', (req, res) => {
-    const query = req.query.q;
-    // Handle search logic here
-    // Render search results page
-    res.render('searchResults', { modes: searchResults });
-});
-router.post('/mode/:id/upvote', (req, res) => {
-    const modeId = req.params.id;
-    // Handle upvoting logic here
-    res.redirect('/mode/' + modeId);
-});
-router.post('/mode/:id/favorite', (req, res) => {
-    const modeId = req.params.id;
-    // Handle favoriting logic here
-    res.redirect('/mode/' + modeId);
-});
-router.post('/upload', (req, res) => {
-    // Handle mode upload logic here
-    res.redirect('/');  // Redirect to homepage after successful upload
-});
-router.get('/search', (req, res) => {
-    const searchTerm = req.query.q;
-    // Fetch modes from the database that match the search term
-    // Render search results page
-    res.render('searchResults', { modes: searchResults });
-});
-router.get('/modes/page/:pageNumber', (req, res) => {
-    const pageNumber = req.params.pageNumber;
-    // Fetch a specific page of modes from the database
-    // Render modes page with pagination
-    res.render('modesPage', { modes: paginatedModes });
-});
-router.get('/mode/:id', (req, res) => {
-    const modeId = req.params.id;
-    // Fetch mode details from the database
-    res.render('modeDetails', { mode: modeData });
-});
-router.post('/mode/:id/upvote', (req, res) => {
-    const modeId = req.params.id;
-    // Handle upvoting logic here
-    res.redirect('/mode/' + modeId);
-});
-router.post('/mode/:id/favorite', (req, res) => {
-    const modeId = req.params.id;
-    // Handle favorite marking logic here
-    res.redirect('/mode/' + modeId);
-});
-router.post('/upload', (req, res) => {
-    // Validate the uploaded mode here
-    // If valid, save to the database
-    // Else, return an error
-    res.redirect('/');
-});
-router.get('/search', (req, res) => {
-    const query = req.query.q;
-    // Fetch modes that match the search query from the database
-    res.render('searchResults', { modes: matchingModes });
-});
-router.get('/showcase', (req, res) => {
-    const page = req.query.page || 1;
-    // Fetch modes for the current page from the database
-    res.render('showcase', { modes: paginatedModes });
-});
-router.post('/upload', (req, res) => {
-    // Handle mode upload logic here
-    // Validate the mode, save to database, and redirect to mode details page
-});
-router.post('/favorite/:modeId', (req, res) => {
-    const modeId = req.params.modeId;
-    // Handle adding mode to user's favorites
-});
-router.post('/upvote/:modeId', (req, res) => {
-    const modeId = req.params.modeId;
-    // Handle upvoting the mode
-});
-router.get('/search', (req, res) => {
-    const searchTerm = req.query.q;
-    // Search logic here
-    // Fetch modes from the database that match the search term
-    res.render('searchResults', { modes: matchingModes });
-});
-router.get('/mode/:modeId', (req, res) => {
-    const modeId = req.params.modeId;
-    // Fetch mode details from the database
-    res.render('modeDetails', { mode: modeDetails });
-});
-router.post('/mode/:modeId/upvote', (req, res) => {
-    const modeId = req.params.modeId;
-    // Logic to upvote the mode
-    res.redirect('/mode/' + modeId);
-});
-router.post('/mode/:modeId/favorite', (req, res) => {
-    const modeId = req.params.modeId;
-    // Logic to favorite the mode
-    res.redirect('/mode/' + modeId);
-});
-router.get('/upload', (req, res) => {
-    res.render('uploadMode');
-});
+module.exports = router;
 
-router.post('/upload', (req, res) => {
-    // Logic to handle mode upload
-    res.redirect('/showcase');
-});
-router.get('/showcase/:page', (req, res) => {
-    const page = req.params.page;
-    // Fetch modes for the given page from the database
-    res.render('showcase', { modes: pageModes });
-});

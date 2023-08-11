@@ -1,14 +1,30 @@
 const mongoose = require('mongoose');
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const modeSchema = new Schema({
-    name: String,
-    description: String,
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    upvotes: Number,
-    fileLink: String,
-    thumbnailLink: String
+const ModeSchema = new mongoose.Schema({
+    _id: mongoose.Schema.Types.ObjectId,
+    name: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    file: Buffer,
+    thumbnail: {
+        type: Buffer,
+        required: false // You can make this required if you always want a thumbnail
+    },
+    votes: {
+        type: Number,
+        default: 0
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Assuming your user model is named 'User'
+        required: true
+    }
 });
 
-module.exports = mongoose.model('Mode', modeSchema);
+module.exports = mongoose.model('Mode', ModeSchema);
+

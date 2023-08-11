@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <section class="search-bar">
+            <form action="/modes" method="get">
+                <div class="search-container">
+                    <input type="text" name="search" placeholder="Search for modes..." value="<%= search || '' %>" class="search-input">
+                </div>
+                <button type="submit">Search</button>
+            </form>
+        </section>
+        <section class="mode-list">
+            <% modes.forEach(function(mode) { %>
+                <article class="mode-item">
+                    <h2><%= mode.title %></h2>
+                    <p><%= mode.description %></p>
+                    <a href="/modes/<%= mode.id %>">View Details</a>
+                </article>
+            <% }); %>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>
+

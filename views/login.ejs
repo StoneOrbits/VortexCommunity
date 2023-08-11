@@ -1,2 +1,35 @@
-<h1>Login</h1>
-<!-- Login form goes here -->
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <div class="container">
+            <% if (messages.error) { %>
+                <div class="alert alert-danger"><%= messages.error %></div>
+            <% } %>
+            <% if (messages.success) { %>
+                <div class="alert alert-success"><%= messages.success %></div>
+            <% } %>
+        </div>
+        <section class="login-section">
+            <form action="/login" method="post">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Login</button>
+                </div>
+            </form>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>
+

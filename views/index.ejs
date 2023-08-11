@@ -1,11 +1,33 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <section class="showcase">
+            <h2>Welcome to Vortex Community</h2>
+            <header>
+              <% if (user) { %>
+              <p>Welcome, <%= user.username %>!</p>
+              <% } else { %>
+              <p>Welcome, Guest!</p>
+              <% } %>
+            </header>
+            <p>Explore, upload, and share your favorite modes. Join the community and contribute to the ever-growing collection of creative content.</p>
+            <h3>Top Upvoted Modes</h3>
+            <div class="mode-list">
+                <% topModes.forEach(mode => { %>
+                    <article class="mode-item">
+                        <h4><%= mode.name %></h4>
+                        <p><%= mode.description %></p>
+                        <a href="/modes/<%= mode.id %>">View Details</a>
+                    </article>
+                <% }); %>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+</body>
 </html>
+

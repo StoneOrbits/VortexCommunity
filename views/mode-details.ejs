@@ -1,3 +1,5 @@
 <h1><%= mode.name %></h1>
+<p>Created by: <%= mode.createdBy.username %></p> <!-- Assuming your user model has a username field -->
+<img src="data:image/png;base64,<%= mode.thumbnail.toString('base64') %>" alt="Mode Thumbnail">
 <p><%= mode.description %></p>
-<!-- Display mode preview and other details here -->
+<p>Votes: <%= mode.votes %></p>
