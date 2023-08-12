@@ -26,8 +26,7 @@ jobs:
     
     - name: Deploy to Linode
       run: |
-        ssh vortex@198.74.48.18 'sudo apt-get update && sudo apt-get install -y nodejs npm mongodb'
-        ssh vortex@198.74.48.18 'sudo systemctl start mongod'
-        scp -r . vortex@198.74.48.18:/home/vortex/
-        ssh vortex@198.74.48.18 'cd /home/vortex/ && npm install && npm start'
+        ssh vortex@198.74.48.18 'systemctl stop vortex-community'
+        ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && git pull'
+        ssh vortex@198.74.48.18 'systemctl start vortex-community'
     
