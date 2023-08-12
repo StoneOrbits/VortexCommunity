@@ -20,7 +20,7 @@ jobs:
     
     - name: Deploy to Linode
       run: |
-        ssh vortex@198.74.48.18 'systemctl stop vortex-community'
+        ssh vortex@198.74.48.18 'sudo systemctl stop vortex-community'
         ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && git pull'
-        ssh vortex@198.74.48.18 'systemctl start vortex-community'
+        ssh vortex@198.74.48.18 'sudo systemctl start vortex-community'
     
