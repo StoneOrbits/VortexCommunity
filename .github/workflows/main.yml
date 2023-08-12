@@ -18,6 +18,7 @@ jobs:
 
     - name: Deploy to Linode
       run: |
+        mkdir -p ~/.ssh
         ssh-keyscan 198.74.48.18 >> ~/.ssh/known_hosts
         ssh vortex@198.74.48.18 'sudo apt-get update && sudo apt-get install -y nodejs npm mongodb'
         ssh vortex@198.74.48.18 'sudo systemctl start mongod'
