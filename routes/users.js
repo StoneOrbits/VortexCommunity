@@ -1,27 +1,28 @@
 const express = require('express');
 const router = express.Router();
+const User = require('../models/User');
 
-router.get('/:username', (req, res) => {
-  // Retrieve the user object, including the modes property
-  const user = {
-    username: 'exampleUser',
-    //profilePicture: 'images/default-profile.png',
-    blurb: 'This is a blurb about the user.',
-    modes: [
-      { name: 'Mode 1', description: 'Description of Mode 1' },
-      { name: 'Mode 2', description: 'Description of Mode 2' },
-      // ... other modes ...
-    ]
-  };
+router.get('/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId).populate('modes');
 
-  if (!req.isAuthenticated()) {
-    const username = req.params.username;
-    // TODO: Fetch user details, uploaded modes, and favorites from the database
-    return res.render('user-profile', { username: username });
+    if (!user) {
+      // Handle the case where the user is not found
+      return res.status(404).render('404', { message: 'User not found' });
+    }
+
+    //if (!req.isAuthenticated()) {
+    //  // Render public profile view
+    //  return res.render('user-profile', { user });
+    //}
+
+    // Render the profile view, passing the user object
+    res.render('profile', { user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { message: 'An error occurred while retrieving the user profile' });
   }
-
-  // Render the profile view, passing the user object
-  res.render('profile', { user });
 });
 
 module.exports = router;

@@ -17,6 +17,8 @@ const UserSchema = new mongoose.Schema({
     },
     profilePic: String,
     bio: String
+    // List of references to modes
+    modes: [{ type: Schema.Types.ObjectId, ref: 'Mode' }]
 });
 
 module.exports = mongoose.model('User', UserSchema);

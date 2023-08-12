@@ -1,0 +1,24 @@
+name: Deploy to Linode
+
+on:
+  push:
+    branches:
+      - main # Trigger the workflow on push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Add any build or test steps here, if needed
+
+    - name: Deploy to Linode
+      run: |
+        ssh -o StrictHostKeyChecking=no root@198.74.48.18 "cd /path/to/your/project && git pull origin main && npm install && npm run build"
+      env:
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+
+
