@@ -3,12 +3,13 @@ const router = express.Router();
 const Mode = require('../models/Mode');
 
 // show the main modes showcase
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     const page = req.query.page || 1;
     const searchQuery = req.query.search;
-    var modesForCurrentPage = [ 
-      { id: 1, name: "Mode 1" },
-    ];
+    var modesForCurrentPage = await Mode.find().sort({ votes: -1 }).limit(5).exec();
+    //var modesForCurrentPage = [ 
+    //  { id: 1, name: "Mode 1" },
+    //];
     // If search query is present, filter the modes based on the search criteria
     if (searchQuery) {
         modesForCurrentPage = modesForCurrentPage.filter(mode => {

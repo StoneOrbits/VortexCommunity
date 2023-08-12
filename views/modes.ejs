@@ -15,11 +15,7 @@
         </section>
         <section class="mode-list">
             <% modes.forEach(function(mode) { %>
-                <article class="mode-item">
-                    <h2><%= mode.title %></h2>
-                    <p><%= mode.description %></p>
-                    <a href="/modes/<%= mode.id %>">View Details</a>
-                </article>
+                <%- include('partials/mode-tile', { mode: mode }) %>
             <% }); %>
         </section>
     </main>

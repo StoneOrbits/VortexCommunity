@@ -257,3 +257,51 @@ nav ul li a:hover {
     font-style: italic;
     color: #aaa;
 }
+
+.mode-item {
+    display: block;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    text-decoration: none;
+    color: #333;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+}
+
+.mode-item:hover {
+    background-color: #e0e0e0;
+}
+
+.led-strip-container {
+    height: 40px;
+    overflow: hidden;
+    position: relative;
+    margin: 10px 0;
+    border: 2px solid #333;
+    border-radius: 5px;
+}
+
+.led-strip {
+    height: 20px;
+    width: 2000px;
+    position: relative;
+    white-space: nowrap;
+    display: flex;
+    transition: transform 5s linear;
+}
+
+.led-strip img {
+    height: 20px;
+    width: 1000px;
+}
+
+.mode-item:hover .led-strip {
+    animation: scrollLed 5s linear infinite;
+}
+
+@keyframes scrollLed {
+    from { transform: translateX(0); }
+    to { transform: translateX(-1000px); }
+}
+
