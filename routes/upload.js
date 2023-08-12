@@ -17,7 +17,7 @@ const processModeFile = (fileBuffer, modeId) => {
     fs.writeFileSync(tempFilePath, fileBuffer);
 
     // Run your command-line tool on the temporary file
-    exec(`/bin/bash -c "/usr/local/bin/vortex --hex --no-timestep --mode ${tempFilePath} <<< w1000q"`, (error, stdout, stderr) => {
+    exec(`/bin/bash -c "/usr/local/bin/vortex --hex --no-timestep --mode ${tempFilePath} <<< w10000q"`, (error, stdout, stderr) => {
       if (error) {
         reject(error);
         return;
@@ -38,7 +38,7 @@ const processModeFile = (fileBuffer, modeId) => {
       });
 
       const createImage = (colors, filename) => {
-        const canvas = createCanvas(1000, 1);
+        const canvas = createCanvas(10000, 1);
         const ctx = canvas.getContext('2d');
 
         colors.forEach((color, index) => {

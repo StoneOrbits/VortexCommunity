@@ -1,6 +1,9 @@
 <a href="/modes/<%= mode.id %>" class="mode-item">
-    <h2><%= mode.title %></h2>
-    <p><%= mode.description %></p>
+    <div class="mode-content">
+        <h2><%= mode.title %></h2>
+        <p class="mode-blurb">A short blurb about the mode.</p>
+        <p><%= mode.description %></p>
+    </div>
     <div class="led-strip-container">
         <div class="led-strip">
             <img src="/images/ledstrips/<%= mode.id %>_led1.png" alt="LED Strip 1">
