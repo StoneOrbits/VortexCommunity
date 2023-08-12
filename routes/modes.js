@@ -23,8 +23,7 @@ router.get('/', async (req, res) => {
 // Mode details
 router.get('/:modeId', async (req, res) => {
     try {
-        //const mode = await Mode.findOne({ id: parseInt(req.params.modeId, 10) });
-        var mode = { id: 1, name: "test", uploadDate: "today", votes:69, creator: { username: "dude" }};
+        const mode = await Mode.findOne({ id: parseInt(req.params.modeId, 10) });
         if (!mode) {
             return res.status(404).render('not-found');
         }

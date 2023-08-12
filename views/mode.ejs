@@ -5,17 +5,17 @@
     <%- include('partials/header') %>
     <%- include('partials/nav') %>
     <main>
-        <section class="mode-profile">
+        <section class="mode-profile-page">
             <h2><%= mode.name %></h2>
-            <header>
+            <header class="mode-profile-header">
                 <p><strong>Description:</strong> <%= mode.description %></p>
             </header>
-            <div class="mode-details">
+            <div class="mode-profile-details">
                 <p><strong>Creator:</strong> <%= mode.creator.username %></p>
                 <p><strong>Upload Date:</strong> <%= mode.uploadDate %></p>
                 <p><strong>Votes:</strong> <%= mode.votes %></p>
             </div>
-            <div class="mode-actions">
+            <div class="mode-profile-actions">
                 <!-- Include buttons or links for actions such as upvoting, favoriting, downloading, etc. -->
                 <button>Upvote</button>
                 <button>Favorite</button>
@@ -26,4 +26,3 @@
     <%- include('partials/footer') %>
 </body>
 </html>
-

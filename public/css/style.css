@@ -300,3 +300,53 @@ nav ul li a:hover {
     color: #aaa;
 }
 
+.mode-profile-page {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #222;
+    border: 2px solid #888;
+    border-radius: 10px;
+}
+
+.mode-profile-header {
+    margin-bottom: 20px;
+}
+
+.mode-profile-blurb {
+    font-size: 14px;
+    font-style: italic;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mode-profile-led-strip-container {
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.mode-profile-details {
+    margin: 20px 0;
+}
+
+.mode-profile-actions button,
+.mode-profile-actions a {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.mode-profile-actions a {
+    text-decoration: none;
+    color: #FFF;
+    border: 1px solid #FFF;
+}
+
+.mode-profile-actions a:hover,
+.mode-profile-actions button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
