@@ -84,6 +84,9 @@ footer {
     font-size: 14px;
     font-style: italic;
     color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .led-strip-container {
