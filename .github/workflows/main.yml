@@ -16,14 +16,18 @@ jobs:
     - name: Install dependencies and build
       run: npm install
 
+    - name: Setup SSH Agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+    
+    - name: Add Linode to known_hosts
+      run: ssh-keyscan 198.74.48.18 >> ~/.ssh/known_hosts
+    
     - name: Deploy to Linode
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa        
-        ssh-keyscan 198.74.48.18 >> ~/.ssh/known_hosts
         ssh vortex@198.74.48.18 'sudo apt-get update && sudo apt-get install -y nodejs npm mongodb'
         ssh vortex@198.74.48.18 'sudo systemctl start mongod'
         scp -r . vortex@198.74.48.18:/home/vortex/
         ssh vortex@198.74.48.18 'cd /home/vortex/ && npm install && npm start'
-
+    
