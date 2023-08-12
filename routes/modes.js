@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
 // Mode details
 router.get('/:modeId', async (req, res) => {
     try {
-        const mode = await Mode.findOne({ id: parseInt(req.params.modeId, 10) });
+        const mode = await Mode.findOne({ _id: req.params.modeId });
         if (!mode) {
             return res.status(404).render('not-found');
         }
@@ -37,7 +37,7 @@ router.get('/:modeId', async (req, res) => {
 // Upvote mode
 router.post('/:modeId/vote', async (req, res) => {
     try {
-        const mode = await Mode.findOne({ id: parseInt(req.params.modeId, 10) });
+        const mode = await Mode.findOne({ _id: parseInt(req.params.modeId, 10) });
         if (!mode) {
             return res.status(404).render('not-found');
         }
