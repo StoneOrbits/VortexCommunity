@@ -51,14 +51,17 @@ footer {
 }
 
 .mode-item {
-    border: 1px solid #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #888;
     padding: 10px;
     border-radius: 5px;
     transition: background-color 0.3s;
-}
-
-.mode-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    height: 120px; /* Adjust the height as needed */
+    position: relative;
+    background-color: #222;
+    color: #FFF;
+    text-decoration: none;
 }
 
 .mode-item h2 {
@@ -66,20 +69,50 @@ footer {
     margin-top: 0;
 }
 
-.mode-item a {
-    display: inline-block;
-    margin-top: 10px;
-    color: #FFFFFF;
-    text-decoration: none;
-    padding: 5px 10px;
-    border: 1px solid #FFFFFF;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+.mode-content {
+    flex-grow: 1;
+    margin-bottom: 10px;
 }
 
-.mode-item a:hover {
-    background-color: #FFFFFF;
-    color: #121212;
+.mode-blurb {
+    font-size: 14px;
+    font-style: italic;
+    color: #aaa;
+}
+
+.led-strip-container {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 40px;
+    overflow: hidden;
+    border: 2px solid #888;
+    border-radius: 5px;
+    background-color: #121212;
+}
+
+.led-strip {
+    height: 20px;
+    width: 2000px;
+    position: relative;
+    white-space: nowrap;
+    display: flex;
+    transition: transform 5s linear;
+}
+
+.led-strip img {
+    height: 20px;
+    width: 1000px;
+}
+
+.mode-item:hover .led-strip {
+    animation: scrollLed 5s linear infinite;
+}
+
+@keyframes scrollLed {
+    from { transform: translateX(0); }
+    to { transform: translateX(-1000px); }
 }
 
 /* Form Styles */
@@ -256,63 +289,5 @@ nav ul li a:hover {
 .profile-blurb {
     font-style: italic;
     color: #aaa;
-}
-
-.mode-item {
-    display: block;
-    border: 1px solid #888;
-    padding: 10px;
-    margin: 10px;
-    text-decoration: none;
-    color: #FFF;
-    background-color: #222;
-    transition: background-color 0.3s ease;
-    border-radius: 5px;
-    position: relative;
-}
-
-.mode-content {
-    margin-bottom: 10px;
-}
-
-.mode-blurb {
-    font-size: 14px;
-    font-style: italic;
-    color: #aaa;
-}
-
-.led-strip-container {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
-    height: 40px;
-    overflow: hidden;
-    border: 2px solid #888;
-    border-radius: 5px;
-    background-color: #121212;
-}
-
-.led-strip {
-    height: 20px;
-    width: 2000px;
-    position: relative;
-    white-space: nowrap;
-    display: flex;
-    transition: transform 5s linear;
-}
-
-.led-strip img {
-    height: 20px;
-    width: 10000px;
-}
-
-.mode-item:hover .led-strip {
-    animation: scrollLed 30s linear infinite;
-}
-
-@keyframes scrollLed {
-    from { transform: translateX(0); }
-    to { transform: translateX(-10000px); }
 }
 
