@@ -44,6 +44,12 @@ footer {
     margin-top: 50px;
 }
 
+.mode-title {
+    font-size: 20px;
+    margin: 0;
+    color: #FFF; /* Adjust the color if needed */
+}
+
 .mode-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -94,7 +100,7 @@ footer {
 
 .led-strip {
     height: 20px;
-    width: 2000px;
+    width: 10000px;
     position: relative;
     white-space: nowrap;
     display: flex;
@@ -103,16 +109,16 @@ footer {
 
 .led-strip img {
     height: 20px;
-    width: 1000px;
+    width: 10000px;
 }
 
 .mode-item:hover .led-strip {
-    animation: scrollLed 5s linear infinite;
+    animation: scrollLed 30s linear infinite;
 }
 
 @keyframes scrollLed {
     from { transform: translateX(0); }
-    to { transform: translateX(-1000px); }
+    to { transform: translateX(-10000px); }
 }
 
 /* Form Styles */
