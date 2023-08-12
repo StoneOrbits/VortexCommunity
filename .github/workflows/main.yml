@@ -10,12 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Install dependencies and build
-      run: npm install
-
     - name: Setup SSH Agent
       uses: webfactory/ssh-agent@v0.5.3
       with:
