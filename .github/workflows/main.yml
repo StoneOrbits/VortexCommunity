@@ -3,7 +3,7 @@ name: Deploy to Linode
 on:
   push:
     branches:
-      - main # Trigger the workflow on push to the main branch
+      - main # or the branch you want to deploy from
 
 jobs:
   deploy:
@@ -13,12 +13,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # Add any build or test steps here, if needed
+    - name: Install dependencies and build
+      run: npm install
 
     - name: Deploy to Linode
       run: |
-        ssh -o StrictHostKeyChecking=no root@198.74.48.18 "cd /path/to/your/project && git pull origin main && npm install && npm run build"
+        ssh-keyscan 198.74.48.18 >> ~/.ssh/known_hosts
+        ssh vortex@198.74.48.18 'sudo apt-get update && sudo apt-get install -y nodejs npm mongodb'
+        ssh vortex@198.74.48.18 'sudo systemctl start mongod'
+        scp -r . vortex@198.74.48.18:/home/vortex/
+        ssh vortex@198.74.48.18 'cd /home/vortex/ && npm install && npm start'
       env:
-        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-
+        DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
 
