@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     profilePic: String,
-    bio: String
+    bio: String,
     // List of references to modes
     modes: [{ type: Schema.Types.ObjectId, ref: 'Mode' }]
 });
