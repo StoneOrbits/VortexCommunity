@@ -8,7 +8,6 @@ router.get('/', (req, res) => {
     const searchQuery = req.query.search;
     var modesForCurrentPage = [ 
       { id: 1, name: "Mode 1" },
-      { id: 2, name: "Mode 2" },
     ];
     // If search query is present, filter the modes based on the search criteria
     if (searchQuery) {
