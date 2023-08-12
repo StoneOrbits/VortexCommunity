@@ -308,7 +308,7 @@ nav ul li a:hover {
 }
 
 .mode-item:hover .led-strip {
-    animation: scrollLed 5s linear infinite;
+    animation: scrollLed 30s linear infinite;
 }
 
 @keyframes scrollLed {
