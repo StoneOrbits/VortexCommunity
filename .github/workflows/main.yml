@@ -16,14 +16,13 @@ jobs:
     - name: Install dependencies and build
       run: npm install
 
-    - name: Deploy to Linode
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa        
-        ssh-keyscan 198.74.48.18 >> ~/.ssh/known_hosts
-        ssh -o HostKeyAlgorithms=ssh-rsa vortex@198.74.48.18 'sudo apt-get update && sudo apt-get install -y nodejs npm mongodb'
-        ssh -o HostKeyAlgorithms=ssh-rsa vortex@198.74.48.18 'sudo systemctl start mongod'
-        scp -o HostKeyAlgorithms=ssh-rsa -r . vortex@198.74.48.18:/home/vortex/
-        ssh -o HostKeyAlgorithms=ssh-rsa vortex@198.74.48.18 'cd /home/vortex/ && npm install && npm start'
-
+  - name: Deploy to Linode
+    run: |
+      mkdir -p ~/.ssh
+      echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+      chmod 600 ~/.ssh/id_rsa        
+      ssh-keyscan -t rsa-sha2-256 198.74.48.18 >> ~/.ssh/known_hosts
+      ssh -o HostKeyAlgorithms=rsa-sha2-256 vortex@198.74.48.18 'sudo apt-get update && sudo apt-get install -y nodejs npm mongodb'
+      ssh -o HostKeyAlgorithms=rsa-sha2-256 vortex@198.74.48.18 'sudo systemctl start mongod'
+      scp -o HostKeyAlgorithms=rsa-sha2-256 -r . vortex@198.74.48.18:/home/vortex/
+      ssh -o HostKeyAlgorithms=rsa-sha2-256 vortex@198.74.48.18 'cd /home/vortex/ && npm install && npm start'
