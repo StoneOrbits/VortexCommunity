@@ -18,11 +18,7 @@
             <h3>Top Upvoted Modes</h3>
             <div class="mode-list">
                 <% topModes.forEach(mode => { %>
-                    <article class="mode-item">
-                        <h4><%= mode.name %></h4>
-                        <p><%= mode.description %></p>
-                        <a href="/modes/<%= mode.id %>">View Details</a>
-                    </article>
+                    <%- include('partials/mode-tile', { mode: mode }) %>
                 <% }); %>
             </div>
         </section>

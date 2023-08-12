@@ -17,11 +17,7 @@
             <% if (user.modes) { %>
                 <div class="mode-list">
                     <% user.modes.forEach(mode => { %>
-                        <article class="mode-item">
-                            <h4><%= mode.name %></h4>
-                            <p><%= mode.description %></p>
-                            <a href="/modes/<%= mode.id %>">View Details</a>
-                        </article>
+                        <%- include('partials/mode-tile', { mode: mode }) %>
                     <% }); %>
                 </div>
             <% } else { %>
