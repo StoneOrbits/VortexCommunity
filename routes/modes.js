@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Mode = require('../models/Mode');
+const User = require('../models/User');
+const { ensureAuthenticated } = require('../middleware/checkAuth');
 
 // show the main modes showcase
 router.get('/', async (req, res) => {
     const page = req.query.page || 1;
     const searchQuery = req.query.search;
-    var modesForCurrentPage = await Mode.find().sort({ votes: -1 }).limit(5).exec();
-    //var modesForCurrentPage = [ 
-    //  { id: 1, name: "Mode 1" },
-    //];
+    var modesForCurrentPage = await Mode.find().sort({ votes: -1 }).exec();
     // If search query is present, filter the modes based on the search criteria
     if (searchQuery) {
         modesForCurrentPage = modesForCurrentPage.filter(mode => {
@@ -27,7 +26,69 @@ router.get('/:modeId', async (req, res) => {
         if (!mode) {
             return res.status(404).render('not-found');
         }
-        res.render('mode', { mode: mode });
+        res.render('mode', { mode: mode, user: req.user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get('/:modeId/edit', ensureAuthenticated, async (req, res) => {
+    try {
+        const mode = await Mode.findById(req.params.modeId);
+        if (!mode) {
+            return res.status(404).render('not-found');
+        }
+        if (mode.createdBy.toString() !== req.user._id.toString()) {
+            return res.status(403).send('Unauthorized');
+        }
+        res.render('mode-edit', { mode: mode, user: req.user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post('/:modeId/edit', ensureAuthenticated, async (req, res) => {
+    try {
+        const modeId = req.params.modeId;
+        const mode = await Mode.findById(modeId);
+
+        // Check if the mode exists
+        if (!mode) {
+            return res.status(404).render('not-found');
+        }
+
+        // Check if the current user is the creator of the mode
+        if (req.user._id.toString() !== mode.createdBy.toString()) {
+            return res.status(403).send('Unauthorized');
+        }
+
+        // Update the mode details
+        mode.name = req.body.modeName;
+        mode.description = req.body.modeDescription;
+        // Add more updates here as needed
+
+        // Save the updated mode
+        await mode.save();
+
+        // Redirect to the mode page
+        res.redirect(`/modes/${modeId}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Delete mode
+router.post('/:modeId/delete', ensureAuthenticated, async (req, res) => {
+    try {
+        const mode = await Mode.findById(req.params.modeId);
+        if (mode.createdBy.toString() !== req.user._id.toString()) {
+            return res.status(403).send('Not authorized');
+        }
+        await mode.remove();
+        res.redirect('/modes');
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
@@ -35,30 +96,67 @@ router.get('/:modeId', async (req, res) => {
 });
 
 // Upvote mode
-router.post('/:modeId/vote', async (req, res) => {
+router.post('/:modeId/upvote', async (req, res) => {
     try {
-        const mode = await Mode.findOne({ _id: parseInt(req.params.modeId, 10) });
+        const mode = await Mode.findById(req.params.modeId);
         if (!mode) {
             return res.status(404).render('not-found');
         }
-        res.render('modes/show', { mode });
+        // Check if the user has already upvoted this mode
+        if (!mode.upvotedBy.includes(req.user._id)) {
+          // Add the user's ID to the upvotedBy array
+          mode.upvotedBy.push(req.user._id);
+          // Increment the upvote count
+          mode.votes += 1;
+          // Save the mode
+          await mode.save();
+        }
+        // Redirect or render as needed
+        res.redirect('/modes/' + mode._id);
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
     }
 });
 
-// Favorite mode
-router.post('/:modeId/favorite', (req, res) => {
-    const modeId = req.params.modeId;
-    // Add the mode to the user's favorites in the database
-    res.redirect('/modes/' + modeId);
+router.post('/:modeId/favorite', ensureAuthenticated, async (req, res) => {
+    try {
+        const mode = await Mode.findById(req.params.modeId);
+        if (!mode) {
+            return res.status(404).send('Mode not found');
+        }
+
+        const user = await User.findById(req.user._id);
+        if (!user.favorites.includes(req.params.modeId)) {
+            user.favorites.push(req.params.modeId);
+            await user.save();
+        }
+
+        res.redirect(`/modes/${req.params.modeId}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post('/:modeId/unfavorite', ensureAuthenticated, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const index = user.favorites.indexOf(req.params.modeId);
+        if (index > -1) {
+            user.favorites.splice(index, 1);
+            await user.save();
+        }
+
+        res.redirect(`/modes/${req.params.modeId}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 });
 
 router.post('/create', async (req, res) => {
     try {
-        // ... (other code for handling file uploads, etc.)
-
         const newMode = new Mode({
             name: req.body.name,
             description: req.body.description,
@@ -66,7 +164,6 @@ router.post('/create', async (req, res) => {
             thumbnail: req.thumbnail.buffer, // Similarly, handle thumbnail upload
             createdBy: req.user._id // Assuming you have user info in req.user
         });
-
         await newMode.save();
         res.redirect('/modes');
     } catch (err) {

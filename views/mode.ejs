@@ -15,13 +15,32 @@
                 <p><strong>Votes:</strong> <%= mode.votes %></p>
             </div>
             <div class="mode-profile-actions">
-                <!-- Include buttons or links for actions such as upvoting, favoriting, downloading, etc. -->
-                <button>Upvote</button>
-                <button>Favorite</button>
-                <a href="<%= mode.downloadLink %>">Download</a>
+                <% if (user && user._id.toString() === mode.createdBy.toString()) { %>
+                    <form action="/modes/<%= mode._id %>/edit" method="get">
+                        <button class="mode-profile-button" type="submit">Edit Details</button>
+                    </form>
+                    <form action="/modes/<%= mode._id %>/delete" method="post">
+                        <button class="mode-profile-button" type="submit">Delete</button>
+                    </form>
+                <% } else if (user) { %>
+                    <form action="/modes/<%= mode._id %>/upvote" method="post">
+                        <button class="mode-profile-button" type="submit">Upvote</button>
+                    </form>
+                    <% if (user && user.favorites.includes(mode._id.toString())) { %>
+                        <form action="/modes/<%= mode._id %>/unfavorite" method="post">
+                            <button class="mode-profile-button" type="submit">Unfavorite</button>
+                        </form>
+                    <% } else if (user) { %>
+                        <form action="/modes/<%= mode._id %>/favorite" method="post">
+                            <button class="mode-profile-button" type="submit">Favorite</button>
+                        </form>
+                    <% } %>
+                    <a href="<%= mode.downloadLink %>">Download</a>
+                <% } %>
             </div>
         </section>
     </main>
     <%- include('partials/footer') %>
 </body>
 </html>
+

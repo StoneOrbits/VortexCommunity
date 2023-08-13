@@ -76,10 +76,8 @@ router.post('/', ensureAuthenticated, upload.single('modeFile'), async (req, res
   try {
     // Generate a new _id
     const modeId = new mongoose.Types.ObjectId();
-
     // Process the uploaded file using the generated ID
     const parsedModeData = await processModeFile(req.file.buffer, modeId.toString());
-
     // Create a new Mode document with the name, description, image paths, and createdBy fields
     const newMode = new Mode({
       _id: modeId,
@@ -89,10 +87,8 @@ router.post('/', ensureAuthenticated, upload.single('modeFile'), async (req, res
       led2_image_path: parsedModeData.led2_image_path,
       createdBy: req.user._id
     });
-
     // Save the Mode document
     await newMode.save();
-
     // Redirect to the modes page
     res.redirect('/modes');
   } catch (error) {
