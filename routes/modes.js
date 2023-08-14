@@ -3,6 +3,8 @@ const router = express.Router();
 const Mode = require('../models/Mode');
 const User = require('../models/User');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
+const fs = require('fs');
+const path = require('path');
 
 // show the main modes showcase
 router.get('/', async (req, res) => {
@@ -81,13 +83,23 @@ router.post('/:modeId/edit', ensureAuthenticated, async (req, res) => {
 });
 
 // Delete mode
-router.post('/:modeId/delete', ensureAuthenticated, async (req, res) => {
+router.post('/:modeId/delete', async (req, res) => {
     try {
-        const mode = await Mode.findById(req.params.modeId);
-        if (mode.createdBy.toString() !== req.user._id.toString()) {
-            return res.status(403).send('Not authorized');
+        const mode = await Mode.findOne({ _id: req.params.modeId });
+        if (!mode) {
+            return res.status(404).send('Mode not found');
         }
-        await mode.remove();
+        // Delete the LED strip files if they exist
+        const led1Path = path.join(__dirname, '../public/images/ledstrips/', mode._id + '_led1.png');
+        const led2Path = path.join(__dirname, '../public/images/ledstrips/', mode._id + '_led2.png');
+        if (fs.existsSync(led1Path)) {
+            fs.unlinkSync(led1Path);
+        }
+        if (fs.existsSync(led2Path)) {
+            fs.unlinkSync(led2Path);
+        }
+        // Delete the mode from the database
+        await Mode.deleteOne({ _id: req.params.modeId });
         res.redirect('/modes');
     } catch (err) {
         console.error(err);
@@ -170,6 +182,37 @@ router.post('/create', async (req, res) => {
         console.error(err);
         res.status(500).send('Server Error');
     }
+});
+
+router.get('/:modeId/download', async (req, res) => {
+  const modeId = req.params.modeId;
+
+  try {
+    // Fetch the mode from the database
+    const mode = await Mode.findOne({ _id: modeId });
+    if (!mode) {
+      return res.status(404).send('Mode not found');
+    }
+
+    const filePath = path.join(__dirname, '../public/modes', `${modeId}.vtxmode`);
+
+    // Check if the file exists
+    fs.stat(filePath, (err, stats) => {
+      if (err) {
+        console.error(err);
+        return res.status(404).send('File not found');
+      }
+
+      // Set the content disposition header to specify the filename
+      res.setHeader('Content-Disposition', `attachment; filename=${mode.name}.vtxmode`);
+
+      // Pipe the file to the response
+      fs.createReadStream(filePath).pipe(res);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
 });
 
 module.exports = router;

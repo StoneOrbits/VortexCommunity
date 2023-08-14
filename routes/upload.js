@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const multer = require('multer');
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const path = require('path');
 const router = express.Router();
 const Mode = require('../models/Mode');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
@@ -10,14 +9,22 @@ const { exec } = require('child_process');
 const { createCanvas } = require('canvas');
 const fs = require('fs');
 
-const processModeFile = (fileBuffer, modeId) => {
-  return new Promise((resolve, reject) => {
-    // Write the buffer to a temporary file
-    const tempFilePath = '/tmp/tempModeFile';
-    fs.writeFileSync(tempFilePath, fileBuffer);
+// Configure storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/modes');
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${req.modeId}.vtxmode`);
+  }
+});
 
+const upload = multer({ storage: storage });
+
+const processModeFile = (filePath, modeId) => {
+  return new Promise((resolve, reject) => {
     // Run your command-line tool on the temporary file
-    exec(`/bin/bash -c "/usr/local/bin/vortex --hex --no-timestep --mode ${tempFilePath} <<< w10000q"`, (error, stdout, stderr) => {
+    exec(`/bin/bash -c "/usr/local/bin/vortex --hex --no-timestep --mode ${filePath} <<< w10000q"`, (error, stdout, stderr) => {
       if (error) {
         reject(error);
         return;
@@ -57,9 +64,6 @@ const processModeFile = (fileBuffer, modeId) => {
       const led1_image_path = createImage(led1_colors, `${modeId}_led1.png`);
       const led2_image_path = createImage(led2_colors, `${modeId}_led2.png`);
 
-      // Clean up the temporary file
-      fs.unlinkSync(tempFilePath);
-
       resolve({
         led1_image_path,
         led2_image_path
@@ -72,15 +76,17 @@ router.get('/', (req, res) => {
   res.render('upload');
 });
 
-router.post('/', ensureAuthenticated, upload.single('modeFile'), async (req, res) => {
+router.post('/', ensureAuthenticated, (req, res, next) => {
+  // Generate a new _id
+  req.modeId = new mongoose.Types.ObjectId();
+  next();
+}, upload.single('modeFile'), async (req, res) => {
   try {
-    // Generate a new _id
-    const modeId = new mongoose.Types.ObjectId();
     // Process the uploaded file using the generated ID
-    const parsedModeData = await processModeFile(req.file.buffer, modeId.toString());
+    const parsedModeData = await processModeFile(req.file.path, req.modeId.toString());
     // Create a new Mode document with the name, description, image paths, and createdBy fields
     const newMode = new Mode({
-      _id: modeId,
+      _id: req.modeId,
       name: req.body.modeName,
       description: req.body.modeDescription,
       led1_image_path: parsedModeData.led1_image_path,
