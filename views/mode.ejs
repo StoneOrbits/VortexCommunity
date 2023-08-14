@@ -6,13 +6,23 @@
     <%- include('partials/nav') %>
     <main>
         <section class="mode-profile-page">
-            <h2><%= mode.name %> by <a href="/users/<%= mode.createdBy._id %>"><%= mode.createdBy.username %></a></h2>
-            <header class="mode-profile-header">
-                <p><strong>Description:</strong> <%= mode.description %></p>
-            </header>
+            <h2><%= mode.name %></h2>
+            <h5>Uploaded by <a href="/users/<%= mode.createdBy._id %>"><%= mode.createdBy.username %></a> on <%= uploadDate %></h5>
+            <a class="mode-profile-header">
+                <p><%= mode.description %></p>
+            </a>
             <div class="mode-profile-details">
-                <p><strong>Upload Date:</strong> <%= mode.uploadDate %></p>
-                <p><strong>Votes:</strong> <%= mode.votes %></p>
+                <form action="/modes/<%= mode._id %>/<%= user && mode.upvotedBy.includes(user._id) ? 'unvote' : 'upvote' %>" method="post" class="votes-container">
+                    <button type="submit" class="icon-button">
+                        <img src="<%= user && mode.upvotedBy.includes(user._id) ? '/images/color-upvote-icon.png' : '/images/bw-upvote-icon.png' %>" alt="Upvote" class="upvote-icon">
+                    </button>
+                    <span class="votes-count"><%= mode.votes %></span>
+                </form>
+                <form action="/modes/<%= mode._id %>/<%= user && user.favorites.includes(mode._id.toString()) ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
+                    <button type="submit" class="icon-button">
+                        <img src="<%= user && user.favorites.includes(mode._id.toString()) ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
+                    </button>
+                </form>
             </div>
             <div class="mode-profile-actions">
                 <% if (user && user._id.toString() === mode.createdBy.toString()) { %>
@@ -22,21 +32,10 @@
                     <form action="/modes/<%= mode._id %>/delete" method="post">
                         <button class="mode-profile-button" type="submit">Delete</button>
                     </form>
-                <% } else if (user) { %>
-                    <form action="/modes/<%= mode._id %>/upvote" method="post">
-                        <button class="mode-profile-button" type="submit">Upvote</button>
-                    </form>
-                    <% if (user && user.favorites.includes(mode._id.toString())) { %>
-                        <form action="/modes/<%= mode._id %>/unfavorite" method="post">
-                            <button class="mode-profile-button" type="submit">Unfavorite</button>
-                        </form>
-                    <% } else if (user) { %>
-                        <form action="/modes/<%= mode._id %>/favorite" method="post">
-                            <button class="mode-profile-button" type="submit">Favorite</button>
-                        </form>
-                    <% } %>
-                    <a href="/modes/<%= mode._id %>/download" download>Download</a>
                 <% } %>
+            </div>
+            <div class="mode-profile-download-button">
+                <a href="/modes/<%= mode._id %>/download" download>Download</a>
             </div>
             <div class="mode-profile-led-strip-container">
                 <div class="mode-profile-led-strip">

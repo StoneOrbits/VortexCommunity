@@ -27,7 +27,11 @@ const ModeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    uploadDate: {
+      type: Date,
+      default: Date.now // Automatically set to the current date when a new document is created
+    },
 });
 
 module.exports = mongoose.model('Mode', ModeSchema);

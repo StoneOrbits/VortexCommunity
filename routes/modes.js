@@ -28,7 +28,9 @@ router.get('/:modeId', async (req, res) => {
         if (!mode) {
             return res.status(404).render('not-found');
         }
-        res.render('mode', { mode: mode, user: req.user });
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const uploadDate = new Date(mode.uploadDate).toLocaleDateString('en-US', options);
+        res.render('mode', { mode: mode, uploadDate: uploadDate, user: req.user });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
@@ -124,6 +126,30 @@ router.post('/:modeId/upvote', async (req, res) => {
           mode.upvotedBy.push(req.user._id);
           // Increment the upvote count
           mode.votes += 1;
+          // Save the mode
+          await mode.save();
+        }
+        // Redirect or render as needed
+        res.redirect('/modes/' + mode._id);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// unvote mode
+router.post('/:modeId/unvote', async (req, res) => {
+    try {
+        const mode = await Mode.findById(req.params.modeId);
+        if (!mode) {
+            return res.status(404).render('not-found');
+        }
+        // Check if the user has already upvoted this mode
+        if (mode.upvotedBy.includes(req.user._id)) {
+          // Add the user's ID to the upvotedBy array
+          mode.upvotedBy.remove(req.user._id);
+          // Increment the upvote count
+          mode.votes -= 1;
           // Save the mode
           await mode.save();
         }

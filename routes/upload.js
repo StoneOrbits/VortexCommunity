@@ -24,7 +24,7 @@ const upload = multer({ storage: storage });
 const processModeFile = (filePath, modeId) => {
   return new Promise((resolve, reject) => {
     // Run your command-line tool on the temporary file
-    exec(`/bin/bash -c "/usr/local/bin/vortex --hex --no-timestep --mode ${filePath} <<< w10000q"`, (error, stdout, stderr) => {
+    exec(`/bin/bash -c "/usr/local/bin/vortex --hex --no-timestep --mode ${filePath} <<< w3000q"`, (error, stdout, stderr) => {
       if (error) {
         reject(error);
         return;
@@ -45,7 +45,7 @@ const processModeFile = (filePath, modeId) => {
       });
 
       const createImage = (colors, filename) => {
-        const canvas = createCanvas(10000, 1);
+        const canvas = createCanvas(3000, 1);
         const ctx = canvas.getContext('2d');
 
         colors.forEach((color, index) => {

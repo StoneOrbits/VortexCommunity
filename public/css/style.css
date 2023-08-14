@@ -103,25 +103,26 @@ footer {
 
 .led-strip {
     height: 20px;
-    width: 10000px;
+    width: 3000px;
     position: relative;
     white-space: nowrap;
     display: flex;
+    transform: translate3d(0, 0, 0);
     transition: transform 5s linear;
 }
 
 .led-strip img {
     height: 20px;
-    width: 10000px;
+    width: 3000px;
 }
 
 .mode-item:hover .led-strip {
-    animation: scrollLed 30s linear infinite;
+    animation: scrollLed 15s linear infinite;
 }
 
 @keyframes scrollLed {
     from { transform: translateX(0); }
-    to { transform: translateX(-10000px); }
+    to { transform: translateX(-3000px); }
 }
 
 /* Form Styles */
@@ -327,7 +328,7 @@ nav ul li a:hover {
     left: 10px;
     right: 10px;
     height: 40px;
-    width 10000px;
+    width 3000px;
     overflow: hidden;
     margin-top: 20px;
     border: 2px solid #888;
@@ -337,22 +338,23 @@ nav ul li a:hover {
 
 .mode-profile-led-strip {
     height: 20px;
-    width: 10000px;
+    width: 3000px;
     position: relative;
     white-space: nowrap;
     display: flex;
     transition: transform 5s linear;
-    animation: scrollLed 30s linear infinite;
+    transform: translate3d(0, 0, 0);
+    animation: scrollLed 10s linear infinite;
 }
 
 .mode-profile-led-strip img {
     height: 20px;
-    width: 10000px;
+    width: 3000px;
 }
 
 .led-strip img {
     height: 20px;
-    width: 10000px;
+    width: 3000px;
 }
 
 .mode-profile-details {
@@ -378,11 +380,85 @@ nav ul li a:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.mode-profile-download-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-right: 80px;
+    margin-left: 80px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mode-profile-download-button a {
+    text-decoration: none;
+    color: #FFF;
+}
+
 .mode-profile-button {
     margin-bottom: 10px;
 }
 
 .mode-profile-button:last-child {
     margin-right: 0;
+}
+
+.mode-profile-page {
+    position: relative; /* Make sure the icons are positioned relative to this container */
+}
+
+.votes-container {
+    position: absolute;
+    top: 10px;
+    right: 40px; /* Adjust as needed */
+}
+
+.upvote-icon {
+    width: 20px; /* Adjust as needed */
+    height: 20px; /* Adjust as needed */
+}
+
+.votes-count {
+    display: block;
+    text-align: center;
+}
+
+.favorite-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px; /* Adjust as needed */
+    height: 20px; /* Adjust as needed */
+}
+
+.icon-button {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer;
+    outline: none !important; /* Remove focus outline */
+    appearance: none !important; /* Remove browser-specific styling */
+    -webkit-appearance: none !important; /* Remove browser-specific styling for WebKit browsers */
+    -moz-appearance: none !important; /* Remove browser-specific styling for Mozilla browsers */
+    text-decoration: none !important; /* Remove underline */
+}
+
+.icon-button:hover,
+.icon-button:focus {
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    text-decoration: none !important;
+}
+
+/* Additional styling to remove padding and margin from the form */
+.votes-container,
+.favorite-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-block; /* Align the forms horizontally */
 }
 
