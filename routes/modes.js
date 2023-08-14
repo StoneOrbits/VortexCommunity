@@ -92,11 +92,15 @@ router.post('/:modeId/delete', async (req, res) => {
         // Delete the LED strip files if they exist
         const led1Path = path.join(__dirname, '../public/images/ledstrips/', mode._id + '_led1.png');
         const led2Path = path.join(__dirname, '../public/images/ledstrips/', mode._id + '_led2.png');
+        const modePath = path.join(__dirname, '../public/modes/', mode._id + '.vtxmode');
         if (fs.existsSync(led1Path)) {
             fs.unlinkSync(led1Path);
         }
         if (fs.existsSync(led2Path)) {
             fs.unlinkSync(led2Path);
+        }
+        if (fs.existsSync(modePath)) {
+            fs.unlinkSync(modePath);
         }
         // Delete the mode from the database
         await Mode.deleteOne({ _id: req.params.modeId });
