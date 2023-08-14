@@ -25,7 +25,7 @@ const ModeSchema = new mongoose.Schema({
     }],
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Assuming your user model is named 'User'
+        ref: 'User',
         required: true
     }
 });

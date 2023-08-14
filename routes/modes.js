@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
 // Mode details
 router.get('/:modeId', async (req, res) => {
     try {
-        const mode = await Mode.findOne({ _id: req.params.modeId });
+        const mode = await Mode.findOne({ _id: req.params.modeId }).populate('createdBy');
         if (!mode) {
             return res.status(404).render('not-found');
         }

@@ -323,8 +323,36 @@ nav ul li a:hover {
 }
 
 .mode-profile-led-strip-container {
-    margin: 10px 0;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 40px;
+    width 10000px;
     overflow: hidden;
+    margin-top: 20px;
+    border: 2px solid #888;
+    border-radius: 5px;
+    background-color: #121212;
+}
+
+.mode-profile-led-strip {
+    height: 20px;
+    width: 10000px;
+    position: relative;
+    white-space: nowrap;
+    display: flex;
+    transition: transform 5s linear;
+    animation: scrollLed 30s linear infinite;
+}
+
+.mode-profile-led-strip img {
+    height: 20px;
+    width: 10000px;
+}
+
+.led-strip img {
+    height: 20px;
+    width: 10000px;
 }
 
 .mode-profile-details {

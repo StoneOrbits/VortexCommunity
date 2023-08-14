@@ -6,7 +6,7 @@
     <%- include('partials/nav') %>
     <main>
         <section class="mode-profile-page">
-            <h2><%= mode.name %></h2>
+            <h2><%= mode.name %> by <a href="/users/<%= mode.createdBy._id %>"><%= mode.createdBy.username %></a></h2>
             <header class="mode-profile-header">
                 <p><strong>Description:</strong> <%= mode.description %></p>
             </header>
@@ -37,6 +37,16 @@
                     <% } %>
                     <a href="/modes/<%= mode._id %>/download" download>Download</a>
                 <% } %>
+            </div>
+            <div class="mode-profile-led-strip-container">
+                <div class="mode-profile-led-strip">
+                    <img src="/images/ledstrips/<%= mode._id %>_led1.png" alt="LED Strip 1">
+                    <img src="/images/ledstrips/<%= mode._id %>_led1.png" alt="LED Strip 1">
+                </div>
+                <div class="mode-profile-led-strip">
+                    <img src="/images/ledstrips/<%= mode._id %>_led2.png" alt="LED Strip 2">
+                    <img src="/images/ledstrips/<%= mode._id %>_led2.png" alt="LED Strip 2">
+                </div>
             </div>
         </section>
     </main>
