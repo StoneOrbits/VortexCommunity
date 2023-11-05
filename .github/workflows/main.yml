@@ -49,8 +49,8 @@ jobs:
     
     - name: Deploy to Linode
       run: |
-        scp VortexEngine/VortexEngine/VortexLib/VortexLib.js lightshow@172.232.170.43:~/VortexCommunity/public/js/VortexLib.js
-        scp VortexEngine/VortexEngine/VortexLib/VortexLib.wasm lightshow@172.232.170.43:~/VortexCommunity/public/js/VortexLib.wasm
+        scp VortexEngine/VortexEngine/VortexLib/VortexLib.js lightshow@198.74.48.18:~/VortexCommunity/public/js/VortexLib.js
+        scp VortexEngine/VortexEngine/VortexLib/VortexLib.wasm lightshow@198.74.48.18:~/VortexCommunity/public/js/VortexLib.wasm
         ssh vortex@198.74.48.18 'sudo systemctl stop vortex-community'
         ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && git pull'
         ssh vortex@198.74.48.18 'sudo systemctl start vortex-community'
