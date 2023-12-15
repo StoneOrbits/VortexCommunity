@@ -4,7 +4,6 @@
         <p class="mode-blurb"><%= mode.description %></p>
     </div>
     <div class="led-strip-container">
-        <canvas id="lightshowCanvas_<%= mode.id %>" class="lightshow-canvas"></canvas>
         <%- include('lightshow', { mode: mode }) %>
     </div>
 </a>

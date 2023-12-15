@@ -1,8 +1,8 @@
 export default class Lightshow {
   constructor(vortexLib, canvasId) {
-    this.dotSize = 25;
-    this.blurFac = 5;
-    this.tickRate = 3;
+    this.dotSize = 1;
+    this.blurFac = 1;
+    this.tickRate = 1;
     this.trailSize = 100;
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) {
@@ -90,7 +90,9 @@ export default class Lightshow {
     }
 
     // Clear the canvas
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.fillStyle = `rgba(0, 0, 0, 0.4)`;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Update history with new color
     const led = this.vortexLib.Tick();
@@ -122,6 +124,7 @@ export default class Lightshow {
 
     // Request next frame
     requestAnimationFrame(this.draw.bind(this));
+    //setTimeout(() => this.draw(), 1000 / this._tickRate);
   }
 
   // get the pattern

@@ -13,13 +13,17 @@ VortexLib().then(vortexLib => {
 
     canvas.addEventListener('mouseover', () => {
       // Start animation
-      lightshow.paused = false;
-      lightshow.draw();
+      if (lightshow.paused) {
+        lightshow.paused = false;
+        lightshow.draw();
+      }
     });
 
     canvas.addEventListener('mouseout', () => {
-      // Stop/pause animation
-      lightshow.paused = true;
+      if (!lightshow.paused) {
+        // Stop/pause animation
+        lightshow.paused = true;
+      }
     });
   });
 });
