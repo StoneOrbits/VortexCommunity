@@ -7,23 +7,19 @@ VortexLib().then(vortexLib => {
   tiles.forEach(canvas => {
     const canvasId = canvas.getAttribute('id');
     const lightshow = new Lightshow(vortexLib, canvasId);
-    lightshow.canvas = canvas;
-    lightshow.init();
-    lightshow.paused = true;
+
+    var set = lightshow.getColorset();
+    set.clear();
+    set.addColor(new vortexLib.RGBColor(255, 0, 0));
+    set.addColor(new vortexLib.RGBColor(0, 255, 0));
+    lightshow.setColorset(set);
 
     canvas.addEventListener('mouseover', () => {
-      // Start animation
-      if (lightshow.paused) {
-        lightshow.paused = false;
-        lightshow.draw();
-      }
+      lightshow.start();
     });
 
     canvas.addEventListener('mouseout', () => {
-      if (!lightshow.paused) {
-        // Stop/pause animation
-        lightshow.paused = true;
-      }
+      lightshow.stop();
     });
   });
 });

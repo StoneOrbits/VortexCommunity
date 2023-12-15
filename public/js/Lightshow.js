@@ -1,9 +1,10 @@
 export default class Lightshow {
+  static instanceCount = 0;
+
   constructor(vortexLib, canvasId) {
-    this.dotSize = 1;
-    this.blurFac = 1;
-    this.tickRate = 1;
-    this.trailSize = 100;
+    this.id = Lightshow.instanceCount++;
+    this.tickRate = 10;
+    this.trailSize = 100; // Adjust for desired trail length
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) {
       throw new Error(`Canvas with ID ${canvasId} not found`);
@@ -11,121 +12,79 @@ export default class Lightshow {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.ctx = this.canvas.getContext('2d');
-    this.angle = 0;
     this.history = [];
-    this.needRefresh = true;
-    this.sendDemoNow = false;
-    this.currentTooltip = null;
     this.vortexLib = vortexLib;
-    this.paused = false;
+    this.animationFrameId = null;
+    this.boundDraw = this.draw.bind(this);
+    // erase the background
+    this.ctx.fillStyle = 'rgba(0, 0, 0)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   set tickRate(value) {
-    this._tickRate = parseInt(value, 10);
+    const intValue = parseInt(value, 10);
+    this._tickRate = intValue > 0 ? intValue : 1;
   }
 
   get tickRate() {
-    return this._tickRate;
+    return this._tickRate || 1;
   }
 
   set trailSize(value) {
-    this._trailSize = parseInt(value, 10);
-    if (this.history && this.history.length > this._trailSize) {
-      const itemsToRemove = this.history.length - this._trailSize;
-      this.history.splice(0, itemsToRemove);
-    }
+    const intValue = parseInt(value, 10);
+    this._trailSize = intValue > 0 ? intValue : 1;
   }
 
   get trailSize() {
-    return this._trailSize;
-  }
-
-  set dotSize(value) {
-    this._dotSize = parseInt(value, 10);
-  }
-
-  get dotSize() {
-    return this._dotSize;
-  }
-
-  set blurFac(value) {
-    this._blurFac = parseInt(value, 10);
-  }
-
-  get blurFac() {
-    return this._blurFac;
-  }
-
-  set width(value) {
-    this.canvas.width = value;
-  }
-
-  get width() {
-    return this.canvas.width;
-  }
-
-  set height(value) {
-    this.canvas.height = value;
-  }
-
-  get height() {
-    return this.canvas.height;
-  }
-
-  set paused(value) {
-    this._pause = value;
-  }
-  
-  get paused() {
-    return this._pause;
-  }
-
-  init() {
-    this.draw();
+    return this._trailSize || 100;
   }
 
   draw() {
-    if (this._pause) {
-      return;
-    }
+    if (this._pause) return;
 
-    // Clear the canvas
-    //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.fillStyle = `rgba(0, 0, 0, 0.4)`;
+    // Clear the canvas with a slight opacity to create a fading trail effect
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Update history with new color
+    // Add a new segment
     const led = this.vortexLib.Tick();
     if (led) {
-      this.history.push({ color: led[0], width: this.canvas.width / this.trailSize });
+      this.history.push({ color: led[0], x: 0 });
     }
 
-    // Limit the history length
-    if (this.history.length > this.trailSize) {
-      this.history.shift(); // Remove the oldest segment to keep the trail size constant
-    }
-
-    // Calculate the total width of all segments in the history
-    let totalWidth = this.history.reduce((sum, point) => sum + point.width, 0);
-
-    // Start drawing from the rightmost part of the canvas
-    let x = this.canvas.width - totalWidth;
-
-    // Draw each segment of the progress bar
-    this.history.forEach(point => {
-      if (!point.color.red && !point.color.green && !point.color.blue) {
-        x += point.width; // Skip drawing but update the x position
-        return;
-      }
-      this.ctx.fillStyle = `rgba(${point.color.red}, ${point.color.green}, ${point.color.blue}, 1)`;
-      this.ctx.fillRect(x, 0, point.width, this.canvas.height);
-      x += point.width;
+    // Draw each segment and move it to the left
+    this.history.forEach((segment, index) => {
+      this.ctx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, 1)`;
+      this.ctx.fillRect(segment.x, 0, this.canvas.width / this.trailSize, this.canvas.height);
+      segment.x += this.tickRate;
     });
 
-    // Request next frame
-    requestAnimationFrame(this.draw.bind(this));
-    //setTimeout(() => this.draw(), 1000 / this._tickRate);
+    // Remove segments that moved off the canvas
+    this.history = this.history.filter(segment => segment.x < this.canvas.width);
+
+    // Schedule next frame
+    this.animationFrameId = requestAnimationFrame(this.boundDraw);
   }
+
+  start() {
+    this._pause = false;
+    this.vortexLib.Modes.setCurMode(this.id);
+    this.ctx.fillStyle = 'rgba(0, 0, 0)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.history = [];
+    if (!this.animationFrameId) {
+      this.animationFrameId = requestAnimationFrame(this.boundDraw);
+    }
+  }
+
+  stop() {
+    this._pause = true;
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+  }
+
 
   // get the pattern
   getPattern() {
