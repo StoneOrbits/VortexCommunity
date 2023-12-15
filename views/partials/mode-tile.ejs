@@ -4,14 +4,8 @@
         <p class="mode-blurb"><%= mode.description %></p>
     </div>
     <div class="led-strip-container">
-        <div class="led-strip">
-            <img src="/images/ledstrips/<%= mode.id %>_led1.png" alt="LED Strip 1">
-            <img src="/images/ledstrips/<%= mode.id %>_led1.png" alt="LED Strip 1">
-        </div>
-        <div class="led-strip">
-            <img src="/images/ledstrips/<%= mode.id %>_led2.png" alt="LED Strip 2">
-            <img src="/images/ledstrips/<%= mode.id %>_led2.png" alt="LED Strip 2">
-        </div>
+        <canvas id="lightshowCanvas_<%= mode.id %>" class="lightshow-canvas"></canvas>
+        <%- include('lightshow', { mode: mode }) %>
     </div>
 </a>
 
