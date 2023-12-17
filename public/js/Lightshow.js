@@ -14,6 +14,9 @@ export default class Lightshow {
     this.ctx = this.canvas.getContext('2d');
     this.history = [];
     this.vortexLib = vortexLib;
+    this.vortex = new vortexLib.Vortex();
+    this.vortex.init();
+    this.modes = this.vortex.engine().modes();
     this.animationFrameId = null;
     this.boundDraw = this.draw.bind(this);
     // erase the background
@@ -43,18 +46,18 @@ export default class Lightshow {
     if (this._pause) return;
 
     // Clear the canvas with a slight opacity to create a fading trail effect
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    //this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    //this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Add a new segment
-    const led = this.vortexLib.Tick();
+    const led = this.vortexLib.RunTick(this.vortex);
     if (led) {
       this.history.push({ color: led[0], x: 0 });
     }
 
     // Draw each segment and move it to the left
     this.history.forEach((segment, index) => {
-      this.ctx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, 1)`;
+      this.ctx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, 0.3)`;
       this.ctx.fillRect(segment.x, 0, this.canvas.width / this.trailSize, this.canvas.height);
       segment.x += this.tickRate;
     });
@@ -68,10 +71,6 @@ export default class Lightshow {
 
   start() {
     this._pause = false;
-    this.vortexLib.Modes.setCurMode(this.id);
-    this.ctx.fillStyle = 'rgba(0, 0, 0)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.history = [];
     if (!this.animationFrameId) {
       this.animationFrameId = requestAnimationFrame(this.boundDraw);
     }
@@ -85,10 +84,9 @@ export default class Lightshow {
     }
   }
 
-
   // get the pattern
   getPattern() {
-    const demoMode = this.vortexLib.Modes.curMode();
+    const demoMode = this.modes.curMode();
     return demoMode.getPattern(this.vortexLib.LedPos.LED_0);
   }
 
@@ -97,7 +95,7 @@ export default class Lightshow {
     // the selected dropdown pattern
     const selectedPattern = this.vortexLib.PatternID.values[patternIDValue];
     // grab the 'preview' mode for the current mode (randomizer)
-    let demoMode = this.vortexLib.Modes.curMode();
+    let demoMode = this.modes.curMode();
     // set the pattern of the demo mode to the selected dropdown pattern on all LED positions
     // with null args and null colorset (so they are defaulted and won't change)
     demoMode.setPattern(selectedPattern, this.vortexLib.LedPos.LED_ALL, null, null);
@@ -107,14 +105,20 @@ export default class Lightshow {
 
   // get colorset
   getColorset() {
-    const demoMode = this.vortexLib.Modes.curMode();
+    const demoMode = this.modes.curMode();
+    if (!demoMode) {
+      return new this.vortexLib.Colorset();
+    }
     return demoMode.getColorset(this.vortexLib.LedPos.LED_0);
   }
 
   // update colorset
   setColorset(colorset) {
     // grab the 'preview' mode for the current mode (randomizer)
-    let demoMode = this.vortexLib.Modes.curMode();
+    let demoMode = this.modes.curMode();
+    if (!demoMode) {
+      return;
+    }
     // set the colorset of the demo mode
     demoMode.setColorset(colorset, this.vortexLib.LedPos.LED_ALL);
     // re-initialize the demo mode because num colors may have changed
@@ -147,14 +151,14 @@ export default class Lightshow {
 
   // randomize the pattern
   randomize() {
-    this.vortexLib.Vortex.openRandomizer();
-    this.vortexLib.Vortex.longClick(0);
-    this.vortexLib.Vortex.shortClick(0);
-    this.vortexLib.Vortex.longClick(0);
+    this.vortex.openRandomizer();
+    this.vortex.longClick(0);
+    this.vortex.shortClick(0);
+    this.vortex.longClick(0);
     // whatever reason we need 3 ticks to clear through the longClick
     // randomize idk it really shouldn't take that long
     for (let i = 0; i < 3; ++i) {
-      this.vortexLib.Tick();
+      this.vortexLib.RunTick(this.vortex);
     }
   }
 }
