@@ -11,6 +11,7 @@ export default class Lightshow {
     }
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
+    this.modeId = canvasId.split('_')[1];
     this.ctx = this.canvas.getContext('2d');
     this.history = [];
     this.vortexLib = vortexLib;
@@ -22,6 +23,42 @@ export default class Lightshow {
     // erase the background
     this.ctx.fillStyle = 'rgba(0, 0, 0)';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // load in the json mode data and feed it to the engine
+    this.loadModeData();
+  }
+
+  loadModeData() {
+    // Logic to load the JSON file for this.modeId
+    // For example, fetch the JSON from the server
+    fetch(`/modes/${this.modeId}.json`)
+      .then(response => response.json())
+      .then(modeData => {
+        // hang onto the mode data but also apply it
+        this.modeData = modeData;
+        this.applyModeData();
+      })
+      .catch(error => {
+        console.error('Error loading mode data:', error);
+      });
+  }
+
+  applyModeData() {
+    if (!this.modeData) {
+      return;
+    }
+    var set = new this.vortexLib.Colorset();
+    this.modeData.colorset.forEach(hexCode => {
+      const normalizedHex = hexCode.replace('0x', '#');
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalizedHex);
+      if (result) {
+        set.addColor(new this.vortexLib.RGBColor(
+          parseInt(result[1], 16),
+          parseInt(result[2], 16),
+          parseInt(result[3], 16)
+        ));
+      }
+    });
+    this.setColorset(set);
   }
 
   set tickRate(value) {
