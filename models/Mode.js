@@ -10,6 +10,10 @@ const ModeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    modeData: {
+        type: mongoose.Schema.Types.Mixed, // or simply 'type: {}'
+        required: true
+    },
     file: Buffer,
     thumbnail: {
         type: Buffer,

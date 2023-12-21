@@ -5,8 +5,7 @@ const path = require('path');
 const router = express.Router();
 const Mode = require('../models/Mode');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
-const { exec } = require('child_process');
-const { createCanvas } = require('canvas');
+const { execSync } = require('child_process');
 const fs = require('fs');
 
 // Configure storage
@@ -21,54 +20,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const processModeFile = (filePath, modeId) => {
+const processSaveFile = (filePath, modeId, singlePat) => {
   return new Promise((resolve, reject) => {
-    // Run your command-line tool on the temporary file
-    exec(`/bin/bash -c "/usr/local/bin/vortex --hex --no-timestep --mode ${filePath} <<< w3000q"`, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-
-      // Parse the output of your tool
-      const lines = stdout.split('\n');
-      const led1_colors = [];
-      const led2_colors = [];
-
-      lines.forEach(line => {
-        if (line.length === 12) {
-          const color1 = line.substr(0, 6);
-          const color2 = line.substr(6, 6);
-          led1_colors.push(color1);
-          led2_colors.push(color2);
-        }
-      });
-
-      const createImage = (colors, filename) => {
-        const canvas = createCanvas(3000, 1);
-        const ctx = canvas.getContext('2d');
-
-        colors.forEach((color, index) => {
-          ctx.fillStyle = `#${color}`;
-          ctx.fillRect(index, 0, 1, 1);
-        });
-
-        const imagePath = `public/images/ledstrips/${filename}`;
-        const buffer = canvas.toBuffer('image/png');
-        fs.writeFileSync(imagePath, buffer);
-
-        return imagePath;
-      };
-
-      // Usage
-      const led1_image_path = createImage(led1_colors, `${modeId}_led1.png`);
-      const led2_image_path = createImage(led2_colors, `${modeId}_led2.png`);
-
-      resolve({
-        led1_image_path,
-        led2_image_path
-      });
-    });
+    // Save the provided single pattern data to a file
+    const jsonFilePath = `public/modes/${modeId}.json`;
+    fs.writeFileSync(jsonFilePath, JSON.stringify(singlePat, null, 2));
+    resolve(singlePat);
   });
 };
 
@@ -82,20 +39,43 @@ router.post('/', ensureAuthenticated, (req, res, next) => {
   next();
 }, upload.single('modeFile'), async (req, res) => {
   try {
-    // Process the uploaded file using the generated ID
-    const parsedModeData = await processModeFile(req.file.path, req.modeId.toString());
-    // Create a new Mode document with the name, description, image paths, and createdBy fields
-    const newMode = new Mode({
-      _id: req.modeId,
-      name: req.body.modeName,
-      description: req.body.modeDescription,
-      led1_image_path: parsedModeData.led1_image_path,
-      led2_image_path: parsedModeData.led2_image_path,
-      createdBy: req.user._id
-    });
-    // Save the Mode document
-    await newMode.save();
-    // Redirect to the modes page
+    // Process the uploaded file
+    const filePath = req.file.path;
+    const output = execSync(`/bin/bash -c "/usr/local/bin/vortex --silent --quick --load-save ${filePath} --json-out"`);
+
+    let jsonData = JSON.parse(output.toString());
+    if (!jsonData.modes || jsonData.modes.length <= 0) {
+      throw new Error("invalid json data");
+    }
+
+    const processedModeData = new Set(); // Set to track serialized mode data
+
+    for (const singlePat of jsonData.modes[0].single_pats) {
+      const modeId = new mongoose.Types.ObjectId();
+      const modeData = await processSaveFile(filePath, modeId.toString(), singlePat);
+
+      // Serialize modeData for comparison
+      const serializedModeData = JSON.stringify(modeData);
+
+      // Check for duplicates
+      if (processedModeData.has(serializedModeData)) {
+        continue; // Skip this iteration if duplicate is found
+      }
+
+      // Add the serialized mode data to the set
+      processedModeData.add(serializedModeData);
+
+      const newMode = new Mode({
+        _id: modeId,
+        name: req.body.modeName,
+        description: req.body.modeDescription,
+        modeData: modeData,
+        createdBy: req.user._id
+      });
+
+      await newMode.save();
+    }
+
     res.redirect('/modes');
   } catch (error) {
     console.error(error);
@@ -104,4 +84,3 @@ router.post('/', ensureAuthenticated, (req, res, next) => {
 });
 
 module.exports = router;
-

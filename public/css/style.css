@@ -342,14 +342,6 @@ nav ul li a:hover {
     position: relative;
     white-space: nowrap;
     display: flex;
-    transition: transform 5s linear;
-    transform: translate3d(0, 0, 0);
-    animation: scrollLed 10s linear infinite;
-}
-
-.mode-profile-led-strip img {
-    height: 20px;
-    width: 3000px;
 }
 
 .led-strip img {

@@ -38,16 +38,14 @@
                 <a href="/modes/<%= mode._id %>/download" download>Download</a>
             </div>
             <div class="mode-profile-led-strip-container">
-                <div class="mode-profile-led-strip">
-                    <img src="/images/ledstrips/<%= mode._id %>_led1.png" alt="LED Strip 1">
-                    <img src="/images/ledstrips/<%= mode._id %>_led1.png" alt="LED Strip 1">
-                </div>
-                <div class="mode-profile-led-strip">
-                    <img src="/images/ledstrips/<%= mode._id %>_led2.png" alt="LED Strip 2">
-                    <img src="/images/ledstrips/<%= mode._id %>_led2.png" alt="LED Strip 2">
-                </div>
+              <div class="mode-profile-led-strip">
+                <%- include('partials/lightshow', { mode: mode }) %>
+              </div>
             </div>
         </section>
+        <script src="/js/VortexLib.js" type="module"></script>
+        <script src="/js/Lightshow.js" type="module"></script>
+        <script src="/js/initLightshow.js" type="module"></script>
     </main>
     <%- include('partials/footer') %>
 </body>
