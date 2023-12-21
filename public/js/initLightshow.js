@@ -10,12 +10,10 @@ VortexLib().then(vortexLib => {
 
     if (tiles.length == 1) {
       lightshow.start();
-    } 
-    {
+    } else {
       canvas.addEventListener('mouseover', () => {
         lightshow.start();
       });
-
       canvas.addEventListener('mouseout', () => {
         lightshow.stop();
       });
