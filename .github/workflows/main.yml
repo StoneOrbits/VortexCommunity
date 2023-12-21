@@ -15,7 +15,13 @@ jobs:
       with:
         repository: 'StoneOrbits/VortexEngine'
         path: 'VortexEngine'
-        ref: 'daniel/core/dynamic_led_count'
+        ref: 'desktop'
+
+    # Build Vortex cli tool
+    - name: Build Vortex CLI Tool
+      run: |
+        cd VortexEngine/VortexEngine/VortexCLI
+        make
 
     # Install Emscripten dependencies
     - name: Install dependencies
@@ -51,6 +57,8 @@ jobs:
       run: |
         scp VortexEngine/VortexEngine/VortexLib/VortexLib.js vortex@198.74.48.18:~/VortexCommunity/public/js/VortexLib.js
         scp VortexEngine/VortexEngine/VortexLib/VortexLib.wasm vortex@198.74.48.18:~/VortexCommunity/public/js/VortexLib.wasm
+        scp VortexEngine/VortexEngine/VortexCLI/vortex vortex@198.74.48.18:~/vortex
+        ssh vortex@198.74.48.18 'sudo mv /home/vortex/vortex /usr/local/bin/vortex'
         ssh vortex@198.74.48.18 'sudo systemctl stop vortex-community'
         ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && git pull'
         ssh vortex@198.74.48.18 'sudo systemctl start vortex-community'
