@@ -71,8 +71,8 @@ export default class Lightshow {
     demoMode.setColorset(set, this.ledCount());
     // set the pattern of the demo mode to the selected dropdown pattern on all LED positions
     // with null args and null colorset (so they are defaulted and won't change)
-    demoMode.setPattern(this.modeData.pattern_id, this.ledCount(), null, null);
-    let args = new this.vortexLib.PatternArgs();
+    let patID = this.vortexLib.intToPatternID(this.modeData.pattern_id);
+    demoMode.setPattern(patID, this.ledCount(), null, null);
     for (let i = 0; i < this.modeData.args.length; ++i) {
       args.addArgs(this.modeData.args[i]);
     }
