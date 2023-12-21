@@ -21,7 +21,7 @@ jobs:
     - name: Build Vortex CLI Tool
       run: |
         cd VortexEngine/VortexEngine/VortexCLI
-        make
+        make -j
 
     # Install Emscripten dependencies
     - name: Install dependencies
@@ -43,6 +43,7 @@ jobs:
       run: |
         source emsdk/emsdk_env.sh
         cd VortexEngine/VortexEngine/VortexLib
+        make clean
         make wasm
 
     - name: Setup SSH Agent
