@@ -73,6 +73,7 @@ export default class Lightshow {
     // with null args and null colorset (so they are defaulted and won't change)
     let patID = this.vortexLib.intToPatternID(this.modeData.pattern_id);
     demoMode.setPattern(patID, this.ledCount(), null, null);
+    let args = new this.vortexLib.PatternArgs();
     for (let i = 0; i < this.modeData.args.length; ++i) {
       args.addArgs(this.modeData.args[i]);
     }
