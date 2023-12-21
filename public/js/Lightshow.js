@@ -1,10 +1,9 @@
 export default class Lightshow {
   static instanceCount = 0;
 
-  constructor(vortexLib, canvasId) {
+  // constructor for draw6
+  constructor(vortexLib, canvasId, configurableSectionCount = 100) {
     this.id = Lightshow.instanceCount++;
-    this.tickRate = 10;
-    this.trailSize = 100; // Adjust for desired trail length
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) {
       throw new Error(`Canvas with ID ${canvasId} not found`);
@@ -17,13 +16,18 @@ export default class Lightshow {
     this.vortexLib = vortexLib;
     this.vortex = new vortexLib.Vortex();
     this.vortex.init();
+    this.vortex.setLedCount(1);
     this.modes = this.vortex.engine().modes();
+    // Run the first tick, at the moment I'm not quite sure why this first
+    // tick is spitting out the color red instead of whatever it's supposed to be
+    // I think it's just a wasm thing though so I'll find it later
+    this.vortexLib.RunTick(this.vortex);
     this.animationFrameId = null;
+    this.configurableSectionCount = configurableSectionCount;
+    this.sectionWidth = this.canvas.width / this.configurableSectionCount;
     this.boundDraw = this.draw.bind(this);
-    // erase the background
     this.ctx.fillStyle = 'rgba(0, 0, 0)';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    // load in the json mode data and feed it to the engine
     this.loadModeData();
   }
 
@@ -58,7 +62,23 @@ export default class Lightshow {
         ));
       }
     });
-    this.setColorset(set);
+    // grab the 'preview' mode for the current mode (randomizer)
+    let demoMode = this.modes.curMode();
+    if (!demoMode) {
+      return;
+    }
+    // set the colorset of the demo mode
+    demoMode.setColorset(set, this.ledCount());
+    // set the pattern of the demo mode to the selected dropdown pattern on all LED positions
+    // with null args and null colorset (so they are defaulted and won't change)
+    demoMode.setPattern(this.modeData.pattern_id, this.ledCount(), null, null);
+    let args = new this.vortexLib.PatternArgs();
+    for (let i = 0; i < this.modeData.args.length; ++i) {
+      args.addArgs(this.modeData.args[i]);
+    }
+    this.vortex.setPatternArgs(this.ledCount(), args, false);
+    // re-initialize the demo mode so it takes the new args into consideration
+    demoMode.init();
   }
 
   set tickRate(value) {
@@ -79,30 +99,39 @@ export default class Lightshow {
     return this._trailSize || 100;
   }
 
+  ledCount() {
+    return this.vortex.engine().leds().ledCount();
+  }
+
   draw() {
     if (this._pause) return;
 
-    // Clear the canvas with a slight opacity to create a fading trail effect
-    //this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    //this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // Clear the canvas with a slight opacity for a fading effect
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Add a new segment
+    const sectionWidth = this.canvas.width / this.configurableSectionCount; // Define this value as per your requirement
+    const movementSpeed = sectionWidth; // Each tick moves one section width
+
+    // Generate a new color or create a gap
     const led = this.vortexLib.RunTick(this.vortex);
     if (led) {
-      this.history.push({ color: led[0], x: 0 });
+      this.history.push({ color: led[0], x: 0, opacity: 1 });
     }
 
-    // Draw each segment and move it to the left
+    // Draw the sections
     this.history.forEach((segment, index) => {
-      this.ctx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, 0.3)`;
-      this.ctx.fillRect(segment.x, 0, this.canvas.width / this.trailSize, this.canvas.height);
-      segment.x += this.tickRate;
+      if (segment.color.red !== 0 || segment.color.green !== 0 || segment.color.blue !== 0) { // Check if color is not 'off'
+        this.ctx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, ${segment.opacity})`;
+        this.ctx.fillRect(segment.x, 0, sectionWidth, this.canvas.height);
+      }
+
+      segment.x += movementSpeed;
     });
 
     // Remove segments that moved off the canvas
     this.history = this.history.filter(segment => segment.x < this.canvas.width);
 
-    // Schedule next frame
     this.animationFrameId = requestAnimationFrame(this.boundDraw);
   }
 
@@ -135,7 +164,7 @@ export default class Lightshow {
     let demoMode = this.modes.curMode();
     // set the pattern of the demo mode to the selected dropdown pattern on all LED positions
     // with null args and null colorset (so they are defaulted and won't change)
-    demoMode.setPattern(selectedPattern, this.vortexLib.LedPos.LED_ALL, null, null);
+    demoMode.setPattern(selectedPattern, this.ledCount(), null, null);
     // re-initialize the demo mode so it takes the new args into consideration
     demoMode.init();
   }
@@ -157,7 +186,7 @@ export default class Lightshow {
       return;
     }
     // set the colorset of the demo mode
-    demoMode.setColorset(colorset, this.vortexLib.LedPos.LED_ALL);
+    demoMode.setColorset(colorset, this.ledCount());
     // re-initialize the demo mode because num colors may have changed
     demoMode.init();
   }
