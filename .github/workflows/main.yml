@@ -44,7 +44,7 @@ jobs:
         source emsdk/emsdk_env.sh
         cd VortexEngine/VortexEngine/VortexLib
         make clean
-        make wasm
+        make -j wasm
 
     - name: Setup SSH Agent
       uses: webfactory/ssh-agent@v0.5.3
