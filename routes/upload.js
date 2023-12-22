@@ -33,11 +33,9 @@ router.get('/', (req, res) => {
   res.render('upload');
 });
 
-router.post('/', ensureAuthenticated, (req, res, next) => {
+router.post('/', ensureAuthenticated, upload.single('modeFile'), async (req, res) => {
   // Generate a new _id
   req.modeId = new mongoose.Types.ObjectId();
-  next();
-}, upload.single('modeFile'), async (req, res) => {
   try {
     // Process the uploaded file
     const filePath = req.file.path;
@@ -51,7 +49,7 @@ router.post('/', ensureAuthenticated, (req, res, next) => {
     const processedModeData = new Set(); // Set to track serialized mode data
 
     for (const singlePat of jsonData.modes[0].single_pats) {
-      const modeId = new mongoose.Types.ObjectId();
+      const modeId = new mongoose.Types.ObjectId(); // Generate a new _id for each mode
       const modeData = await processSaveFile(filePath, modeId.toString(), singlePat);
 
       // Serialize modeData for comparison
@@ -70,7 +68,7 @@ router.post('/', ensureAuthenticated, (req, res, next) => {
         name: req.body.modeName,
         description: req.body.modeDescription,
         modeData: modeData,
-        createdBy: req.user._id
+        createdBy: req.user._id // Assign the user's _id to createdBy
       });
 
       await newMode.save();

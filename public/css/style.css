@@ -4,10 +4,33 @@ body.dark-theme {
     font-family: Arial, sans-serif;
 }
 
-header, nav, main, footer {
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 1200px;
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* This will position the hamburger menu and the logo/title on opposite ends */
+    padding: 10px; /* Adjust padding as needed */
+    max-width: 1460px;
+    margin: 0 auto;
+}
+
+header img {
+    margin-right: 10px;
+    transition: width 0.3s, height 0.3s; /* Smooth transition for size changes */
+}
+
+header h1 {
+    font-size: 24px;
+    margin: 0; /* Removes any default margin */
+    transition: font-size 0.3s;
+    flex-grow: 1; /* Allows the title to take available space */
+    text-align: left; /* Aligns the title to the left */
+}
+
+nav {
+    /* Center the navigation and set a max-width */
+    margin: 0 auto; /* Center the nav container horizontally */
+    max-width: 1460px; /* Set a maximum width for the navigation */
+    padding: 10px 20px; /* Add padding for spacing */
 }
 
 nav ul {
@@ -36,7 +59,10 @@ nav a:hover {
 }
 
 .showcase {
-    /* Add any specific styles for the showcase section here */
+    /* Center the content and set a max-width on desktop */
+    margin: 0 auto; /* Center the .showcase container horizontally */
+    max-width: 1400px; /* Set a maximum width for the content */
+    padding: 20px; /* Add padding to create spacing around the content */
 }
 
 footer {
@@ -53,7 +79,20 @@ footer {
 .mode-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    gap: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* for the index page, different from the actual showcase */
+.mode-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+    max-height: calc(2 * (120px + 30px)); /* Limit to 2 rows */
+    overflow: hidden;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .mode-item {
@@ -101,31 +140,6 @@ footer {
     background-color: #121212;
 }
 
-.led-strip {
-    height: 20px;
-    width: 3000px;
-    position: relative;
-    white-space: nowrap;
-    display: flex;
-    transform: translate3d(0, 0, 0);
-    transition: transform 5s linear;
-}
-
-.led-strip img {
-    height: 20px;
-    width: 3000px;
-}
-
-.mode-item:hover .led-strip {
-    animation: scrollLed 15s linear infinite;
-}
-
-@keyframes scrollLed {
-    from { transform: translateX(0); }
-    to { transform: translateX(-3000px); }
-}
-
-/* Form Styles */
 .form-group {
     margin-bottom: 20px;
 }
@@ -240,12 +254,6 @@ button:hover {
     margin-bottom: 10px;
 }
 
-@media (max-width: 768px) {
-    .search-input {
-        width: 100%;
-    }
-}
-
 nav {
   padding: 10px 0;
 }
@@ -282,7 +290,7 @@ nav ul li a:hover {
     align-items: center;
     padding: 20px;
     margin: 20px auto;
-    max-width: 1200px;
+    max-width: 1400px;
 }
 
 .profile-picture {
@@ -321,32 +329,6 @@ nav ul li a:hover {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.mode-profile-led-strip-container {
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
-    height: 40px;
-    width 3000px;
-    overflow: hidden;
-    margin-top: 20px;
-    border: 2px solid #888;
-    border-radius: 5px;
-    background-color: #121212;
-}
-
-.mode-profile-led-strip {
-    height: 20px;
-    width: 3000px;
-    position: relative;
-    white-space: nowrap;
-    display: flex;
-}
-
-.led-strip img {
-    height: 20px;
-    width: 3000px;
 }
 
 .mode-profile-details {
@@ -395,6 +377,19 @@ nav ul li a:hover {
 
 .mode-profile-button:last-child {
     margin-right: 0;
+}
+
+.mode-profile-led-strip-container {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 40px;
+    width 3000px;
+    overflow: hidden;
+    margin-top: 20px;
+    border: 2px solid #888;
+    border-radius: 5px;
+    background-color: #121212;
 }
 
 .mode-profile-page {
@@ -452,5 +447,82 @@ nav ul li a:hover {
     padding: 0 !important;
     margin: 0 !important;
     display: inline-block; /* Align the forms horizontally */
+}
+
+/* Style changes for small screens */
+@media (max-width: 768px) {
+    nav {
+        margin: 0 auto; /* Center the nav container horizontally on mobile */
+        max-width: 95%; /* Reduce the maximum width on mobile to ensure responsiveness */
+        padding: 10px; /* Reduce padding on mobile for better spacing */
+    }
+
+    /* Hide the list by default */
+    .nav-menu ul {
+        display: none;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    /* When nav-menu is active, display the list and stack items vertically */
+    .nav-menu.active ul {
+        display: block;
+    }
+
+    .nav-menu ul li {
+        display: block; /* Ensure list items stack vertically */
+        text-align: center;
+        padding: 10px 20px; /* Adjust padding as necessary */
+    }
+
+    header h1 {
+        font-size: 20px; /* Reduce font size on smaller screens */
+    }
+
+    header img {
+        width: 48px; /* Reduce logo size on smaller screens */
+        height: 48px;
+    }
+
+    /* Style the hamburger icon */
+    .hamburger {
+        display: block;
+        position: absolute; /* Position the hamburger menu independently */
+        top: 20px; /* Adjust as needed */
+        right: 20px; /* Adjust as needed */
+    }
+
+    .hamburger div {
+        width: 30px; /* Width of the hamburger lines */
+        height: 3px; /* Height of the hamburger lines */
+        background-color: #fff;
+        margin: 6px 0;
+        transition: 0.4s;
+    }
+
+    /* Adjust search input if necessary */
+    .search-input {
+        width: 100%;
+    }
+
+    .showcase {
+        margin: 0 auto; /* Center the .showcase container horizontally on mobile */
+        max-width: 95%; /* Reduce the maximum width on mobile to ensure responsiveness */
+        padding: 10px; /* Reduce padding on mobile for better spacing */
+    }
+}
+
+@media (max-width: 594px) {
+
+
+
+}
+
+/* Hide the hamburger icon on larger screens */
+@media (min-width: 769px) {
+    .hamburger {
+        display: none;
+    }
 }
 

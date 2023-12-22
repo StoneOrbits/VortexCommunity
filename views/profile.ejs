@@ -6,26 +6,36 @@
     <%- include('partials/nav') %>
     <main>
         <section class="profile-section">
-            <img src="<%= user.profilePicture || '/images/default-profile.png' %>" alt="Profile Picture">
-            <div class="profile-details">
-                <h2><%= user.username %></h2>
-                <p class="profile-blurb"><%= user.blurb %></p>
+           <img src="<%= profileUser.profilePicture || '/images/default-profile.png' %>" alt="Profile Picture">
+           <div class="profile-details">
+                <% if (user && user.id == profileUser.id) { %>
+                  <h2>Your Profile</h2>
+                <% } else { %>
+                  <h2><%= profileUser.username %></h2>
+                <% } %>
+                <p class="profile-blurb"><%= profileUser.blurb %></p>
             </div>
         </section>
         <section class="showcase">
-            <h3>Your Modes</h3>
-            <% if (user.modes) { %>
-                <div class="mode-list">
-                    <% user.modes.forEach(mode => { %>
+            <% if (user && user.id == profileUser.id) { %>
+              <h3>Your Modes</h3>
+            <% } else { %>
+              <h3><%= profileUser.username %>'s Modes</h3>
+            <% } %>
+
+            <% if (!profileUser.modes.length) { %>
+                <p>No modes available.</p>
+            <% } else { %>
+                <div class="mode-showcase">
+                    <% profileUser.modes.forEach(mode => { %>
                         <%- include('partials/mode-tile', { mode: mode }) %>
                     <% }); %>
                 </div>
-            <% } else { %>
-                <p>No modes available.</p>
             <% } %>
         </section>
     </main>
     <%- include('partials/footer') %>
+    <%- include('partials/script') %>
 </body>
 </html>
 

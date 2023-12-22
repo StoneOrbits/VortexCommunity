@@ -57,7 +57,7 @@ app.use(favicon(path.join(__dirname, 'public', 'images', 'vortex-transparent.png
 // Rate limiter for uploads
 const uploadLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 5,
+    max: 25,
     message: 'Too many uploads created from this IP, please try again after 15 minutes'
 });
 app.use('/upload', uploadLimiter);
