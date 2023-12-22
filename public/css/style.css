@@ -4,10 +4,24 @@ body.dark-theme {
     font-family: Arial, sans-serif;
 }
 
-header, nav, main, footer {
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 1200px;
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* This will position the hamburger menu and the logo/title on opposite ends */
+    padding: 10px; /* Adjust padding as needed */
+}
+
+header img {
+    margin-right: 10px;
+    transition: width 0.3s, height 0.3s; /* Smooth transition for size changes */
+}
+
+header h1 {
+    font-size: 24px;
+    margin: 0; /* Removes any default margin */
+    transition: font-size 0.3s;
+    flex-grow: 1; /* Allows the title to take available space */
+    text-align: left; /* Aligns the title to the left */
 }
 
 nav ul {
@@ -240,12 +254,6 @@ button:hover {
     margin-bottom: 10px;
 }
 
-@media (max-width: 768px) {
-    .search-input {
-        width: 100%;
-    }
-}
-
 nav {
   padding: 10px 0;
 }
@@ -452,5 +460,64 @@ nav ul li a:hover {
     padding: 0 !important;
     margin: 0 !important;
     display: inline-block; /* Align the forms horizontally */
+}
+
+/* Style changes for small screens */
+@media (max-width: 768px) {
+    /* Hide the list by default */
+    .nav-menu ul {
+        display: none;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    /* When nav-menu is active, display the list and stack items vertically */
+    .nav-menu.active ul {
+        display: block;
+    }
+
+    .nav-menu ul li {
+        display: block; /* Ensure list items stack vertically */
+        text-align: center;
+        padding: 10px 20px; /* Adjust padding as necessary */
+    }
+
+    header h1 {
+        font-size: 20px; /* Reduce font size on smaller screens */
+    }
+
+    header img {
+        width: 48px; /* Reduce logo size on smaller screens */
+        height: 48px;
+    }
+
+    /* Style the hamburger icon */
+    .hamburger {
+        display: block;
+        position: absolute; /* Position the hamburger menu independently */
+        top: 20px; /* Adjust as needed */
+        right: 20px; /* Adjust as needed */
+    }
+
+    .hamburger div {
+        width: 30px; /* Width of the hamburger lines */
+        height: 3px; /* Height of the hamburger lines */
+        background-color: #fff;
+        margin: 6px 0;
+        transition: 0.4s;
+    }
+
+    /* Adjust search input if necessary */
+    .search-input {
+        width: 100%;
+    }
+}
+
+/* Hide the hamburger icon on larger screens */
+@media (min-width: 769px) {
+    .hamburger {
+        display: none;
+    }
 }
 

@@ -1,14 +1,22 @@
 <nav>
-    <ul>
-        <li><a href="/">Home</a></li> <!-- Added Home link -->
-        <li><a href="/modes">Showcase</a></li>
-        <% if (user) { %>
-            <li><a href="/upload">Upload Mode</a></li>
-            <li><a href="/users/<%= user.id %>">Profile</a></li>
-            <li><a href="/logout">Log Out</a></li>
-        <% } else { %>
-            <li><a href="/register">Register</a></li>
-            <li><a href="/login">Log In</a></li>
-        <% } %>
-    </ul>
+    <div class="hamburger">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="nav-menu">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/modes">Showcase</a></li>
+            <% if (user) { %>
+                <li><a href="/upload">Upload Mode</a></li>
+                <li><a href="/users/<%= user.id %>">Profile</a></li>
+                <li><a href="/logout">Log Out</a></li>
+            <% } else { %>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/login">Log In</a></li>
+            <% } %>
+        </ul>
+        <script src="/js/initNav.js"></script>
+    </div>
 </nav>
