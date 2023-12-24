@@ -8,18 +8,6 @@ VortexLib().then(vortexLib => {
     const canvasId = canvas.getAttribute('id');
     const lightshow = new Lightshow(vortexLib, canvasId);
     lightshow.start();
-
-    //if (tiles.length == 1) {
-    //  lightshow.start();
-    //} else {
-    //  lightshow.start();
-    //  canvas.addEventListener('mouseover', () => {
-    //    lightshow.start();
-    //  });
-    //  canvas.addEventListener('mouseout', () => {
-    //    lightshow.stop();
-    //  });
-    //}
   });
 });
 

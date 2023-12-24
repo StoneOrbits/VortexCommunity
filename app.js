@@ -65,16 +65,18 @@ app.use('/upload', uploadLimiter);
 // Routes
 var indexRouter = require('./routes/index');
 var uploadRouter = require('./routes/upload');
-var usersRouter = require('./routes/users');
+var userRouter = require('./routes/user');
 var modesRouter = require('./routes/modes');
+var modeRouter = require('./routes/mode');
 var registerRouter = require('./routes/register');
 var loginRouter = require('./routes/login');
 var logoutRouter = require('./routes/logout');
 
 app.use('/', indexRouter);
 app.use('/upload', uploadRouter);
-app.use('/users', usersRouter);
+app.use('/user', userRouter);
 app.use('/modes', modesRouter);
+app.use('/mode', modeRouter);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
