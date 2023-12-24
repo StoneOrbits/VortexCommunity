@@ -23,7 +23,7 @@
                         <img src="<%= user && user.favorites.includes(mode._id.toString()) ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
                     </button>
                 </form>
-                <a href="#" id="openOnLightshow" class="mode-profile-button">Open on lightshow.lol →</a>
+                <a href="<%= lightshowUrl %>" id="openOnLightshow" class="mode-profile-button">Open on lightshow.lol →</a>
             </div>
             <div class="mode-profile-actions">
                 <% if (user && user._id.toString() === mode.createdBy.toString()) { %>

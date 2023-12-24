@@ -3,19 +3,42 @@ const router = express.Router();
 const Mode = require('../models/Mode');
 const User = require('../models/User');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 
-// Mode details
+
 router.get('/:modeId', async (req, res) => {
   try {
     const mode = await Mode.findOne({ _id: req.params.modeId }).populate('createdBy');
     if (!mode) {
       return res.status(404).render('not-found');
     }
+
+    const jsonFilePath = path.join(__dirname, '../public/modes', `${req.params.modeId}.json`);
+
+    let modeData;
+    try {
+      const data = await fs.readFile(jsonFilePath, 'utf8');
+      modeData = JSON.parse(data);
+    } catch (err) {
+      console.error('Error reading mode data file:', err);
+      // Handle file read error
+    }
+
+    // Base64 encode the JSON data
+    const base64EncodedData = Buffer.from(JSON.stringify(modeData)).toString('base64');
+    const lightshowUrl = `https://lightshow.lol/loadMode?data=${base64EncodedData}`;
+
+    // Format the upload date
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const uploadDate = new Date(mode.uploadDate).toLocaleDateString('en-US', options);
-    res.render('mode', { mode: mode, uploadDate: uploadDate, user: req.user });
+    const uploadDate = new Date(mode.uploadDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    res.render('mode', {
+      mode: mode,
+      uploadDate: uploadDate,
+      user: req.user,
+      lightshowUrl: lightshowUrl  // Passing the generated URL to the template
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
