@@ -526,3 +526,149 @@ nav ul li a:hover {
     }
 }
 
+/* Downloads Section */
+.downloads-section {
+    margin: 20px auto;
+    max-width: 1400px;
+}
+
+.downloads-section h2 {
+    color: #FFF;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.download-category {
+    background-color: #282828;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.download-category-title {
+    color: #f1c40f;
+    margin-bottom: 10px;
+}
+
+/* Individual Download Item Styling */
+.download-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #888;
+    color: #FFF;
+}
+
+.download-item:last-child {
+    border-bottom: none;
+}
+
+.download-item h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.download-info {
+    font-size: 14px;
+    color: #aaa;
+}
+
+.download-link {
+    padding: 8px 16px;
+    background-color: #333;
+    color: #FFF;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.download-link:hover {
+    background-color: #555;
+}
+
+.editor-section {
+    background-color: #333;
+    padding: 20px;
+    margin: 50px auto;
+    border-radius: 10px;
+    max-width: 1400px;
+}
+
+.editor-section h2 {
+    color: #f1c40f;
+}
+
+.device-section {
+    background-color: #282828;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    max-width: 1300px;
+}
+
+.device-image {
+    width: 100%;
+    max-width: 200px; /* Adjust as needed */
+    margin-bottom: 15px;
+}
+
+/* Admin Uploads Form */
+.admin-downloads {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #222;
+    border: 2px solid #888;
+    border-radius: 10px;
+}
+
+.admin-downloads h2 {
+    color: #FFF;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.admin-download-form {
+    display: grid;
+    grid-gap: 15px;
+}
+
+/* Form Group Styling */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: #FFF;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    background-color: #333;
+    color: #FFF;
+    border: 1px solid #888;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #f1c40f;
+}
+
+.form-group button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.form-group button:hover {
+    background-color: #555;
+}
+

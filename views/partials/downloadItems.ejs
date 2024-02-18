@@ -1,0 +1,16 @@
+<div class="download-list">
+    <% if (downloads && downloads.length > 0) { %>
+        <% downloads.forEach(download => { %>
+            <div class="download-item">
+                <h4 class="download-title"><%= download.name %> - <%= download.version %></h4>
+                <div class="download-info">
+                    <p><%= download.description %></p>
+                    <a href="<%= download.fileUrl %>" target="_blank" class="download-link">Download</a>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>No downloads available for this device at the moment.</p>
+    <% } %>
+</div>
+

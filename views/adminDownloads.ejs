@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <section class="admin-downloads">
+            <h2>Admin - Upload New Download</h2>
+            <form id="new-download-form" method="post" action="/downloads/new">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="version">Version:</label>
+                    <input type="text" id="version" name="version" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <input type="text" id="category" name="category" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fileUrl">File URL:</label>
+                    <input type="text" id="fileUrl" name="fileUrl" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fileSize">File Size (in bytes):</label>
+                    <input type="number" id="fileSize" name="fileSize">
+                </div>
+
+                <div class="form-group">
+                    <label for="compatibility">Compatibility:</label>
+                    <input type="text" id="compatibility" name="compatibility">
+                </div>
+
+                <div class="form-group">
+                    <button type="submit">Submit New Download</button>
+                </div>
+            </form>
+        </section>
+        <section class="downloads">
+            <h2>Vortex Downloads</h2>
+            <p>Here you can find the various software and downloads for Vortex Firmwares</p>
+            <%- include('partials/downloadItems', { downloads: downloads }) %>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+</body>
+</html>
+

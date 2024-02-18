@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <section class="editor-section">
+            <h2>Desktop Editor</h2>
+            <!-- Desktop Editor details and download link -->
+        </section>
+
+        <!-- Repeat this structure for each device -->
+        <section class="device-section" id="device1">
+            <img src="path_to_device1_image" alt="Device 1" class="device-image">
+            <h3>Device 1</h3>
+            <%- include('partials/downloadItems', { downloads: downloads.device1 }) %>
+        </section>
+
+        <section class="device-section" id="device2">
+            <img src="path_to_device2_image" alt="Device 2" class="device-image">
+            <h3>Device 2</h3>
+            <%- include('partials/downloadItems', { downloads: downloads.device2 }) %>
+        </section>
+
+        <!-- Add more sections for additional devices -->
+
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+</body>
+</html>
+
