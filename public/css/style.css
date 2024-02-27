@@ -571,17 +571,24 @@ nav ul li a:hover {
     color: #aaa;
 }
 
-.download-link {
-    padding: 8px 16px;
-    background-color: #333;
-    color: #FFF;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+.download-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #007bff; /* Primary button color */
+    color: #ffffff; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
-.download-link:hover {
-    background-color: #555;
+.download-button:hover, .download-button:focus {
+    background-color: #0056b3; /* Darker shade on hover/focus */
+    color: #ffffff;
+}
+
+.button-container {
+    text-align: center; /* Centers the inline-block element within */
 }
 
 .editor-section {
@@ -672,3 +679,21 @@ nav ul li a:hover {
     background-color: #555;
 }
 
+.editor-screenshot, .firmware-screenshot {
+    width: auto; /* Adjust width to be flexible */
+    height: 350px; /* Set a fixed height to maintain aspect ratio without stretching */
+    object-fit: contain; /* Ensure content fits without being cropped or distorted */
+    display: block; /* Ensure images are block-level for correct spacing */
+    margin: 0 auto; /* Center images within their grid cell if they are smaller than the maximum size */
+    border-radius: 8px; /* Maintain rounded corners for aesthetics */
+}
+
+.image-gallery {
+    display: grid; /* Switch to grid layout */
+    grid-template-columns: auto auto; /* Create two columns */
+    justify-content: center; /* Align items to the start of the gallery */
+    gap: 20px; /* Space between items */
+    padding: 20px; /* Padding around the container */
+    max-width: 1200px; /* Maximum width of the gallery */
+    margin: 20px auto; /* Margin around the gallery */
+}

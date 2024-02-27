@@ -6,25 +6,36 @@
     <%- include('partials/nav') %>
     <main>
         <section class="editor-section">
-            <h2>Desktop Editor</h2>
-            <!-- Desktop Editor details and download link -->
+            <h2>Vortex Desktop Editor</h2>
+            <p>The Desktop Editor is a Windows-only application designed to program Vortex devices directly from a computer. It facilitates seamless interaction with all Vortex devices, allowing savefiles to be pushed or pulled to/from vortex deveices with ease.</p>
+            <div class="image-gallery">
+                <img src="/images/editor.png" alt="Editor Screenshot 1" class="editor-screenshot">
+                <img src="/images/editor-color-picker.png" alt="Editor Screenshot 2" class="editor-screenshot">
+            </div>
+            <div class="button-container">
+                <a href="/download/link/editor" class="download-button">Download Editor</a>
+            </div>
         </section>
-
-        <!-- Repeat this structure for each device -->
-        <section class="device-section" id="device1">
-            <img src="path_to_device1_image" alt="Device 1" class="device-image">
-            <h3>Device 1</h3>
+        <section class="device-section" id="Vortex Wired Gloveset">
+            <img src="/images/wired-gloves-logo.png" alt="Wired Gloveset" class="device-image">
+            <h3>Vortex Wired Gloveset</h3>
             <%- include('partials/downloadItems', { downloads: downloads.device1 }) %>
         </section>
-
-        <section class="device-section" id="device2">
-            <img src="path_to_device2_image" alt="Device 2" class="device-image">
-            <h3>Device 2</h3>
+        <section class="device-section" id="Vortex Orbit">
+            <img src="/images/orbit-logo.png" alt="Vortex Orbit" class="device-image">
+            <h3>Vortex Orbit</h3>
             <%- include('partials/downloadItems', { downloads: downloads.device2 }) %>
         </section>
-
-        <!-- Add more sections for additional devices -->
-
+        <section class="device-section" id="Vortex Omega Handle">
+            <img src="/images/handle-logo.png" alt="Vortex Omega Handle" class="device-image">
+            <h3>Vortex Omega Handle</h3>
+            <%- include('partials/downloadItems', { downloads: downloads.device2 }) %>
+        </section>
+        <section class="device-section" id="Vortex Chromadeck">
+            <img src="/images/chromadeck-logo.png" alt="Chromadeck" class="device-image">
+            <h3>Chromadeck</h3>
+            <%- include('partials/downloadItems', { downloads: downloads.device2 }) %>
+        </section>
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
