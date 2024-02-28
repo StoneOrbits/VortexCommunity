@@ -1,24 +1,12 @@
 const mongoose = require('mongoose');
 const express = require('express');
-const multer = require('multer');
+const upload = require('../config/userUpload');
 const path = require('path');
 const router = express.Router();
 const Mode = require('../models/Mode');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 const { execSync } = require('child_process');
 const fs = require('fs');
-
-// Configure storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/modes');
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${req.modeId}.vtxmode`);
-  }
-});
-
-const upload = multer({ storage: storage });
 
 const processSaveFile = (filePath, modeId, singlePat) => {
   return new Promise((resolve, reject) => {

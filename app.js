@@ -10,6 +10,7 @@ var passport = require('passport');
 var rateLimit = require('express-rate-limit');
 var favicon = require('serve-favicon');
 const flash = require('connect-flash');
+require('dotenv').config();
 
 var app = express();
 
@@ -64,7 +65,8 @@ app.use('/upload', uploadLimiter);
 
 // Routes
 var indexRouter = require('./routes/index');
-var uploadRouter = require('./routes/upload');
+var userUploadRouter = require('./routes/userUpload');
+var firmwareUploadRouter = require('./routes/firmwareUpload');
 var userRouter = require('./routes/user');
 var modesRouter = require('./routes/modes');
 var downloadsRouter = require('./routes/downloads');
@@ -74,7 +76,8 @@ var loginRouter = require('./routes/login');
 var logoutRouter = require('./routes/logout');
 
 app.use('/', indexRouter);
-app.use('/upload', uploadRouter);
+app.use('/upload', userUploadRouter);
+app.use('/firmware', firmwareUploadRouter);
 app.use('/user', userRouter);
 app.use('/modes', modesRouter);
 app.use('/downloads', downloadsRouter);
