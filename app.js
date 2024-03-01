@@ -28,11 +28,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Session configuration
 app.use(session({
-    secret: 'vortex-community-secret',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: 'mongodb://localhost:27017/vortexcommunity',
+      mongoUrl: 'mongodb://0.0.0.0:27017/vortexcommunity',
       mongooseConnection: mongoose.connection
     })
 }));
@@ -48,7 +48,6 @@ app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success');
     res.locals.error_msg = req.flash('error');
     res.locals.user = req.user || null;
-    console.log('req.user:', req.user);
     next();
 });
 

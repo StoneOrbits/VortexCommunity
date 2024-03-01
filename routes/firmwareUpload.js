@@ -2,15 +2,16 @@ const express = require('express');
 const router = express.Router();
 const uploadFirmware = require('../config/firmwareUpload'); // Adjust the path as necessary
 const Download = require('../models/Download'); // Adjust the path as necessary
+require('dotenv').config();
 
 router.post('/upload', uploadFirmware.single('file'), async (req, res) => {
-  const { device, version, category } = req.body; // Extract additional fields from the request
+  const { device, version, category, clientApiKey } = req.body; // Extract additional fields from the request
   const serverApiKey = process.env.VORTEX_COMMUNITY_API_KEY;
   if (!clientApiKey || clientApiKey !== serverApiKey) {
     return res.status(401).json({ message: 'Unauthorized: Invalid API Key' });
   }
 
-  const fileUrl = `${req.protocol}://${req.get('host')}/firmwares/${req.file.filename}`;
+  const fileUrl = `https://vortex.community/firmwares/${req.file.filename}`;
 
   try {
     // Construct the file URL based on your server's file-serving logic
