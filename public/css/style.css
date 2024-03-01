@@ -614,6 +614,7 @@ nav ul li a:hover {
 .device-image {
     width: 100%;
     max-width: 200px; /* Adjust as needed */
+    padding: 10px;
     margin-bottom: 15px;
 }
 

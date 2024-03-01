@@ -7,55 +7,34 @@
     <main>
         <section class="editor-section">
             <h2>Vortex Desktop Editor</h2>
-            <p>The Desktop Editor is a Windows-only application designed to program Vortex devices directly from a computer. It facilitates seamless interaction with all Vortex devices, allowing savefiles to be pushed or pulled to/from vortex deveices with ease.</p>
+            <p>The Desktop Editor is a Windows-only application designed to program Vortex devices directly from a computer. It facilitates seamless interaction with all Vortex devices, allowing savefiles to be pushed or pulled to/from vortex devices with ease.</p>
             <div class="image-gallery">
                 <img src="/images/editor.png" alt="Editor Screenshot 1" class="editor-screenshot">
                 <img src="/images/editor-color-picker.png" alt="Editor Screenshot 2" class="editor-screenshot">
             </div>
-            <div class="button-container">
-                <a href="/download/link/editor" class="download-button">Download Editor</a>
-            </div>
+            <% if (latestDownloads['desktop']) { %>
+              <div class="button-container">
+                  <p class="device-description">Released on <%= latestDownloads['desktop']['editor'].releaseDate %></p>
+                  <p class="device-description">Latest editor version: <%= latestDownloads['desktop']['editor'].version %></p>
+                  <a href="<%= latestDownloads['desktop']['editor'].fileUrl %>" class="download-button">Download Editor</a>
+              </div>
+            <% } %>
         </section>
-        <section class="device-section" id="vortex-wired-gloveset">
-            <div class="device-content">
-                <img src="/images/wired-gloves-logo.png" alt="Wired Gloveset" class="device-image">
-                <div class="device-details">
-                    <h3>Vortex Wired Gloveset</h3>
-                    <p class="device-description">This is the firmware for the prewired vortex gloveset from StoneOrbits.</p>
-                    <a href="/download/link/for/device" class="download-button">Download Firmware</a>
-                </div>
-            </div>
-        </section>
-        <section class="device-section" id="vortex-orbit">
-            <div class="device-content">
-                <img src="/images/orbit-logo.png" alt="Vortex Orbit" class="device-image">
-                <div class="device-details">
-                    <h3>Vortex Orbit</h3>
-                    <p class="device-description">This is the firmware for the vortex orbit from StoneOrbits.</p>
-                    <a href="/download/link/for/device" class="download-button">Download Firmware</a>
-                </div>
-            </div>
-        </section>
-        <section class="device-section" id="vortex-omega-handle">
-            <div class="device-content">
-                <img src="/images/handle-logo.png" alt="Vortex Omega Handle" class="device-image">
-                <div class="device-details">
-                    <h3>Vortex Omega Handle</h3>
-                    <p class="device-description">This is the firmware for the vortex omega handles from StoneOrbits.</p>
-                    <a href="/download/link/for/device" class="download-button">Download Firmware</a>
-                </div>
-            </div>
-        </section>
-        <section class="device-section" id="vortex-chromadeck">
-            <div class="device-content">
-                <img src="/images/chromadeck-logo.png" alt="Vortex Chromadeck" class="device-image">
-                <div class="device-details">
-                    <h3>Vortex Chromadeck</h3>
-                    <p class="device-description">This is the firmware for the vortex omega handles from StoneOrbits.</p>
-                    <a href="/download/link/for/device" class="download-button">Download Firmware</a>
-                </div>
-            </div>
-        </section>
+        <% ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop'].forEach(device => { %>
+            <% if (latestDownloads[device] && latestDownloads[device]['firmware']) { %>
+                <section class="device-section" id="vortex-<%= device %>">
+                    <div class="device-content">
+                        <img src="/images/<%= device %>-logo.png" alt="Vortex <%= device.charAt(0).toUpperCase() + device.slice(1) %>" class="device-image">
+                        <div class="device-details">
+                            <h3>Vortex <%= device.charAt(0).toUpperCase() + device.slice(1) %></h3>
+                            <p class="device-description">Released on <%= latestDownloads[device]['firmware'].releaseDate %></p>
+                            <p class="device-description">Latest firmware version: <%= latestDownloads[device]['firmware'].version %></p>
+                            <a href="<%= latestDownloads[device]['firmware'].fileUrl %>" class="download-button">Download Latest Firmware</a>
+                        </div>
+                    </div>
+                </section>
+            <% } %>
+        <% }); %>
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>

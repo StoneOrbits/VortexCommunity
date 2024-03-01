@@ -3,34 +3,27 @@ const router = express.Router();
 const uploadFirmware = require('../config/firmwareUpload'); // Adjust the path as necessary
 const Download = require('../models/Download'); // Adjust the path as necessary
 
-router.post('/upload', uploadFirmware.single('firmwareFile'), async (req, res) => {
-    // Check for the uploaded file
-    if (!req.file) {
-        return res.status(400).send('No file uploaded.');
-    }
+router.post('/upload', uploadFirmware.single('file'), async (req, res) => {
+  const { device, version, category } = req.body; // Extract additional fields from the request
 
-    // Extract additional information from the request, if any
-    const { name, description, version, category, compatibility } = req.body;
+  const fileUrl = `${req.protocol}://${req.get('host')}/firmwares/${req.file.filename}`;
 
-    try {
-        // Create a new database entry for the upload
-        const newDownload = new Download({
-            name: name || 'Unnamed Firmware',
-            description: description || 'No description provided.',
-            version,
-            category: category || 'Firmware',
-            fileUrl: req.file.path, // You might want to adjust this based on how you serve files
-            fileSize: req.file.size,
-            compatibility,
-        });
+  try {
+    // Construct the file URL based on your server's file-serving logic
+    const newDownload = new Download({
+      device,
+      version,
+      category,
+      fileUrl,
+      fileSize: req.file.size
+    });
 
-        await newDownload.save();
-
-        res.status(201).json({ message: 'Firmware uploaded successfully', download: newDownload });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error processing the firmware upload.');
-    }
+    await newDownload.save();
+    res.status(201).json({ message: 'Upload successful', data: newDownload });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error processing the upload');
+  }
 });
 
 module.exports = router;

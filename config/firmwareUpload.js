@@ -4,7 +4,7 @@ const path = require('path');
 const firmwareStorage = multer.diskStorage({
     destination: function(req, file, cb) {
         // Specify the destination directory for firmware files
-        cb(null, 'firmwares/');
+        cb(null, 'public/firmwares/');
     },
     filename: function(req, file, cb) {
         // Use file original name in the filename

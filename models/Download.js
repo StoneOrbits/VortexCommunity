@@ -1,47 +1,34 @@
 const mongoose = require('mongoose');
 
 const DownloadSchema = new mongoose.Schema({
-    name: {
+    device: { // device like 'gloves', 'orbit', etc
         type: String,
         required: true
     },
-    description: {
+    version: { // version like 1.0
         type: String,
         required: true
     },
-    version: {
+    category: { // category of file like 'firmware', 'editor', 'emulator'
         type: String,
         required: true
     },
-    category: {
+    fileUrl: { // url to file
         type: String,
-        required: true  // Categories like 'Firmware', 'Editor', 'CLI tool', etc.
+        required: true
     },
-    fileUrl: {
-        type: String,
-        required: true  // URL to the downloadable file
-    },
-    fileSize: {
+    fileSize: { // file size
         type: Number,
-        required: false // Size of the file, optional
+        required: true
     },
-    compatibility: {
-        type: String,
-        required: false // Compatibility information (e.g., Operating System, Device type)
-    },
-    downloadCount: {
+    downloadCount: { // track downloads
         type: Number,
-        default: 0 // Track how many times the file has been downloaded
+        default: 0
     },
-    releaseDate: {
+    releaseDate: { // track release date
         type: Date,
-        default: Date.now // Date when this version was released
-    },
-    updatedDate: {
-        type: Date,
-        default: Date.now // Date when this entry was last updated (for new versions)
-    },
-    // Add any additional fields that might be relevant for your downloads
+        default: Date.now
+    }
 });
 
 module.exports = mongoose.model('Download', DownloadSchema);

@@ -29,8 +29,28 @@ router.get('/admin', ensureAuthenticated, async function(req, res) {
 
 router.get('/', async function(req, res, next) {
   try {
-    // Fetch the latest or most popular downloads
-    res.render('downloads', { title: 'Vortex Downloads', downloads: await getCategorizedDownloads() });
+    const devices = ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop']; // Example devices
+    const categories = ['firmware', 'editor', 'emulator']; // Example categories
+    let latestDownloads = {};
+
+    for (const device of devices) {
+      latestDownloads[device] = {};
+      for (const category of categories) {
+        const latestDownload = await Download.findOne({ device, category })
+          .sort({ releaseDate: -1 })
+          .exec();
+
+        if (latestDownload) {
+          latestDownloads[device][category] = latestDownload;
+        }
+      }
+    }
+
+    // Render the downloads view, passing the latest downloads info
+    res.render('downloads', {
+      title: 'Vortex Downloads',
+      latestDownloads: latestDownloads,
+    });
   } catch (err) {
     console.error(err);
     next(err); // Error handling
