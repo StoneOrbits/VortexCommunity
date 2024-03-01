@@ -5,6 +5,10 @@ const Download = require('../models/Download'); // Adjust the path as necessary
 
 router.post('/upload', uploadFirmware.single('file'), async (req, res) => {
   const { device, version, category } = req.body; // Extract additional fields from the request
+  const serverApiKey = process.env.VORTEX_COMMUNITY_API_KEY;
+  if (!clientApiKey || clientApiKey !== serverApiKey) {
+    return res.status(401).json({ message: 'Unauthorized: Invalid API Key' });
+  }
 
   const fileUrl = `${req.protocol}://${req.get('host')}/firmwares/${req.file.filename}`;
 
