@@ -12,7 +12,7 @@
                 <img src="/images/editor.png" alt="Editor Screenshot 1" class="editor-screenshot">
                 <img src="/images/editor-color-picker.png" alt="Editor Screenshot 2" class="editor-screenshot">
             </div>
-            <% if (latestDownloads['desktop']) { %>
+            <% if (latestDownloads['desktop'] && latestDownloads['desktop']['editor']) { %>
               <div class="button-container">
                   <p class="device-description">Released on <%= latestDownloads['desktop']['editor'].releaseDate %></p>
                   <p class="device-description">Latest editor version: <%= latestDownloads['desktop']['editor'].version %></p>
