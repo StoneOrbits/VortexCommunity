@@ -19,7 +19,7 @@
                   <% if (req.user) { %>
                     <a href="<%= latestDownloads['desktop']['editor'].fileUrl %>" class="download-button">Download Editor</a>
                   <% } else { %>
-                    <p>Please log in to download.</p>
+                    <a href="/login" class="download-button-disabled">Login to Download</a>
                   <% } %>
               </div>
             <% } %>
@@ -36,7 +36,7 @@
                             <% if (req.user) { %>
                               <a href="<%= latestDownloads[device]['firmware'].fileUrl %>" class="download-button">Download Latest Firmware</a>
                             <% } else { %>
-                              <p>Please log in to download.</p>
+                              <a href="/login" class="download-button-disabled">Login to Download</a>
                             <% } %>
                         </div>
                     </div>

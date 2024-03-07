@@ -20,7 +20,7 @@ async function getCategorizedDownloads() {
 router.get('/admin', ensureAuthenticated, async function(req, res) {
   try {
     // Fetch the latest or most popular downloads
-    res.render('adminDownloads', { title: 'Vortex Downloads', downloads: await getCategorizedDownloads() });
+    res.render('adminDownloads', { title: 'Vortex Downloads', downloads: await getCategorizedDownloads(), req: req });
   } catch (err) {
     console.error(err);
     next(err); // Error handling
@@ -50,6 +50,7 @@ router.get('/', async function(req, res, next) {
     res.render('downloads', {
       title: 'Vortex Downloads',
       latestDownloads: latestDownloads,
+      req: req
     });
   } catch (err) {
     console.error(err);

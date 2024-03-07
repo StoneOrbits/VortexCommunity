@@ -587,6 +587,22 @@ nav ul li a:hover {
     color: #ffffff;
 }
 
+.download-button-disabled {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #aaaaaa; /* Primary button color */
+    color: #ffffff; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.download-button-disabled:hover, .download-button-disabled:focus {
+    background-color: #6c757d; /* Keep the same color on hover/focus */
+    color: #ffffff;
+}
+
 .button-container {
     text-align: center; /* Centers the inline-block element within */
 }

@@ -12,6 +12,11 @@ var favicon = require('serve-favicon');
 const flash = require('connect-flash');
 require('dotenv').config();
 
+// NOTE! You must create a .env file with:
+//  VORTEX_COMMUNITY_API_KEY=...
+//  SESSION_SECRET=...
+//  MONGO_URI=mongodb://0.0.0.0:27017/vortexcommunity
+
 var app = express();
 
 require('./config/passport')(passport);
