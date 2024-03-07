@@ -215,7 +215,7 @@ button:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.login-button, .register-button {
+.login-button, .register-button, .upload-button {
 }
 
 .form-group button {
