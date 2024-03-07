@@ -191,8 +191,7 @@ button:hover {
 .form-group {
     margin-bottom: 20px;
     max-width: 300px; /* Set a maximum width for the input fields */
-    margin-left: auto; /* Center the input fields within the form */
-    margin-right: auto;
+    margin: 20px auto
 }
 
 .form-group label {
@@ -214,6 +213,9 @@ button:hover {
 .form-group input:focus {
     outline: none;
     background-color: rgba(255, 255, 255, 0.2);
+}
+
+.login-button, .register-button {
 }
 
 .form-group button {

@@ -16,16 +16,16 @@ async function getCategorizedDownloads() {
   return categorizedDownloads;
 }
 
-// Route to render the adminDownloads page
-router.get('/admin', ensureAuthenticated, async function(req, res) {
-  try {
-    // Fetch the latest or most popular downloads
-    res.render('adminDownloads', { title: 'Vortex Downloads', downloads: await getCategorizedDownloads(), req: req });
-  } catch (err) {
-    console.error(err);
-    next(err); // Error handling
-  }
-});
+//// Route to render the adminDownloads page
+//router.get('/admin', ensureAuthenticated, async function(req, res) {
+//  try {
+//    // Fetch the latest or most popular downloads
+//    res.render('adminDownloads', { title: 'Vortex Downloads', downloads: await getCategorizedDownloads(), req: req });
+//  } catch (err) {
+//    console.error(err);
+//    next(err); // Error handling
+//  }
+//});
 
 router.get('/', async function(req, res, next) {
   try {
