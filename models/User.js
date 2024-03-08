@@ -27,9 +27,9 @@ const UserSchema = new mongoose.Schema({
   favorites: [{
     type: Schema.Types.ObjectId,
     ref: 'Mode'
-  }]
+  }],
   emailVerified: { type: Boolean, default: false },
-  emailVerificationToken: { type: String, required: false },
+  emailVerificationToken: { type: String, required: false }
 });
 
 module.exports = mongoose.model('User', UserSchema);
