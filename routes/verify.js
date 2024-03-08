@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
         }
 
         user.emailVerified = true;
-        user.emailVerificationToken = undefined; // Clear the token after verification
+        user.emailVerificationToken = undefined;
         await user.save();
 
         req.flash('success', 'Email verified successfully. You can now log in.');

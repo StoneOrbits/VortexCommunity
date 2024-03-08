@@ -29,7 +29,7 @@ const UserSchema = new mongoose.Schema({
     ref: 'Mode'
   }],
   emailVerified: { type: Boolean, default: false },
-  emailVerificationToken: { type: String, required: false }
+  verificationToken: { type: String, required: false }
 });
 
 module.exports = mongoose.model('User', UserSchema);
