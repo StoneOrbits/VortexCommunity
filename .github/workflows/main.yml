@@ -61,6 +61,6 @@ jobs:
         scp VortexEngine/VortexEngine/VortexCLI/vortex vortex@198.74.48.18:~/vortex
         ssh vortex@198.74.48.18 'sudo /usr/bin/mv /home/vortex/vortex /usr/local/bin/vortex'
         ssh vortex@198.74.48.18 'sudo systemctl stop vortex-community'
-        ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && git pull'
+        ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && git pull && chmod +x start.sh'
         ssh vortex@198.74.48.18 'sudo systemctl start vortex-community'
     

@@ -76,6 +76,7 @@ var modesRouter = require('./routes/modes');
 var downloadsRouter = require('./routes/downloads');
 var modeRouter = require('./routes/mode');
 var registerRouter = require('./routes/register');
+var verifyRouter = require('./routes/verify');
 var loginRouter = require('./routes/login');
 var logoutRouter = require('./routes/logout');
 
@@ -87,6 +88,7 @@ app.use('/modes', modesRouter);
 app.use('/downloads', downloadsRouter);
 app.use('/mode', modeRouter);
 app.use('/register', registerRouter);
+app.use('/verify', verifyRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 
