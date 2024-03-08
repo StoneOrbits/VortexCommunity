@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
         const emailContent = `Hi ${username}, welcome to Vortex Community! Please verify your email by clicking the following link: https://vortex.community/verify?token=${verificationToken}`;
 
         // Send email using local system command
-        const sendMailCommand = `echo "${emailContent}" | mail -s "Verify Your Email" ${email} -aFrom:postmaster@vortex.community`;
+        const sendMailCommand = `echo "${emailContent}" | sudo /usr/bin/mail -s "Verify Your Email" ${email} -aFrom:postmaster@vortex.community`;
         exec(sendMailCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`);
