@@ -731,3 +731,20 @@ nav ul li a:hover {
     justify-content: start;
     padding: 50px 0; /* Adds vertical padding for spacing */
 }
+
+.fb-login-button button {
+    background-color: #4267B2; /* Facebook Blue */
+    color: white;
+    padding: 10px 15px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.fb-login-button button:hover {
+    background-color: #365899; /* Darker Facebook Blue */
+}
