@@ -9,9 +9,9 @@ var scriptPath = '/js/' + scriptName;
 var script = document.createElement('script');
 script.src = scriptPath;
 script.type = 'module'; // Specify that the script is a module
-//script.onload = function() {
-//  console.log(scriptName + ' loaded successfully.');
-//};
+script.onload = function() {
+  console.log(scriptName + ' loaded successfully.');
+};
 script.onerror = function() {
   console.log('Error loading script: ' + scriptName);
 };
