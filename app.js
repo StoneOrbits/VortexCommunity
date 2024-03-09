@@ -79,6 +79,8 @@ var registerRouter = require('./routes/register');
 var verifyRouter = require('./routes/verify');
 var loginRouter = require('./routes/login');
 var logoutRouter = require('./routes/logout');
+var privacyRouter = require('./routes/privacy');
+var termsRouter = require('./routes/terms');
 
 app.use('/', indexRouter);
 app.use('/upload', userUploadRouter);
@@ -91,6 +93,8 @@ app.use('/register', registerRouter);
 app.use('/verify', verifyRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
+app.use('/privacy', privacyRouter);
+app.use('/terms', termsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
