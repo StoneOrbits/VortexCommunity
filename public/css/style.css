@@ -746,6 +746,20 @@ img {
     gap: 20px; /* Optional: Adds some space between the images */
 }
 
+
+.editor-screenshot {
+    max-width: 100%; /* Ensure images are responsive */
+    height: auto; /* Maintain aspect ratio */
+    flex-basis: calc(50% - 10px); /* Adjust this value as needed, considering the gap */
+}
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+    .editor-screenshot {
+        flex-basis: 100%; /* Allow each image to take full width on smaller screens */
+    }
+}
+
 .content-container {
     max-width: 800px; /* Adjust as needed */
     margin: auto; /* Centers the container */
