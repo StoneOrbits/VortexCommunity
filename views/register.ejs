@@ -12,7 +12,7 @@
                 </div>
             <% } %>
             <section class="register-section">
-                <form action="/register" method="post">
+                <form id="registerForm" action="/register" method="post">
                     <div class="form-group">
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" required>
@@ -30,7 +30,7 @@
                         <input type="password" id="confirmPassword" name="confirmPassword" required>
                     </div>
                     <div class="register-button">
-                        <button type="submit">Register</button>
+                      <button class="g-recaptcha" data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk" data-callback='onSubmit' data-action='submit'>Register</button>
                     </div>
                 </form>
             </section>
@@ -38,6 +38,12 @@
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script>
+      function onSubmit(token) {
+        document.getElementById("registerForm").submit();
+      }
+    </script>
 </body>
 </html>
 

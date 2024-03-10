@@ -4,15 +4,31 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const { exec } = require('child_process');
 const router = express.Router();
+require('dotenv').config();
 
 // Register Page
 router.get('/', (req, res) => {
   res.render('register', { user: req.user }); // Added user object
 });
 
-// Handle Registration
+const fetch = require('node-fetch'); // Ensure you have node-fetch installed
+
 router.post('/', async (req, res) => {
+  const { username, email, password, 'g-recaptcha-response': gRecaptchaResponse } = req.body;
+
+  // First, verify the reCAPTCHA token
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+  const recaptchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecretKey}&response=${recaptchaToken}`;
+
   try {
+    const recaptchaResponse = await fetch(recaptchaVerifyUrl, { method: 'POST' });
+    const recaptchaData = await recaptchaResponse.json();
+
+    if (!recaptchaData.success) {
+      req.flash('error', 'Invalid CAPTCHA. Please try again.');
+      return res.redirect('/register');
+    }
+
     const { username, email, password } = req.body;
 
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
