@@ -2,20 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
    handleFBLogin();
 });
 
-function facebookLogin() {
-  FB.login(function(response) {
-    if (response.authResponse) {
-      console.log('Welcome! Fetching your information...');
-      FB.api('/me', {fields: 'name,email'}, function(response) {
-        console.log('Successful login for: ' + response.name);
-        // Here, you can also redirect the user or perform other actions like setting cookies or updating your database
-      });
-    } else {
-      console.log('User cancelled login or did not fully authorize.');
-    }
-  }, {scope: 'email,public_profile', return_scopes: true});
-}
-
 function handleFBLogin() {
   (function(d, s, id) {
    var js, fjs = d.getElementsByTagName(s)[0];
