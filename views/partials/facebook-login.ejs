@@ -41,13 +41,13 @@ function facebookLogin() {
   FB.login(function(response) {
     if (response.authResponse) {
       console.log('Welcome! Fetching your information...');
-      FB.api('/me', {fields: 'name,email'}, function(response) {
+      FB.api('/me', {fields: 'name'}, function(response) {
         console.log('Successful login for: ' + response.name);
         // Implement additional actions here, such as redirecting the user or updating your database
       });
     } else {
       console.log('User cancelled login or did not fully authorize.');
     }
-  }, {scope: 'email,public_profile', return_scopes: true});
+  }, {scope: 'public_profile', return_scopes: true});
 }
 </script>
