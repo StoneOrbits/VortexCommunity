@@ -5,7 +5,8 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const { token } = req.query;
-    console.log("Checking token: " + token);
+    // TODO: Fix email verification?
+    //console.log("Checking token: " + token);
     const user = await User.findOne({ emailVerificationToken: token });
 
     if (!user) {

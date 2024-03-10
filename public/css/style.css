@@ -609,6 +609,38 @@ nav ul li a:hover {
     text-align: center; /* Centers the inline-block element within */
 }
 
+
+/* Ensure images do not exceed their containers */
+img {
+    max-width: 100%;
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .editor-section, .device-section {
+        padding: 10px; /* Reduce padding on smaller screens */
+    }
+
+    /* Adjust section and container widths */
+    .button-container, .device-content, .image-gallery {
+        width: 100%; /* Ensure these elements don't exceed the screen width */
+        box-sizing: border-box; /* Include padding and border in the element's total width */
+    }
+
+    .download-button, .download-button-disabled {
+        width: 100%; /* Full width buttons for easier mobile access */
+        box-sizing: border-box;
+        margin: 10px 0; /* Add some margin for spacing */
+    }
+}
+
+/* General style for content not to exceed the viewport width */
+.content-container, .editor-section, .device-section {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 .editor-section {
     background-color: #333;
     padding: 20px;
@@ -708,13 +740,10 @@ nav ul li a:hover {
 }
 
 .image-gallery {
-    display: grid; /* Switch to grid layout */
-    grid-template-columns: auto auto; /* Create two columns */
-    justify-content: center; /* Align items to the start of the gallery */
-    gap: 20px; /* Space between items */
-    padding: 20px; /* Padding around the container */
-    max-width: 1200px; /* Maximum width of the gallery */
-    margin: 20px auto; /* Margin around the gallery */
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap as needed */
+    justify-content: center; /* Center items horizontally */
+    gap: 20px; /* Optional: Adds some space between the images */
 }
 
 .content-container {
@@ -748,3 +777,5 @@ nav ul li a:hover {
 .fb-login-button button:hover {
     background-color: #365899; /* Darker Facebook Blue */
 }
+
+
