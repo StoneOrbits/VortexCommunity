@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 const fetch = require('node-fetch'); // Ensure you have node-fetch installed
 
 router.post('/', async (req, res) => {
-  const { username, email, password, 'g-recaptcha-response': gRecaptchaResponse } = req.body;
+  const { username, email, password, 'g-recaptcha-response': recaptchaToken } = req.body;
 
   // First, verify the reCAPTCHA token
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
