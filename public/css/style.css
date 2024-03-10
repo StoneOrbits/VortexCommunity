@@ -179,19 +179,20 @@ button:hover {
     background-color: #555;
 }
 
-.login-section, .register-section {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #FFFFFF;
-    border-radius: 5px;
-    text-align: center; /* Center the elements within the form */
+.register-section, .login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 50px;
 }
 
 .form-group {
-    margin-bottom: 20px;
-    max-width: 300px; /* Set a maximum width for the input fields */
-    margin: 20px auto
+    width: 100%; /* Ensure full width to contain the input fields */
+    max-width: 300px; /* Maintain a max width for better appearance on wider screens */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align the flex items */
 }
 
 .form-group label {
@@ -216,6 +217,11 @@ button:hover {
 }
 
 .login-button, .register-button, .upload-button {
+    margin: 5px auto;
+}
+
+.g-recaptcha {
+    margin: 5px auto;
 }
 
 .form-group button {
@@ -627,12 +633,6 @@ img {
         width: 100%; /* Ensure these elements don't exceed the screen width */
         box-sizing: border-box; /* Include padding and border in the element's total width */
     }
-
-    .download-button, .download-button-disabled {
-        width: 100%; /* Full width buttons for easier mobile access */
-        box-sizing: border-box;
-        margin: 10px 0; /* Add some margin for spacing */
-    }
 }
 
 /* General style for content not to exceed the viewport width */
@@ -735,7 +735,6 @@ img {
     height: 350px; /* Set a fixed height to maintain aspect ratio without stretching */
     object-fit: contain; /* Ensure content fits without being cropped or distorted */
     display: block; /* Ensure images are block-level for correct spacing */
-    margin: 0 auto; /* Center images within their grid cell if they are smaller than the maximum size */
     border-radius: 8px; /* Maintain rounded corners for aesthetics */
 }
 
@@ -746,17 +745,13 @@ img {
     gap: 20px; /* Optional: Adds some space between the images */
 }
 
-
-.editor-screenshot {
-    max-width: 100%; /* Ensure images are responsive */
-    height: auto; /* Maintain aspect ratio */
-    flex-basis: calc(50% - 10px); /* Adjust this value as needed, considering the gap */
-}
-
 /* Responsive adjustment */
 @media (max-width: 768px) {
     .editor-screenshot {
         flex-basis: 100%; /* Allow each image to take full width on smaller screens */
+        max-width: 100%; /* Ensure images are responsive */
+        height: auto; /* Maintain aspect ratio */
+        flex-basis: calc(50% - 10px); /* Adjust this value as needed, considering the gap */
     }
 }
 
