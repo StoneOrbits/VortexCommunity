@@ -13,7 +13,9 @@ module.exports = function(passport) {
 
         // Check if the email has been verified
         if (!user.emailVerified) {
-          return done(null, false, { message: 'Email has not been verified' });
+          // do not block login for non verified users right now,
+          // we have google to prevent bots
+          //return done(null, false, { message: 'Email has not been verified' });
         }
 
         // Match password
