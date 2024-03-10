@@ -14,7 +14,7 @@
             <% } %>
         </div>
         <section class="login-section">
-            <form action="/login" method="post">
+            <form id="loginForm" action="/login" method="post">
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" autocomplete="username" required>
@@ -24,14 +24,20 @@
                     <input type="password" id="password" name="password" autocomplete="current-password" required>
                 </div>
                 <div class="login-button">
-                    <button type="submit">Login</button>
+                    <button class="g-recaptcha" data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk" data-callback='onSubmit' data-action='submit'>Login</button>
                 </div>
-                <%- include('partials/facebook-login') %> <!-- Include the Facebook login partial here -->
+                <!-- Can't use login with facebook because it requires business verification and I don't run a business, thanks facebook -->
+                <!-- <%- include('partials/facebook-login') %> -->
             </form>
         </section>
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script>
+        function onSubmit(token) {
+            document.getElementById("loginForm").submit();
+        }
+    </script>
 </body>
 </html>
-
