@@ -47,18 +47,18 @@ router.post('/', async (req, res) => {
     const newUser = new User({ username, email, password: hashedPassword, verificationToken: verificationToken });
     await newUser.save();
 
-    // Prepare the email content
-    const emailContent = `Hi ${username}, welcome to Vortex Community! Please verify your email by clicking the following link: https://vortex.community/verify?token=${encodedToken}`;
+    //// Prepare the email content
+    //const emailContent = `Hi ${username}, welcome to Vortex Community! Please verify your email by clicking the following link: https://vortex.community/verify?token=${encodedToken}`;
 
-    // Send email using local system command
-    const sendMailCommand = `echo "${emailContent}" | sudo /usr/bin/mail -s "Verify Your Email" ${email} -aFrom:postmaster@vortex.community`;
-    exec(sendMailCommand, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(`Email sent to ${email}`);
-    });
+    //// Send email using local system command
+    //const sendMailCommand = `echo "${emailContent}" | sudo /usr/bin/mail -s "Verify Your Email" ${email} -aFrom:postmaster@vortex.community`;
+    //exec(sendMailCommand, (error, stdout, stderr) => {
+    //  if (error) {
+    //    console.error(`exec error: ${error}`);
+    //    return;
+    //  }
+    //  console.log(`Email sent to ${email}`);
+    //});
 
     req.flash('success', 'User registered successfully. You can now log in.');
     res.redirect('/login');
