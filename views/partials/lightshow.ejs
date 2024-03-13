@@ -1,6 +1,3 @@
-<!-- lightshow.ejs -->
 <div class="lightshow-container">
-    <canvas id="lightshowCanvas_<%= mode.id %>" class="lightshow-canvas"></canvas>
-    <!-- Include other elements if needed -->
+    <canvas id="lightshowCanvas_<%= typeof tempId !== 'undefined' ? tempId : mode._id %>" class="lightshow-canvas" data-mode='<%= JSON.stringify(mode.modeData) %>'></canvas>
 </div>
-

@@ -138,6 +138,8 @@ footer {
     border: 2px solid #888;
     border-radius: 5px;
     background-color: #121212;
+    align-self: stretch; /* Ensures the container fills the width */
+    margin-bottom: 10px; /* Ensures spacing between this and any elements below */
 }
 
 .form-group {
@@ -787,4 +789,99 @@ img {
     background-color: #365899; /* Darker Facebook Blue */
 }
 
+.submit-button {
+  text-align: center;
+    margin: 0 auto;
+}
+
+.submit-button button {
+    margin: 0 auto; /* Centers the button horizontally */
+    display: inline-block; /* Allows margin auto to work */
+}
+
+.mode-item-submission-content {
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+
+.mode-submission-section {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* for the index page, different from the actual showcase */
+.mode-submission-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 10px;
+    margin: 20px;
+}
+
+.mode-item-submission {
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    margin: 10px;
+    padding: 15px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    background-color: #222;
+    color: #FFF;
+    transition: background-color 0.3s;
+    position: relative;
+    text-decoration: none;
+    min-width: 300px;
+    min-height: 225px;
+}
+
+.mode-item-submission.locked {
+    background-color: #444; /* Darker background for locked items */
+    color: #777; /* Greyed out text */
+}
+
+.mode-item-submission.locked .mode-title-input,
+.mode-item-submission.locked .mode-description-input {
+    background-color: #555;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.mode-item h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+.mode-title-input {
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    word-wrap: break-word; /* Prevents overflow */
+}
+
+.mode-description-input {
+    margin-bottom: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+    height: auto; /* Allows the height to grow as needed */
+    resize: none; /* Users can adjust vertically */
+    align-self: stretch; /* Ensures input fills container width */
+}
+
+.duplicate-message {
+    color: #FF5733; /* Alert color for duplicates */
+    font-size: 14px;
+    flex-basis: 100%; /* Ensure message takes full width */
+    text-align: center; /* Center-align the duplicate message */
+    margin-top: 5px; /* Space above the duplicate message */
+}
+
+/* Style adjustments for disabled input fields to indicate non-interactivity */
+input[type="text"]:disabled, textarea:disabled {
+    background-color: #555;
+    color: #777;
+    cursor: not-allowed; /* Change cursor to indicate disabled status */
+}
 

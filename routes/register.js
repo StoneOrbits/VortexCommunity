@@ -29,12 +29,20 @@ router.post('/', async (req, res) => {
       return res.redirect('/register');
     }
 
-    const { username, email, password } = req.body;
-
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-    if (existingUser) {
-      req.flash('error', 'Email or username is already taken');
+    if (await User.findOne({ username })) {
+      req.flash('error', 'Username is taken');
       return res.redirect('/register');
+    }
+
+    // null out the email if it was empty, it's not required
+    let emailAddress = null;
+    if (email.length > 0) {
+      if (await User.findOne({ email })) {
+        req.flash('error', 'Email is already registered');
+        return res.redirect('/register');
+      }
+      // todo: validate email more?
+      emailAddress = email;
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -44,21 +52,24 @@ router.post('/', async (req, res) => {
     const verificationToken = crypto.randomBytes(20).toString('hex');
     const encodedToken = encodeURIComponent(verificationToken);
 
-    const newUser = new User({ username, email, password: hashedPassword, verificationToken: verificationToken });
+    const newUser = new User({ username, emailAddress, password: hashedPassword, verificationToken: verificationToken });
     await newUser.save();
 
-    //// Prepare the email content
-    //const emailContent = `Hi ${username}, welcome to Vortex Community! Please verify your email by clicking the following link: https://vortex.community/verify?token=${encodedToken}`;
+    // if they specified an email address
+    if (email) {
+      // Prepare the email content
+      const emailContent = `Hi ${username}, welcome to Vortex Community! Please verify your email by clicking the following link: https://vortex.community/verify?token=${encodedToken}`;
 
-    //// Send email using local system command
-    //const sendMailCommand = `echo "${emailContent}" | sudo /usr/bin/mail -s "Verify Your Email" ${email} -aFrom:postmaster@vortex.community`;
-    //exec(sendMailCommand, (error, stdout, stderr) => {
-    //  if (error) {
-    //    console.error(`exec error: ${error}`);
-    //    return;
-    //  }
-    //  console.log(`Email sent to ${email}`);
-    //});
+      // Send email using local system command
+      const sendMailCommand = `echo "${emailContent}" | sudo /usr/bin/mail -s "Verify Your Email" ${email} -aFrom:postmaster@vortex.community`;
+      exec(sendMailCommand, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        console.log(`Email sent to ${email}`);
+      });
+    }
 
     req.flash('success', 'User registered successfully. You can now log in.');
     res.redirect('/login');

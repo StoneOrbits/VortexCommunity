@@ -6,6 +6,7 @@ var page = segments.length > 0 ? segments[0] : 'home'; // Default to 'home' if n
 var scriptName = 'page_' + page + '.js';
 var scriptPath = '/js/' + scriptName;
 
+// if the script for this page exists then load it
 var script = document.createElement('script');
 script.src = scriptPath;
 script.type = 'module'; // Specify that the script is a module

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <div class="container">
+           <section class="mode-submission-section">
+               <form action="/upload/submit" method="post">
+                   <div class="mode-submission-showcase">
+                       <% modes.forEach((mode, index) => { %>
+                           <%- include('partials/mode-tile-submission', { mode: mode, tempId: index }) %>
+                       <% }); %>
+                   </div>
+                   <div class="submit-button">
+                       <button type="submit">Submit Selected Modes</button>
+                   </div>
+               </form>
+           </section>
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+</body>
+</html>
+

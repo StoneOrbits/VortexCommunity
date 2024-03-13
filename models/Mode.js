@@ -7,17 +7,17 @@ const ModeSchema = new mongoose.Schema({
     required: true
   },
   description: {
-    type: String,
-    required: true
+    type: String
   },
-  modeData: {
+  modeData: { // the json object containing the 1-led mode sorted
     type: mongoose.Schema.Types.Mixed, // or simply 'type: {}'
-    required: true
+    required: true,
+    unique: true
   },
-  file: Buffer,
-  thumbnail: {
-    type: Buffer,
-    required: false // You can make this required if you always want a thumbnail
+  modeDataHash: { // hash of the above data for comparison/lookup
+    type: String,
+    required: true,
+    unique: true
   },
   votes: {
     type: Number,
@@ -38,5 +38,6 @@ const ModeSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Mode', ModeSchema);
+ModeSchema.index({ modeDataHash: 1 }, { unique: true }); // Create an index on modeDataHash
 
+module.exports = mongoose.model('Mode', ModeSchema);

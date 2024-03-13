@@ -14,24 +14,12 @@ router.get('/:modeId', async (req, res) => {
       return res.status(404).render('not-found');
     }
 
-    const jsonFilePath = path.join(__dirname, '../public/modes', `${req.params.modeId}.json`);
-
-    let modeData;
-    try {
-      const data = await fs.readFile(jsonFilePath, 'utf8');
-      modeData = JSON.parse(data);
-    } catch (err) {
-      console.error('Error reading mode data file:', err);
-      // Handle file read error
-    }
-
-    // Base64 encode the JSON data
-    const base64EncodedData = Buffer.from(JSON.stringify(modeData)).toString('base64');
+    // Base64 encode the modeData for use in a URL or other purposes
+    const base64EncodedData = Buffer.from(JSON.stringify(mode.modeData)).toString('base64');
     const lightshowUrl = `https://lightshow.lol/loadMode?data=${base64EncodedData}`;
 
     // Format the upload date
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const uploadDate = new Date(mode.uploadDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const uploadDate = mode.uploadDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
     res.render('mode', {
       mode: mode,

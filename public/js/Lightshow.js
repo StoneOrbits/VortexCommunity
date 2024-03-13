@@ -28,28 +28,18 @@ export default class Lightshow {
     this.boundDraw = this.draw.bind(this);
     this.ctx.fillStyle = 'rgba(0, 0, 0)';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.loadModeData();
-  }
 
-  loadModeData() {
-    // Logic to load the JSON file for this.modeId
-    // For example, fetch the JSON from the server
-    fetch(`/modes/${this.modeId}.json`)
-      .then(response => response.json())
-      .then(modeData => {
-        // hang onto the mode data but also apply it
-        this.modeData = modeData;
-        this.applyModeData();
-      })
-      .catch(error => {
-        console.error('Error loading mode data:', error);
-      });
-  }
-
-  applyModeData() {
-    if (!this.modeData) {
-      return;
+    // New: Load and apply mode data directly if available
+    const modeDataAttr = this.canvas.getAttribute('data-mode');
+    if (modeDataAttr) {
+      this.applyModeData(JSON.parse(modeDataAttr));
+    } else {
+      console.log("no modedata for lightshow " + canvasId);
     }
+  }
+
+  applyModeData(modeData) {
+    this.modeData = modeData;
     var set = new this.vortexLib.Colorset();
     this.modeData.colorset.forEach(hexCode => {
       const normalizedHex = hexCode.replace('0x', '#');
