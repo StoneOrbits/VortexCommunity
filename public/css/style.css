@@ -407,12 +407,13 @@ nav ul li a:hover {
 }
 
 @media (max-width: 338px) {
-.mode-profile-button {
-    text-decoration: none;
-    color: #FFF;
-    margin-top: 10px;
-    margin-left: 5px;
-    font-size: 12px;
+  .mode-profile-button {
+      text-decoration: none;
+      color: #FFF;
+      margin-top: 10px;
+      margin-left: 5px;
+      font-size: 12px;
+  }
 }
 
 .edit-details-btn {
