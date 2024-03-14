@@ -6,12 +6,7 @@
     <%- include('partials/nav') %>
     <main>
         <section class="mode-profile-page">
-            <h2><%= mode.name %></h2>
-            <h5>Uploaded by <a href="/user/<%= mode.createdBy._id %>"><%= mode.createdBy.username %></a> on <%= uploadDate %></h5>
-            <a class="mode-profile-header">
-                <p><%= mode.description %></p>
-            </a>
-            <div class="mode-profile-details">
+            <div class="mode-icons">
                 <form action="/mode/<%= mode._id %>/<%= user && mode.upvotedBy.includes(user._id) ? 'unvote' : 'upvote' %>" method="post" class="votes-container">
                     <button type="submit" class="icon-button">
                         <img src="<%= user && mode.upvotedBy.includes(user._id) ? '/images/color-upvote-icon.png' : '/images/bw-upvote-icon.png' %>" alt="Upvote" class="upvote-icon">
@@ -23,25 +18,41 @@
                         <img src="<%= user && user.favorites.includes(mode._id.toString()) ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
                     </button>
                 </form>
-                <a href="<%= lightshowUrl %>" id="openOnLightshow" class="mode-profile-button">Open on lightshow.lol →</a>
+            </div>
+            <h2 class="mode-title"><%= mode.name %></h2>
+            <div class="mode-profile-header">
+                <p>Uploaded by <a href="/user/<%= mode.createdBy._id %>"><%= mode.createdBy.username %></a> on <%= uploadDate %></p>
+            </div>
+            <div class="mode-profile-details">
+                <p><%= mode.description %></p>
+                <% if (user && user._id.toString() === mode.createdBy._id.toString()) { %>
+                  <a href="/mode/<%= mode._id %>/edit" class="edit-mode-link">Edit</a>
+                  <a href="#" class="delete-mode-link" onclick="confirmDelete()">Delete</a>
+                <% } %>
+            <!-- Confirmation Modal HTML (hidden by default) -->
+            <div id="deleteConfirmModal" style="display:none;">
+                <p>Are you sure you want to delete this mode?</p>
+                <button onclick="document.getElementById('deleteForm').submit();">Yes, Delete</button>
+                <button onclick="document.getElementById('deleteConfirmModal').style.display='none';">Cancel</button>
+            </div>
             </div>
             <div class="mode-profile-actions">
-                <% if (user && user._id.toString() === mode.createdBy.toString()) { %>
-                    <form action="/mode/<%= mode._id %>/edit" method="get">
-                        <button class="mode-profile-button" type="submit">Edit Details</button>
-                    </form>
-                    <form action="/mode/<%= mode._id %>/delete" method="post">
-                        <button class="mode-profile-button" type="submit">Delete</button>
-                    </form>
-                <% } %>
-            </div>
-            <div class="mode-profile-download-button">
+                <a href="<%= lightshowUrl %>" id="openOnLightshow" class="mode-profile-button lightshow-button">Open on lightshow.lol →</a>
                 <% if (user) { %>
-                    <a href="/mode/<%= mode._id %>/download" download>Download</a>
+                    <a href="/mode/<%= mode._id %>/download" class="mode-profile-button download-button">Download</a>
                 <% } else { %>
-                    <a href="/login">Login to Download</a>
+                    <a href="/login" class="mode-profile-button download-button-disabled">Login to Download</a>
                 <% } %>
             </div>
+            <script>
+              function confirmDelete() {
+                var modal = document.getElementById('deleteConfirmModal');
+                modal.style.display = 'block';
+              }
+            </script>
+            <!-- Hidden form for deletion -->
+            <form id="deleteForm" action="/mode/<%= mode._id %>/delete" method="post" style="display:none;">
+            </form>
             <div class="mode-profile-led-strip-container">
                 <%- include('partials/lightshow', { mode: mode }) %>
             </div>

@@ -5,27 +5,30 @@
     <%- include('partials/header') %>
     <%- include('partials/nav') %>
     <main>
-        <section class="mode-edit-page">
-            <h2>Edit Mode: <%= mode.name %></h2>
-            <form action="/mode/<%= mode._id %>/edit" method="post">
-                <div class="form-group">
-                    <label for="modeName">Name:</label>
-                    <input type="text" id="modeName" name="modeName" value="<%= mode.name %>" required>
-                </div>
-                <div class="form-group">
-                    <label for="modeDescription">Description:</label>
-                    <textarea id="modeDescription" name="modeDescription" rows="4" required><%= mode.description %></textarea>
-                </div>
-                <!-- Add more fields here as needed -->
-                <div class="form-group">
-                    <button type="submit">Save Changes</button>
-                    <a href="/mode/<%= mode._id %>">Cancel</a>
-                </div>
-            </form>
-        </section>
+        <div class="container">
+            <section class="mode-edit-section">
+                <form action="/mode/<%= mode._id %>/edit" method="post">
+                    <h2>Edit Mode: <%= mode.name %></h2>
+                    <div class="form-group">
+                        <label for="modeName">Name:</label>
+                        <input type="text" id="modeName" name="modeName" value="<%= mode.name %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modeDescription">Description:</label>
+                        <textarea id="modeDescription" name="modeDescription" rows="4" required><%= mode.description %></textarea>
+                    </div>
+                    <!-- Add more fields here as needed -->
+                    <div class="form-group">
+                        <button type="submit">Save Changes</button>
+                    </div>
+                    <div class="form-group">
+                        <a href="/mode/<%= mode._id %>">Cancel</a>
+                    </div>
+                </form>
+            </section>
+        </div>
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
 </body>
 </html>
-

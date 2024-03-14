@@ -330,7 +330,58 @@ nav ul li a:hover {
 }
 
 .mode-profile-header {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.edit-mode-link,
+.delete-mode-link {
+    color: #FFFFFF;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block; /* Aligns links next to each other */
+    margin: 0px;
+}
+
+.mode-profile-actions {
+    display: flex;
+    justify-content: flex-end; /* Aligns buttons to the right */
+    position: absolute;
+    bottom: 80px; /* Adjust based on your layout */
+    right: 20px;
+}
+
+.mode-title {
+  margin-top: 0px;
+}
+
+.mode-icons {
+    margin: 0px;
+    position: relative; /* This makes it the reference for absolute positioning */
+    height: 0; /* It doesn't take up space */
+    width: 100%; /* Adjust the width as needed */
+}
+
+.mode-profile-button {
+    text-decoration: none;
+    color: #FFF;
+    margin-top: 10px; /* Adds spacing between buttons */
+    margin-left: 10px; /* Adds spacing between buttons */
+}
+
+.lightshow-button {
+    background-color: #1abc9c; /* Teal background */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    margin-right: 10px; /* Adds spacing between this button and the next */
+}
+
+.lightshow-button:hover {
+    background-color: #16a085; /* A slightly darker teal on hover */
 }
 
 .mode-profile-blurb {
@@ -344,50 +395,37 @@ nav ul li a:hover {
 
 .mode-profile-details {
     margin: 20px 0;
+    padding-bottom: 50px;
 }
 
-.mode-profile-actions button,
-.mode-profile-actions a {
-    margin-right: 10px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+.edit-details-btn {
+    background-color: #4CAF50; /* Green background for edit button */
+    color: white;
 }
 
-.mode-profile-actions a {
-    text-decoration: none;
-    color: #FFF;
-    border: 1px solid #FFF;
+.delete-mode-btn {
+    color: red;
+    font-size: 24px;
+    padding: 0 5px; /* Reduce padding for alignment */
 }
 
-.mode-profile-actions a:hover,
-.mode-profile-actions button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+.edit-mode-btn img, .delete-mode-btn {
+    height: 20px; /* Standardize icon size */
 }
 
 .mode-profile-download-button {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    margin-right: 80px;
-    margin-left: 80px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.mode-profile-download-button a {
+    background-color: #007bff; /* Blue background */
+    color: white;
+    padding: 10px 20px;
     text-decoration: none;
-    color: #FFF;
+    border-radius: 5px;
+    display: inline-block; /* Aligns with other inline or inline-block elements */
+    margin-top: 20px; /* Space from the top elements */
+    transition: background-color 0.3s; /* Smooth transition */
 }
 
-.mode-profile-button {
-    margin-bottom: 10px;
-}
-
-.mode-profile-button:last-child {
-    margin-right: 0;
+.mode-profile-download-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
 }
 
 .mode-profile-led-strip-container {
@@ -409,8 +447,8 @@ nav ul li a:hover {
 
 .votes-container {
     position: absolute;
-    top: 10px;
-    right: 40px; /* Adjust as needed */
+    top: 0px;
+    right: 30px; /* Adjust as needed */
 }
 
 .upvote-icon {
@@ -425,8 +463,8 @@ nav ul li a:hover {
 
 .favorite-icon {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 0px;
+    right: 0px;
     width: 20px; /* Adjust as needed */
     height: 20px; /* Adjust as needed */
 }
@@ -692,6 +730,16 @@ img {
     grid-gap: 15px;
 }
 
+.mode-edit-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto; /* Centers the section */
+    padding: 20px;
+    border-radius: 10px; /* Optional styling */
+    color: #fff; /* Ensures text is visible against the dark background */
+}
+
 /* Form Group Styling */
 .form-group {
     display: flex;
@@ -885,4 +933,5 @@ input[type="text"]:disabled, textarea:disabled {
     color: #777;
     cursor: not-allowed; /* Change cursor to indicate disabled status */
 }
+
 

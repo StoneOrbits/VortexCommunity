@@ -88,14 +88,8 @@ router.post('/:modeId/delete', ensureAuthenticated, async (req, res) => {
     if (mode.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).send('Unauthorized');
     }
-    const modePath = path.join(__dirname, '../public/modes/', mode._id + '.vtxmode');
-    const modeJsonPath = path.join(__dirname, '../public/modes/', mode._id + '.json');
-    if (fs.existsSync(modePath)) {
-      fs.unlinkSync(modePath);
-    }
-    if (fs.existsSync(modeJsonPath)) {
-      fs.unlinkSync(modeJsonPath);
-    }
+
+    // Directly delete the mode from the database
     await Mode.deleteOne({ _id: req.params.modeId });
     res.redirect('/modes');
   } catch (err) {
