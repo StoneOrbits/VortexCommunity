@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Mode = require('../models/Mode');
-const User = require('../models/User');
-const { ensureAuthenticated } = require('../middleware/checkAuth');
-const fs = require('fs').promises;
+const fs = require('fs').promises; // Using the promise-based version of fs
 const path = require('path');
-
+const Mode = require('../models/Mode');
+const { ensureAuthenticated } = require('../middleware/checkAuth');
+const tmp = require('tmp-promise'); // Using tmp-promise for handling temporary files with promises
+const { exec } = require('child_process');
+const util = require('util');
+const execAsync = util.promisify(exec);
 
 router.get('/:modeId', async (req, res) => {
   try {
@@ -206,34 +208,61 @@ router.post('/create', async (req, res) => {
 });
 
 // Download mode
-router.get('/:modeId/download', async (req, res) => {
-  const modeId = req.params.modeId;
-
+router.get('/:modeId/download', ensureAuthenticated, async (req, res) => {
   try {
-    // Fetch the mode from the database
-    const mode = await Mode.findOne({ _id: modeId });
+    const mode = await Mode.findOne({ _id: req.params.modeId });
     if (!mode) {
       return res.status(404).send('Mode not found');
     }
 
-    const filePath = path.join(__dirname, '../public/modes', `${modeId}.vtxmode`);
+    // Create a temporary file for the output .vtxmode
+    const tempVtxmodeFile = await tmp.file({ postfix: '.vtxmode' });
 
-    // Check if the file exists
-    fs.stat(filePath, (err, stats) => {
-      if (err) {
-        console.error(err);
-        return res.status(404).send('File not found');
-      }
+    // wrapp the mode data in a vortex savefile so the CLI can parse it
+    // TODO: honestly the CLI should just accept the modedata json, I'll do it later
+    const wrappedModeData = {
+      version_major: 1, version_minor: 1, brightness: 255, global_flags: 0, num_modes: 1,
+      modes: [{ flags: 2, num_leds: 1, single_pats: [ mode.modeData ] }],
+    };
+    const modeDataJson = JSON.stringify(wrappedModeData);
+    const command = `/usr/local/bin/vortex --silent --quick --led-count 1 --write-mode ${tempVtxmodeFile.path} --json-in`;
 
-      // Set the content disposition header to specify the filename
-      res.setHeader('Content-Disposition', `attachment; filename=${mode.name}.vtxmode`);
+    // Using child_process.spawn to stream the JSON directly into the vortex tool
+    const vortex = require('child_process').spawn(command, [], { shell: true, stdio: ['pipe', 'ignore', 'pipe'] });
 
-      // Pipe the file to the response
-      fs.createReadStream(filePath).pipe(res);
+    vortex.stderr.on('data', (data) => {
+      console.error('Vortex STDERR:', data.toString());
     });
+
+    vortex.on('error', (error) => {
+      console.error('Spawn error:', error);
+      return res.status(500).send('Conversion error');
+    });
+
+    vortex.on('close', (code) => {
+      if (code === 0) {
+        // If the command executed successfully, send the .vtxmode file as a download
+        res.download(tempVtxmodeFile.path, `${mode.name.replace(/\s+/g, '_')}.vtxmode`, async (err) => {
+          if (err) {
+            console.error('Error sending file:', err);
+          }
+          // Cleanup temporary file after sending it or in case of error
+          await tempVtxmodeFile.cleanup();
+        });
+      } else {
+        console.error('Vortex process exited with code:', code);
+        tempVtxmodeFile.cleanup(); // Ensure cleanup in case of failure
+        return res.status(500).send('Conversion failed');
+      }
+    });
+
+    // Write the JSON data to the vortex command's stdin and close it to start the process
+    vortex.stdin.write(modeDataJson);
+    vortex.stdin.end();
+
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server Error');
+    res.status(500).send('Server error');
   }
 });
 
