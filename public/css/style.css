@@ -8,7 +8,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between; /* This will position the hamburger menu and the logo/title on opposite ends */
-    padding: 10px; /* Adjust padding as needed */
+    padding: 10px;
     max-width: 1460px;
     margin: 0 auto;
 }
@@ -30,7 +30,7 @@ nav {
     /* Center the navigation and set a max-width */
     margin: 0 auto; /* Center the nav container horizontally */
     max-width: 1460px; /* Set a maximum width for the navigation */
-    padding: 10px 20px; /* Add padding for spacing */
+    padding: 10px 20px;
 }
 
 nav ul {
@@ -62,7 +62,7 @@ nav a:hover {
     /* Center the content and set a max-width on desktop */
     margin: 0 auto; /* Center the .showcase container horizontally */
     max-width: 1400px; /* Set a maximum width for the content */
-    padding: 20px; /* Add padding to create spacing around the content */
+    padding: 20px;
 }
 
 footer {
@@ -73,7 +73,7 @@ footer {
 .mode-title {
     font-size: 20px;
     margin: 0;
-    color: #FFF; /* Adjust the color if needed */
+    color: #FFF;
 }
 
 .mode-list {
@@ -102,7 +102,7 @@ footer {
     padding: 10px;
     border-radius: 5px;
     transition: background-color 0.3s;
-    height: 120px; /* Adjust the height as needed */
+    height: 120px;
     position: relative;
     background-color: #222;
     color: #FFF;
@@ -241,13 +241,13 @@ button:hover {
 }
 
 .search-input {
-    width: 300px; /* Adjust the width as needed */
+    width: 300px;
     max-width: 100%; /* Ensures the input doesn't exceed the container's width */
 }
 
 .search-bar {
     text-align: center; /* Center the search bar */
-    padding: 10px; /* Add some padding around the search bar */
+    padding: 10px;
     margin-bottom: 20px;
     margin-top: 20px;
 }
@@ -348,7 +348,7 @@ nav ul li a:hover {
     display: flex;
     justify-content: flex-end; /* Aligns buttons to the right */
     position: absolute;
-    bottom: 80px; /* Adjust based on your layout */
+    bottom: 80px;
     right: 20px;
 }
 
@@ -360,14 +360,14 @@ nav ul li a:hover {
     margin: 0px;
     position: relative; /* This makes it the reference for absolute positioning */
     height: 0; /* It doesn't take up space */
-    width: 100%; /* Adjust the width as needed */
+    width: 100%;
 }
 
 .mode-profile-button {
     text-decoration: none;
     color: #FFF;
-    margin-top: 10px; /* Adds spacing between buttons */
-    margin-left: 10px; /* Adds spacing between buttons */
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
 .lightshow-button {
@@ -377,7 +377,8 @@ nav ul li a:hover {
     border-radius: 5px;
     transition: background-color 0.3s;
     text-decoration: none;
-    margin-right: 10px; /* Adds spacing between this button and the next */
+    margin-right: 10px;
+    margin-left: 20px;
 }
 
 .lightshow-button:hover {
@@ -396,6 +397,22 @@ nav ul li a:hover {
 .mode-profile-details {
     margin: 20px 0;
     padding-bottom: 50px;
+}
+
+@media (max-width: 768px) {
+  .mode-profile-details {
+      margin: 20px 0;
+      padding-bottom: 80px;
+  }
+}
+
+@media (max-width: 338px) {
+.mode-profile-button {
+    text-decoration: none;
+    color: #FFF;
+    margin-top: 10px;
+    margin-left: 5px;
+    font-size: 12px;
 }
 
 .edit-details-btn {
@@ -448,12 +465,12 @@ nav ul li a:hover {
 .votes-container {
     position: absolute;
     top: 0px;
-    right: 30px; /* Adjust as needed */
+    right: 30px;
 }
 
 .upvote-icon {
-    width: 20px; /* Adjust as needed */
-    height: 20px; /* Adjust as needed */
+    width: 20px;
+    height: 20px;
 }
 
 .votes-count {
@@ -465,8 +482,8 @@ nav ul li a:hover {
     position: absolute;
     top: 0px;
     right: 0px;
-    width: 20px; /* Adjust as needed */
-    height: 20px; /* Adjust as needed */
+    width: 20px;
+    height: 20px;
 }
 
 .icon-button {
@@ -522,7 +539,7 @@ nav ul li a:hover {
     .nav-menu ul li {
         display: block; /* Ensure list items stack vertically */
         text-align: center;
-        padding: 10px 20px; /* Adjust padding as necessary */
+        padding: 10px 20px;
     }
 
     header h1 {
@@ -538,8 +555,8 @@ nav ul li a:hover {
     .hamburger {
         display: block;
         position: absolute; /* Position the hamburger menu independently */
-        top: 20px; /* Adjust as needed */
-        right: 20px; /* Adjust as needed */
+        top: 20px;
+        right: 20px;
     }
 
     .hamburger div {
@@ -550,7 +567,6 @@ nav ul li a:hover {
         transition: 0.4s;
     }
 
-    /* Adjust search input if necessary */
     .search-input {
         width: 100%;
     }
@@ -669,7 +685,6 @@ img {
         padding: 10px; /* Reduce padding on smaller screens */
     }
 
-    /* Adjust section and container widths */
     .button-container, .device-content, .image-gallery {
         width: 100%; /* Ensure these elements don't exceed the screen width */
         box-sizing: border-box; /* Include padding and border in the element's total width */
@@ -704,7 +719,7 @@ img {
 
 .device-image {
     width: 100%;
-    max-width: 200px; /* Adjust as needed */
+    max-width: 200px;
     padding: 10px;
     margin-bottom: 15px;
 }
@@ -782,7 +797,7 @@ img {
 }
 
 .editor-screenshot, .firmware-screenshot {
-    width: auto; /* Adjust width to be flexible */
+    width: auto;
     height: 350px; /* Set a fixed height to maintain aspect ratio without stretching */
     object-fit: contain; /* Ensure content fits without being cropped or distorted */
     display: block; /* Ensure images are block-level for correct spacing */
@@ -802,14 +817,14 @@ img {
         flex-basis: 100%; /* Allow each image to take full width on smaller screens */
         max-width: 100%; /* Ensure images are responsive */
         height: auto; /* Maintain aspect ratio */
-        flex-basis: calc(50% - 10px); /* Adjust this value as needed, considering the gap */
+        flex-basis: calc(50% - 10px);
     }
 }
 
 .content-container {
-    max-width: 800px; /* Adjust as needed */
+    max-width: 800px;
     margin: auto; /* Centers the container */
-    padding: 20px; /* Adds some spacing inside the container */
+    padding: 20px;
     text-align: left; /* Ensures text alignment is readable */
 }
 
@@ -818,7 +833,7 @@ img {
     flex-direction: column;
     align-items: center; /* Center align the content for wider screens */
     justify-content: start;
-    padding: 50px 0; /* Adds vertical padding for spacing */
+    padding: 50px 0;
 }
 
 .fb-login-button button {
