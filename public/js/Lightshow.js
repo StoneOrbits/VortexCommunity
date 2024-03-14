@@ -1,93 +1,92 @@
 export default class Lightshow {
-  static instanceCount = 0;
+  static count = 0;
 
-  // constructor for draw6
-  constructor(vortexLib, canvasId, configurableSectionCount = 100) {
-    this.id = Lightshow.instanceCount++;
+  constructor(vortexLib, canvasId, sectionCount = 100) {
+    this.id = Lightshow.count++;
+    this.setupCanvas(canvasId);
+    this.initializeVortex(vortexLib);
+    this.configureDisplay(sectionCount);
+    this.loadModeData();
+  }
+
+  setupCanvas(canvasId) {
     this.canvas = document.getElementById(canvasId);
-    if (!this.canvas) {
-      throw new Error(`Canvas with ID ${canvasId} not found`);
-    }
+    if (!this.canvas) throw new Error(`Canvas with ID ${canvasId} not found`);
+
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
-    this.modeId = canvasId.split('_')[1];
     this.ctx = this.canvas.getContext('2d');
-    this.history = [];
+    this.clearCanvas();
+    this.modeId = canvasId.split('_')[1];
+  }
+
+  initializeVortex(vortexLib) {
     this.vortexLib = vortexLib;
     this.vortex = new vortexLib.Vortex();
     this.vortex.init();
     this.vortex.setLedCount(1);
     this.modes = this.vortex.engine().modes();
-    // Run the first tick, at the moment I'm not quite sure why this first
-    // tick is spitting out the color red instead of whatever it's supposed to be
-    // I think it's just a wasm thing though so I'll find it later
-    this.vortexLib.RunTick(this.vortex);
-    this.animationFrameId = null;
-    this.configurableSectionCount = configurableSectionCount;
-    this.sectionWidth = this.canvas.width / this.configurableSectionCount;
-    this.boundDraw = this.draw.bind(this);
-    this.ctx.fillStyle = 'rgba(0, 0, 0)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.vortexLib.RunTick(this.vortex); // Initial tick
+  }
 
-    // New: Load and apply mode data directly if available
+  configureDisplay(sectionCount) {
+    this.sectionCount = sectionCount;
+    this.sectionWidth = this.canvas.width / this.sectionCount;
+    this.history = [];
+    this.boundDraw = this.draw.bind(this);
+    this.animationFrameId = null;
+  }
+
+  loadModeData() {
     const modeDataAttr = this.canvas.getAttribute('data-mode');
     if (modeDataAttr) {
       this.applyModeData(JSON.parse(modeDataAttr));
     } else {
-      console.log("no modedata for lightshow " + canvasId);
+      console.log("No mode data for lightshow " + this.canvas.id);
     }
+  }
+
+  clearCanvas() {
+    this.ctx.fillStyle = 'rgba(0, 0, 0)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   applyModeData(modeData) {
     this.modeData = modeData;
-    var set = new this.vortexLib.Colorset();
-    this.modeData.colorset.forEach(hexCode => {
-      const normalizedHex = hexCode.replace('0x', '#');
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalizedHex);
-      if (result) {
-        set.addColor(new this.vortexLib.RGBColor(
-          parseInt(result[1], 16),
-          parseInt(result[2], 16),
-          parseInt(result[3], 16)
+    let colorSet = new this.vortexLib.Colorset();
+
+    modeData.colorset.forEach(hex => {
+      let color = hex.replace('0x', '#');
+      let rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+      if (rgb) {
+        colorSet.addColor(new this.vortexLib.RGBColor(
+          parseInt(rgb[1], 16),
+          parseInt(rgb[2], 16),
+          parseInt(rgb[3], 16)
         ));
       }
     });
-    // grab the 'preview' mode for the current mode (randomizer)
-    let demoMode = this.modes.curMode();
-    if (!demoMode) {
-      return;
-    }
-    // set the colorset of the demo mode
-    demoMode.setColorset(set, this.ledCount());
-    // set the pattern of the demo mode to the selected dropdown pattern on all LED positions
-    // with null args and null colorset (so they are defaulted and won't change)
-    let patID = this.vortexLib.intToPatternID(this.modeData.pattern_id);
-    demoMode.setPattern(patID, this.ledCount(), null, null);
-    let args = new this.vortexLib.PatternArgs();
-    for (let i = 0; i < this.modeData.args.length; ++i) {
-      args.addArgs(this.modeData.args[i]);
-    }
-    this.vortex.setPatternArgs(this.ledCount(), args, false);
-    // re-initialize the demo mode so it takes the new args into consideration
-    demoMode.init();
+
+    let previewMode = this.getCurrentMode();
+    if (!previewMode) return;
+
+    previewMode.setColorset(colorSet, this.ledCount());
+    this.setPatternAndArgs(previewMode);
   }
 
-  set tickRate(value) {
-    const intValue = parseInt(value, 10);
-    this._tickRate = intValue > 0 ? intValue : 1;
+  getCurrentMode() {
+    return this.modes.curMode();
   }
 
-  get tickRate() {
-    return this._tickRate || 1;
-  }
+  setPatternAndArgs(mode) {
+    let patternId = this.vortexLib.intToPatternID(this.modeData.pattern_id);
+    mode.setPattern(patternId, this.ledCount(), null, null);
 
-  set trailSize(value) {
-    const intValue = parseInt(value, 10);
-    this._trailSize = intValue > 0 ? intValue : 1;
-  }
+    let patternArgs = new this.vortexLib.PatternArgs();
+    this.modeData.args.forEach(arg => patternArgs.addArgs(arg));
+    this.vortex.setPatternArgs(this.ledCount(), patternArgs, false);
 
-  get trailSize() {
-    return this._trailSize || 100;
+    mode.init(); // Re-initialize to apply new args
   }
 
   ledCount() {
@@ -97,33 +96,24 @@ export default class Lightshow {
   draw() {
     if (this._pause) return;
 
-    // Clear the canvas with a slight opacity for a fading effect
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    const sectionWidth = this.canvas.width / this.configurableSectionCount; // Define this value as per your requirement
-    const movementSpeed = sectionWidth; // Each tick moves one section width
+    const newColor = this.vortexLib.RunTick(this.vortex);
+    if (newColor) this.history.push({ color: newColor[0], x: 0, opacity: 1 });
 
-    // Generate a new color or create a gap
-    const led = this.vortexLib.RunTick(this.vortex);
-    if (led) {
-      this.history.push({ color: led[0], x: 0, opacity: 1 });
-    }
+    this.history.forEach(segment => this.drawSegment(segment));
 
-    // Draw the sections
-    this.history.forEach((segment, index) => {
-      if (segment.color.red !== 0 || segment.color.green !== 0 || segment.color.blue !== 0) { // Check if color is not 'off'
-        this.ctx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, ${segment.opacity})`;
-        this.ctx.fillRect(segment.x, 0, sectionWidth, this.canvas.height);
-      }
-
-      segment.x += movementSpeed;
-    });
-
-    // Remove segments that moved off the canvas
     this.history = this.history.filter(segment => segment.x < this.canvas.width);
-
     this.animationFrameId = requestAnimationFrame(this.boundDraw);
+  }
+
+  drawSegment(segment) {
+    if (segment.color.red !== 0 || segment.color.green !== 0 || segment.color.blue !== 0) {
+      this.ctx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, ${segment.opacity})`;
+      this.ctx.fillRect(segment.x, 0, this.sectionWidth, this.canvas.height);
+    }
+    segment.x += this.sectionWidth;
   }
 
   start() {
