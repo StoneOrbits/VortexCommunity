@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs').promises; // Using the promise-based version of fs
 const path = require('path');
+const User = require('../models/User');
 const Mode = require('../models/Mode');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 const tmp = require('tmp-promise'); // Using tmp-promise for handling temporary files with promises
