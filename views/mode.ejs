@@ -36,7 +36,11 @@
                 <% } %>
             </div>
             <div class="mode-profile-download-button">
-                <a href="/mode/<%= mode._id %>/download" download>Download</a>
+                <% if (user) { %>
+                    <a href="/mode/<%= mode._id %>/download" download>Download</a>
+                <% } else { %>
+                    <a href="/login">Login to Download</a>
+                <% } %>
             </div>
             <div class="mode-profile-led-strip-container">
                 <%- include('partials/lightshow', { mode: mode }) %>

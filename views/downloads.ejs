@@ -16,7 +16,7 @@
               <div class="button-container">
                   <p class="device-description">Released on <%= latestDownloads['desktop']['editor'].releaseDate %></p>
                   <p class="device-description">Latest editor version: <%= latestDownloads['desktop']['editor'].version %></p>
-                  <% if (req.user || 1) { %>
+                  <% if (user || 1) { %>
                     <a href="<%= latestDownloads['desktop']['editor'].fileUrl %>" class="download-button">Download Editor</a>
                   <% } else { %>
                     <a href="/login" class="download-button-disabled">Login to Download</a>
@@ -33,7 +33,7 @@
                             <h3>Vortex <%= device.charAt(0).toUpperCase() + device.slice(1) %></h3>
                             <p class="device-description">Released on <%= latestDownloads[device]['firmware'].releaseDate %></p>
                             <p class="device-description">Latest firmware version: <%= latestDownloads[device]['firmware'].version %></p>
-                            <% if (req.user || 1) { %>
+                            <% if (user || 1) { %>
                               <a href="<%= latestDownloads[device]['firmware'].fileUrl %>" class="download-button">Download Latest Firmware</a>
                             <% } else { %>
                               <a href="/login" class="download-button-disabled">Login to Download</a>
