@@ -153,7 +153,6 @@ label {
 }
 
 input[type="text"], textarea, input[type="file"] {
-    width: 100%;
     padding: 10px;
     border: 1px solid #888;
     background-color: #222;
@@ -200,22 +199,6 @@ button:hover {
 .form-group label {
     display: block;
     margin-bottom: 10px;
-}
-
-.form-group input {
-    width: 100%;
-    max-width: 100%; /* Ensure the input fields don't stretch beyond their container */
-    padding: 10px;
-    border: 1px solid #FFFFFF;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #FFFFFF;
-    transition: background-color 0.3s;
-}
-
-.form-group input:focus {
-    outline: none;
-    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .login-button, .register-button, .upload-button {
@@ -767,8 +750,8 @@ img {
     margin-bottom: 5px;
 }
 
-.form-group input[type="text"],
-.form-group textarea {
+.form-group input, .form-group textarea {
+    width: 100%;
     background-color: #333;
     color: #FFF;
     border: 1px solid #888;
@@ -777,7 +760,7 @@ img {
     margin-bottom: 10px;
 }
 
-.form-group input[type="text"]:focus,
+.form-group input:focus,
 .form-group textarea:focus {
     outline: none;
     border-color: #f1c40f;
@@ -950,4 +933,51 @@ input[type="text"]:disabled, textarea:disabled {
     cursor: not-allowed; /* Change cursor to indicate disabled status */
 }
 
+.feedback {
+  margin-top: 8px; /* Adjust the value as needed */
+}
+
+.admin-panel {
+  max-width: 800px; /* Adjust based on your preference */
+  margin: 0 auto; /* Center the panel */
+  margin-top: 20px;
+  padding: 50px;
+  border-radius: 8px; /* Optional: adds rounded corners */
+  box-shadow: 0 6px 9px rgba(0,0,0,0.8); /* Optional: adds a subtle shadow */
+}
+
+.admin-panel h2 {
+  text-align: center;
+}
+
+.admin-panel table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.admin-panel th, .admin-panel td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ddd; /* Adds a line between rows */
+}
+
+.admin-panel th {
+  color: white;
+}
+
+.admin-panel button {
+  background-color: #007bff; /* Button background color */
+  color: white; /* Button text color */
+  margin: 5px 5px;
+  margin-left: 10px;
+  margin-right: 0px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.admin-panel button:hover {
+  background-color: #0056b3; /* Darker shade for hover */
+}
 

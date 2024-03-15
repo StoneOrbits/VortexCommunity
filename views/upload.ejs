@@ -8,11 +8,11 @@
         <div class="container">
             <section class="login-section">
                 <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                      <label for="modeFile">Upload .vtxmode File(s):</label>
+                    </div>
                     <div class="form-group" id="drop_area">
-                        <label for="modeFile">Upload Mode File(s):</label>
-                        <!-- Modify this input to accept multiple files -->
                         <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
-                        <p>Drag and drop your files here or click to select files.</p>
                     </div>
                     <div class="form-group">
                       <button type="button" class="g-recaptcha"

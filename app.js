@@ -79,6 +79,7 @@ var registerRouter = require('./routes/register');
 var verifyRouter = require('./routes/verify');
 var loginRouter = require('./routes/login');
 var logoutRouter = require('./routes/logout');
+var adminRouter = require('./routes/admin');
 var privacyRouter = require('./routes/privacy');
 var termsRouter = require('./routes/terms');
 
@@ -95,6 +96,7 @@ app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/privacy', privacyRouter);
 app.use('/terms', termsRouter);
+app.use('/control', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
