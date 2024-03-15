@@ -19,7 +19,7 @@ function computeHash(data) {
   return crypto.createHash('sha256').update(data).digest('hex');
 }
 
-router.post('/', ensureAuthenticated, upload.single('modeFile'), async (req, res) => {
+router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res) => {
   const { 'g-recaptcha-response': recaptchaToken } = req.body;
   const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
   const recaptchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecretKey}&response=${recaptchaToken}`;
@@ -32,16 +32,21 @@ router.post('/', ensureAuthenticated, upload.single('modeFile'), async (req, res
       return res.status(400).send("reCAPTCHA validation failed.");
     }
 
-    const filePath = req.file.path;
-    const output = execSync(`/bin/bash -c "/usr/local/bin/vortex --silent --quick --load-save ${filePath} --json-out"`);
-    const jsonData = JSON.parse(output.toString());
-
-    if (!jsonData.modes || jsonData.modes.length <= 0) {
-      throw new Error("Invalid JSON data");
-    }
-
     let set = new Set();
-    const processedPatterns = await prepareModesForSession(jsonData, set); // Refactored to handle async processing
+    let processedPatterns = []; // Initialize as an array
+    for (const file of req.files) {
+      const filePath = file.path;
+      const fileName = path.basename(file.originalname, path.extname(file.originalname));
+      const output = execSync(`/bin/bash -c "/usr/local/bin/vortex --silent --quick --load-save ${filePath} --json-out"`);
+      const jsonData = JSON.parse(output.toString());
+
+      if (!jsonData.modes || jsonData.modes.length <= 0) {
+        throw new Error("Invalid JSON data");
+      }
+
+      // Use the spread operator to concatenate arrays
+      processedPatterns = processedPatterns.concat(await prepareModesForSession(jsonData, set, fileName)); // Correctly accumulate patterns
+    }
 
     req.session.temporaryModes = processedPatterns;
     res.redirect('/upload/submit');
@@ -69,10 +74,10 @@ function sortObjectKeys(obj) {
   return sortedObj;
 }
 
-async function prepareModesForSession(jsonData, processedSet) {
+async function prepareModesForSession(jsonData, processedSet, fileName) {
   const processedPatternsPromises = jsonData.modes[0].single_pats.map(async (patData, index) => {
     // Process each pattern data asynchronously
-    const processedData = await processPatternData(patData, processedSet);
+    const processedData = await processPatternData(patData, processedSet, fileName);
     return processedData ? { id: index, ...processedData } : null;
   });
 
@@ -84,7 +89,7 @@ async function prepareModesForSession(jsonData, processedSet) {
 }
 
 // Assuming processedSet is a Set of modeDataHashes for quick in-memory duplicate checks
-async function processPatternData(patData, processedSet) {
+async function processPatternData(patData, processedSet, fileName) {
     if (patData.colorset.length === 0 || patData.pattern_id === -1 || patData.pattern_id === 255) {
         return null; // Skip invalid modes
     }
@@ -107,8 +112,9 @@ async function processPatternData(patData, processedSet) {
     // Return the pattern data with an additional isDuplicate flag
     return {
         modeData: sortedPatData,
-        modeDataHash,
+        modeDataHash: modeDataHash,
         isDuplicate: !!existingMode,
+        fileName: fileName,
     };
 }
 

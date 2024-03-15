@@ -4,7 +4,7 @@
         <input type="checkbox" name="selectedModes[]" value="<%= tempId %>" <%= mode.isDuplicate ? 'disabled' : '' %> checked>
         <!-- Assuming a loop over modes, with 'i' being the current index -->
         <input type="hidden" name="modeIds[]" value="<%= tempId %>" <%= mode.isDuplicate ? 'disabled' : '' %> />
-        <input type="text" class="mode-title-input" name="modeNames[<%= tempId %>]" placeholder="Enter mode name" value="Mode <%= tempId + 1 %>" required <%= mode.isDuplicate ? 'disabled' : '' %>>
+        <input type="text" class="mode-title-input" name="modeNames[<%= tempId %>]" placeholder="Enter mode name" value="<%= fileName %> <%= tempId + 1 %>" required <%= mode.isDuplicate ? 'disabled' : '' %>>
         <textarea class="mode-description-input" name="modeDescriptions[<%= tempId %>]" placeholder="Enter description" rows="2" <%= mode.isDuplicate ? 'disabled' : '' %>></textarea>
         <% if(mode.isDuplicate) { %>
             <div class="duplicate-message">This mode already exists and cannot be submitted again.</div>

@@ -8,12 +8,16 @@
         <div class="container">
             <section class="login-section">
                 <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="modeFile">Upload Mode File:</label>
-                        <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" required>
+                    <div class="form-group" id="drop_area">
+                        <label for="modeFile">Upload Mode File(s):</label>
+                        <!-- Modify this input to accept multiple files -->
+                        <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
+                        <p>Drag and drop your files here or click to select files.</p>
                     </div>
                     <div class="form-group">
-                      <button class="g-recaptcha" data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk" data-callback='onSubmit' data-action='submit'>Upload</button>
+                      <button type="button" class="g-recaptcha"
+                              data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk"
+                              data-callback='onSubmit' data-action='submit'>Upload</button>
                     </div>
                 </form>
             </section>
@@ -25,6 +29,46 @@
     <script>
       function onSubmit(token) {
         document.getElementById("uploadForm").submit();
+      }
+
+      // JavaScript for handling drag and drop
+      const dropArea = document.getElementById('drop_area');
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false)
+      });
+
+      function preventDefaults (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // Highlight drop area when item is dragged over it
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false)
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false)
+      });
+
+      function highlight(e) {
+        dropArea.classList.add('highlight');
+      }
+
+      function unhighlight(e) {
+        dropArea.classList.remove('highlight');
+      }
+
+      // Handle dropped files
+      dropArea.addEventListener('drop', handleDrop, false);
+
+      function handleDrop(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+
+        // Process the files
+        document.getElementById('modeFile').files = files;
       }
     </script>
 </body>

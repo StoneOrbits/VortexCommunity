@@ -10,7 +10,7 @@
                <form action="/upload/submit" method="post">
                    <div class="mode-submission-showcase">
                        <% modes.forEach((mode, index) => { %>
-                           <%- include('partials/mode-tile-submission', { mode: mode, tempId: index }) %>
+                           <%- include('partials/mode-tile-submission', { mode: mode, tempId: index, fileName: mode.fileName}) %>
                        <% }); %>
                    </div>
                    <div class="submit-button">
