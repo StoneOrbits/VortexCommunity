@@ -142,6 +142,15 @@ footer {
     margin-bottom: 10px; /* Ensures spacing between this and any elements below */
 }
 
+.lightshow-container {
+    overflow: hidden; /* Add this to hide overflowing content */
+    box-sizing: border-box; /* Include padding and border in the element's size */
+    height: 40px;
+    width: 100%; /* Example width */
+    padding: 0; /* Adjust padding as needed */
+    margin: 0 auto; /* Center the container, remove margin if not needed */
+}
+
 .form-group {
     margin-bottom: 20px;
 }

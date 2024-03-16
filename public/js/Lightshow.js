@@ -1,23 +1,34 @@
 export default class Lightshow {
   static count = 0;
 
-  constructor(vortexLib, canvasId, sectionCount = 100) {
+  constructor(vortexLib, canvasId, sectionCount = 20) {
     this.id = Lightshow.count++;
     this.setupCanvas(canvasId);
+    this.setupOffScreenCanvas(canvasId);
     this.initializeVortex(vortexLib);
     this.configureDisplay(sectionCount);
     this.loadModeData();
+    this.clearCanvas();
   }
 
-  setupCanvas(canvasId) {
+  setupCanvas(canvasId, width, height) {
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) throw new Error(`Canvas with ID ${canvasId} not found`);
 
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    const container = this.canvas.parentElement; // Get the container of the canvas
+    // Set the canvas dimensions based on its container size
+    this.canvas.width = container.offsetWidth;
+    this.canvas.height = container.offsetHeight;
+
     this.ctx = this.canvas.getContext('2d');
-    this.clearCanvas();
     this.modeId = canvasId.split('_')[1];
+  }
+
+  setupOffScreenCanvas(canvasId, width, height) {
+    this.offScreenCanvas = document.createElement('canvas');
+    this.offScreenCanvas.width = this.canvas.width;
+    this.offScreenCanvas.height = this.canvas.height;
+    this.offCtx = this.offScreenCanvas.getContext('2d');
   }
 
   initializeVortex(vortexLib) {
@@ -47,8 +58,8 @@ export default class Lightshow {
   }
 
   clearCanvas() {
-    this.ctx.fillStyle = 'rgba(0, 0, 0)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.offCtx.fillStyle = 'rgba(0, 0, 0)';
+    this.offCtx.fillRect(0, 0, this.offScreenCanvas.width, this.offScreenCanvas.height);
   }
 
   applyModeData(modeData) {
@@ -96,22 +107,29 @@ export default class Lightshow {
   draw() {
     if (this._pause) return;
 
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // Perform drawing operations on the off-screen canvas
+    this.offCtx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    this.offCtx.fillRect(0, 0, this.offScreenCanvas.width, this.offScreenCanvas.height);
 
     const newColor = this.vortexLib.RunTick(this.vortex);
-    if (newColor) this.history.push({ color: newColor[0], x: 0, opacity: 1 });
+    if (newColor) {
+      this.history.push({ color: newColor[0], x: 0, opacity: 1 });
+    }
 
     this.history.forEach(segment => this.drawSegment(segment));
 
-    this.history = this.history.filter(segment => segment.x < this.canvas.width);
+    this.history = this.history.filter(segment => segment.x < this.offScreenCanvas.width);
+
+    // Copy the off-screen canvas to the on-screen canvas in one operation
+    this.ctx.drawImage(this.offScreenCanvas, 0, 0);
+
     this.animationFrameId = requestAnimationFrame(this.boundDraw);
   }
 
   drawSegment(segment) {
     if (segment.color.red !== 0 || segment.color.green !== 0 || segment.color.blue !== 0) {
-      this.ctx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, ${segment.opacity})`;
-      this.ctx.fillRect(segment.x, 0, this.sectionWidth, this.canvas.height);
+      this.offCtx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, ${segment.opacity})`;
+      this.offCtx.fillRect(segment.x, 0, this.sectionWidth, this.offScreenCanvas.height);
     }
     segment.x += this.sectionWidth;
   }
