@@ -21,38 +21,44 @@ router.get('/', async (req, res) => {
   res.render('modes', { modes: modesForCurrentPage, user: req.user, currentPage: page, search: req.query.search });
 });
 
-// show the main modes showcase
 router.get('/json', async (req, res) => {
-  // Extracting page and pageSize from query parameters
-  // Defaulting to 1 for page and allowing pageSize to be specified by the client
-  const page = parseInt(req.query.page || 1, 10);
-  const pageSize = parseInt(req.query.pageSize || 10, 10); // Default size is 10
-  const searchQuery = req.query.search;
+  try {
+    // Extracting page and pageSize from query parameters
+    // Defaulting to 1 for page and allowing pageSize to be specified by the client
+    const page = parseInt(req.query.page || 1, 10);
+    const pageSize = parseInt(req.query.pageSize || 10, 10); // Default size is 10
+    const searchQuery = req.query.search;
 
-  var modesForCurrentPage = await Mode.find().sort({ votes: -1 }).exec();
-  // If search query is present, filter the modes based on the search criteria
-  if (searchQuery) {
-    modesForCurrentPage = modesForCurrentPage.filter(mode => {
-      return mode.name.toLowerCase().includes(searchQuery.toLowerCase());
+    // Build the query object
+    let query = {};
+    if (searchQuery) {
+      query.name = { $regex: new RegExp(searchQuery, 'i') }; // Case-insensitive search
+    }
+
+    // Find the total count for pagination metadata (total pages, etc.)
+    const totalCount = await Mode.countDocuments(query);
+
+    // Use MongoDB's skip and limit for efficient pagination, along with sorting
+    const modesForCurrentPage = await Mode.find(query)
+      .sort({ votes: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .exec();
+
+    const pageCount = Math.ceil(totalCount / pageSize); // Calculate total pages based on dynamic pageSize
+
+    // Return the modes as JSON
+    res.json({
+      data: modesForCurrentPage,
+      page: page,
+      pageSize: pageSize, // Include pageSize in the response for clarity
+      pages: pageCount,
+      totalCount: totalCount
     });
+  } catch (error) {
+    console.error("Error fetching modes:", error);
+    res.status(500).send("An error occurred while fetching the modes.");
   }
-
-  // Now using pageSize from the query parameter
-  const totalCount = modesForCurrentPage.length;
-  const pageCount = Math.ceil(totalCount / pageSize); // Calculate total pages based on dynamic pageSize
-  const startIndex = (page - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const modesOnPage = modesForCurrentPage.slice(startIndex, endIndex);
-
-  // Return the modes as JSON
-  res.json({
-    data: modesOnPage,
-    page: page,
-    pageSize: pageSize, // Include pageSize in the response for clarity
-    pages: pageCount,
-    totalCount: totalCount
-  });
 });
 
 module.exports = router;
-
