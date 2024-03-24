@@ -23,8 +23,12 @@ router.get('/', async (req, res) => {
 
 // show the main modes showcase
 router.get('/json', async (req, res) => {
+  // Extracting page and pageSize from query parameters
+  // Defaulting to 1 for page and allowing pageSize to be specified by the client
   const page = parseInt(req.query.page || 1, 10);
+  const pageSize = parseInt(req.query.pageSize || 10, 10); // Default size is 10
   const searchQuery = req.query.search;
+
   var modesForCurrentPage = await Mode.find().sort({ votes: -1 }).exec();
   // If search query is present, filter the modes based on the search criteria
   if (searchQuery) {
@@ -33,10 +37,9 @@ router.get('/json', async (req, res) => {
     });
   }
 
-  // Assuming you want pagination
-  const pageSize = 10; // Or any other number of items per page you prefer
+  // Now using pageSize from the query parameter
   const totalCount = modesForCurrentPage.length;
-  const pageCount = Math.ceil(totalCount / pageSize);
+  const pageCount = Math.ceil(totalCount / pageSize); // Calculate total pages based on dynamic pageSize
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const modesOnPage = modesForCurrentPage.slice(startIndex, endIndex);
@@ -45,6 +48,7 @@ router.get('/json', async (req, res) => {
   res.json({
     data: modesOnPage,
     page: page,
+    pageSize: pageSize, // Include pageSize in the response for clarity
     pages: pageCount,
     totalCount: totalCount
   });
