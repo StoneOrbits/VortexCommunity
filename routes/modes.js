@@ -34,7 +34,7 @@ router.get('/json', async (req, res) => {
   }
 
   // Assuming you want pagination
-  const pageSize = 10; // Or any other number of items per page you prefer
+  const pageSize = 50; // Or any other number of items per page you prefer
   const totalCount = modesForCurrentPage.length;
   const pageCount = Math.ceil(totalCount / pageSize);
   const startIndex = (page - 1) * pageSize;

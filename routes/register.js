@@ -103,13 +103,6 @@ router.get('/check-email/:email', async (req, res) => {
     return res.json({ valid: false, message: 'Invalid email format' });
   }
 
-  // Check for disallowed domains
-  const blockedDomains = ['hotmail.com', 'outlook.com'];
-  const emailDomain = email.split('@')[1]; // Get the domain part of the email
-  if (blockedDomains.includes(emailDomain)) {
-    return res.json({ valid: false, message: 'Microsoft domains not supported, they use overly agressive email blocklists' });
-  }
-
   if (await User.findOne({ email: email })) {
     return res.json({ valid: false, message: 'Email is already registered' });
   }

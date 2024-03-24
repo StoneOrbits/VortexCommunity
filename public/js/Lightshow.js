@@ -1,12 +1,13 @@
 export default class Lightshow {
   static count = 0;
 
-  constructor(vortexLib, canvasId, sectionCount = 20) {
+  constructor(vortexLib, canvasId, controlPanel) {
     this.id = Lightshow.count++;
+    this.controlPanel = controlPanel; // Store the reference to the control panel object
     this.setupCanvas(canvasId);
     this.setupOffScreenCanvas(canvasId);
     this.initializeVortex(vortexLib);
-    this.configureDisplay(sectionCount);
+    this.configureDisplay(controlPanel.sectionCount); // Use value from control panel
     this.loadModeData();
     this.clearCanvas();
   }
@@ -105,10 +106,16 @@ export default class Lightshow {
   }
 
   draw() {
-    if (this._pause) return;
+    if (this._pause) {
+      return;
+    }
+
+    if (this.sectionCount != this.controlPanel.sectionCount) {
+      this.configureDisplay(this.controlPanel.sectionCount);
+    }
 
     // Perform drawing operations on the off-screen canvas
-    this.offCtx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    this.offCtx.fillStyle = 'rgba(0, 0, 0, ' + this.controlPanel.opacity + ')';
     this.offCtx.fillRect(0, 0, this.offScreenCanvas.width, this.offScreenCanvas.height);
 
     const newColor = this.vortexLib.RunTick(this.vortex);
@@ -128,10 +135,11 @@ export default class Lightshow {
 
   drawSegment(segment) {
     if (segment.color.red !== 0 || segment.color.green !== 0 || segment.color.blue !== 0) {
-      this.offCtx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, ${segment.opacity})`;
+      const opacity = this.controlPanel.useSegmentOpacity ? segment.opacity : 1;
+      this.offCtx.fillStyle = `rgba(${segment.color.red}, ${segment.color.green}, ${segment.color.blue}, ${opacity})`;
       this.offCtx.fillRect(segment.x, 0, this.sectionWidth, this.offScreenCanvas.height);
     }
-    segment.x += this.sectionWidth;
+    segment.x += this.sectionWidth + this.controlPanel.speed;
   }
 
   start() {
