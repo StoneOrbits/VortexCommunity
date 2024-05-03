@@ -24,7 +24,7 @@
               </div>
             <% } %>
         </section>
-        <% ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop'].forEach(device => { %>
+        <% ['gloves', 'orbit', 'handle'].forEach(device => { %>
             <% if (latestDownloads[device] && latestDownloads[device]['firmware']) { %>
                 <section class="device-section" id="vortex-<%= device %>">
                     <div class="device-content">
