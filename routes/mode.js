@@ -19,7 +19,7 @@ router.get('/:modeId', async (req, res) => {
 
     // Base64 encode the modeData for use in a URL or other purposes
     const base64EncodedData = Buffer.from(JSON.stringify(mode.modeData)).toString('base64');
-    const lightshowUrl = `https://lightshow.lol/loadMode?data=${base64EncodedData}`;
+    const lightshowUrl = `https://lightshow.lol/?data=${base64EncodedData}`;
 
     // Format the upload date
     const uploadDate = mode.uploadDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
