@@ -13,9 +13,9 @@
                     </button>
                     <span class="votes-count"><%= pat.votes %></span>
                 </form>
-                <form action="/pat/<%= pat._id %>/<%= user && user.favorites.includes(pat._id.toString()) ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
+                <form action="/pat/<%= pat._id %>/<%= user && user.favPats.includes(pat._id.toString()) ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
                     <button type="submit" class="icon-button">
-                        <img src="<%= user && user.favorites.includes(pat._id.toString()) ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
+                        <img src="<%= user && user.favPats.includes(pat._id.toString()) ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
                     </button>
                 </form>
             </div>

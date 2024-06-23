@@ -19,7 +19,7 @@ function computeHash(data) {
   return crypto.createHash('sha256').update(data).digest('hex');
 }
 
-router.post('/', ensureAuthenticated, upload.array('patFile'), async (req, res) => {
+router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res) => {
   const { 'g-recaptcha-response': recaptchaToken } = req.body;
   const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
   const recaptchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecretKey}&response=${recaptchaToken}`;
