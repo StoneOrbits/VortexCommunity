@@ -6,16 +6,16 @@
     <%- include('partials/nav') %>
     <main>
         <section class="search-bar">
-            <form action="/modes" method="get">
+            <form action="/pats" method="get">
                 <div class="search-container">
-                    <input type="text" class="search-input" name="search" placeholder="Search for modes..." value="<%= search || '' %>">
+                    <input type="text" class="search-input" name="search" placeholder="Search for pats..." value="<%= search || '' %>">
                 </div>
                 <button type="submit">Search</button>
             </form>
         </section>
-        <section class="mode-list">
-            <% modes.forEach(function(mode) { %>
-                <%- include('partials/mode-tile', { mode: mode }) %>
+        <section class="pat-list">
+            <% pats.forEach(function(pat) { %>
+                <%- include('partials/pat-tile', { pat: pat }) %>
             <% }); %>
         </section>
     </main>

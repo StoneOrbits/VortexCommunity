@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const Mode = require('../models/Mode');
+const PatternSet = require('../models/PatternSet');
 
 router.get('/:userId', async (req, res) => {
   try {
@@ -13,8 +13,8 @@ router.get('/:userId', async (req, res) => {
       return res.status(404).render('404', { message: 'User not found' });
     }
 
-    // lookup modes for this user since populate seems broken
-    profileUser.modes = await Mode.find({ createdBy: userId });
+    // lookup pats for this user since populate seems broken
+    profileUser.pats = await PatternSet.find({ createdBy: userId });
 
     // Render the profile view, passing the user object
     res.render('profile', { profileUser });

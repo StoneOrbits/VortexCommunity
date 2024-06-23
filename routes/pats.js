@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const Mode = require('../models/Mode');
+const PatternSet = require('../models/PatternSet');
 const User = require('../models/User');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 const fs = require('fs');
 const path = require('path');
 
-// show the main modes showcase
+// show the main pats showcase
 router.get('/', async (req, res) => {
   const page = req.query.page || 1;
   const searchQuery = req.query.search;
-  var modesForCurrentPage = await Mode.find().sort({ votes: -1 }).exec();
-  // If search query is present, filter the modes based on the search criteria
+  var patsForCurrentPage = await PatternSet.find().sort({ votes: -1 }).exec();
+  // If search query is present, filter the pats based on the search criteria
   if (searchQuery) {
-    modesForCurrentPage = modesForCurrentPage.filter(mode => {
-      return mode.name.toLowerCase().includes(searchQuery.toLowerCase());
+    patsForCurrentPage = patsForCurrentPage.filter(pat => {
+      return pat.name.toLowerCase().includes(searchQuery.toLowerCase());
     });
   }
-  // Fetch modes for the current page
-  res.render('modes', { modes: modesForCurrentPage, user: req.user, currentPage: page, search: req.query.search });
+  // Fetch pats for the current page
+  res.render('pats', { pats: patsForCurrentPage, user: req.user, currentPage: page, search: req.query.search });
 });
 
 router.get('/json', async (req, res) => {
@@ -36,10 +36,10 @@ router.get('/json', async (req, res) => {
     }
 
     // Find the total count for pagination metadata (total pages, etc.)
-    const totalCount = await Mode.countDocuments(query);
+    const totalCount = await PatternSet.countDocuments(query);
 
     // Use MongoDB's skip and limit for efficient pagination, along with sorting
-    const modesForCurrentPage = await Mode.find(query)
+    const patsForCurrentPage = await PatternSet.find(query)
       .sort({ votes: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
@@ -47,17 +47,17 @@ router.get('/json', async (req, res) => {
 
     const pageCount = Math.ceil(totalCount / pageSize); // Calculate total pages based on dynamic pageSize
 
-    // Return the modes as JSON
+    // Return the pats as JSON
     res.json({
-      data: modesForCurrentPage,
+      data: patsForCurrentPage,
       page: page,
       pageSize: pageSize, // Include pageSize in the response for clarity
       pages: pageCount,
       totalCount: totalCount
     });
   } catch (error) {
-    console.error("Error fetching modes:", error);
-    res.status(500).send("An error occurred while fetching the modes.");
+    console.error("Error fetching pats:", error);
+    res.status(500).send("An error occurred while fetching the pats.");
   }
 });
 

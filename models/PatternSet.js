@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const ModeSchema = new mongoose.Schema({
+// a PatternSet is a Pattern + Colorset, often referred to as just a Pattern or pat
+const PatternSetSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   name: {
     type: String,
@@ -9,12 +10,12 @@ const ModeSchema = new mongoose.Schema({
   description: {
     type: String
   },
-  modeData: { // the json object containing the 1-led mode sorted
+  data: { // the json object containing the 1-led pat sorted
     type: mongoose.Schema.Types.Mixed, // or simply 'type: {}'
     required: true,
     unique: true
   },
-  modeDataHash: { // hash of the above data for comparison/lookup
+  dataHash: { // hash of the above data for comparison/lookup
     type: String,
     required: true,
     unique: true
@@ -38,6 +39,6 @@ const ModeSchema = new mongoose.Schema({
   },
 });
 
-ModeSchema.index({ modeDataHash: 1 }, { unique: true }); // Create an index on modeDataHash
+PatternSetSchema.index({ dataHash: 1 }, { unique: true }); // Create an index on dataHash
 
-module.exports = mongoose.model('Mode', ModeSchema);
+module.exports = mongoose.model('PatternSet', PatternSetSchema);
