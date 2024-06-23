@@ -9,6 +9,7 @@ const tmp = require('tmp-promise'); // Using tmp-promise for handling temporary 
 const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
+const spawn = require('child_process').spawn;
 
 router.get('/:patId', async (req, res) => {
   try {
@@ -214,17 +215,20 @@ router.get('/:patId/download', ensureAuthenticated, async (req, res) => {
     // Create a temporary file for the output .vtxmode
     const tempVtxmodeFile = await tmp.file({ postfix: '.vtxmode' });
 
-    // wrapp the mode data in a vortex savefile so the CLI can parse it
-    // TODO: honestly the CLI should just accept the modedata json, I'll do it later
+    // Wrap the mode data in a vortex savefile
     const wrappedPatternSetData = {
-      version_major: 1, version_minor: 1, brightness: 255, global_flags: 0, num_modes: 1,
-      modes: [{ flags: 2, num_leds: 1, single_pats: [ pat.data ] }],
+      version_major: 1,
+      version_minor: 1,
+      brightness: 255,
+      global_flags: 0,
+      num_modes: 1,
+      modes: [{ flags: 2, num_leds: 1, single_pats: [pat.data] }],
     };
+
+
     const modeDataJson = JSON.stringify(wrappedPatternSetData);
     const command = `/usr/local/bin/vortex --silent --quick --led-count 1 --write-mode ${tempVtxmodeFile.path} --json-in`;
-
-    // Using child_process.spawn to stream the JSON directly into the vortex tool
-    const vortex = require('child_process').spawn(command, [], { shell: true, stdio: ['pipe', 'ignore', 'pipe'] });
+    const vortex = spawn(command, [], { shell: true, stdio: ['pipe', 'ignore', 'pipe'] });
 
     vortex.stderr.on('data', (data) => {
       console.error('Vortex STDERR:', data.toString());
@@ -235,19 +239,31 @@ router.get('/:patId/download', ensureAuthenticated, async (req, res) => {
       return res.status(500).send('Conversion error');
     });
 
-    vortex.on('close', (code) => {
+    vortex.on('close', async (code) => {
       if (code === 0) {
-        // If the command executed successfully, send the .vtxmode file as a download
-        res.download(tempVtxmodeFile.path, `${pat.name.replace(/\s+/g, '_')}.vtxmode`, async (err) => {
-          if (err) {
-            console.error('Error sending file:', err);
+        try {
+          const fileBuffer = await fs.readFile(tempVtxmodeFile.path);
+          if (fileBuffer.length === 0) {
+            console.error('Generated file is empty');
+            return res.status(500).send('Conversion failed: Empty file');
           }
-          // Cleanup temporary file after sending it or in case of error
+
+          // If the command executed successfully, send the .vtxmode file as a download
+          res.download(tempVtxmodeFile.path, `${pat.name.replace(/\s+/g, '_')}.vtxmode`, async (err) => {
+            if (err) {
+              console.error('Error sending file:', err);
+            }
+            // Cleanup temporary file after sending it or in case of error
+            await tempVtxmodeFile.cleanup();
+          });
+        } catch (readError) {
+          console.error('Error reading generated file:', readError);
           await tempVtxmodeFile.cleanup();
-        });
+          return res.status(500).send('Error reading generated file');
+        }
       } else {
         console.error('Vortex process exited with code:', code);
-        tempVtxmodeFile.cleanup(); // Ensure cleanup in case of failure
+        await tempVtxmodeFile.cleanup(); // Ensure cleanup in case of failure
         return res.status(500).send('Conversion failed');
       }
     });
@@ -261,6 +277,7 @@ router.get('/:patId/download', ensureAuthenticated, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
 
 module.exports = router;
 
