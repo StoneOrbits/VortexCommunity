@@ -7,7 +7,7 @@ export default class Lightshow {
     this.setupOffScreenCanvas(canvasId);
     this.initializeVortex(vortexLib);
     this.configureDisplay(sectionCount);
-    this.loadModeData();
+    this.loadPatData();
     this.clearCanvas();
   }
 
@@ -21,7 +21,7 @@ export default class Lightshow {
     this.canvas.height = container.offsetHeight;
 
     this.ctx = this.canvas.getContext('2d');
-    this.modeId = canvasId.split('_')[1];
+    this.patId = canvasId.split('_')[1];
   }
 
   setupOffScreenCanvas(canvasId, width, height) {
@@ -48,12 +48,12 @@ export default class Lightshow {
     this.animationFrameId = null;
   }
 
-  loadModeData() {
-    const modeDataAttr = this.canvas.getAttribute('data-mode');
-    if (modeDataAttr) {
-      this.applyModeData(JSON.parse(modeDataAttr));
+  loadPatData() {
+    const patDataAttr = this.canvas.getAttribute('data-pat');
+    if (patDataAttr) {
+      this.applyPatData(JSON.parse(patDataAttr));
     } else {
-      console.log("No mode data for lightshow " + this.canvas.id);
+      console.log("No pat data for lightshow " + this.canvas.id);
     }
   }
 
@@ -62,11 +62,11 @@ export default class Lightshow {
     this.offCtx.fillRect(0, 0, this.offScreenCanvas.width, this.offScreenCanvas.height);
   }
 
-  applyModeData(modeData) {
-    this.modeData = modeData;
+  applyPatData(patData) {
+    this.patData = patData;
     let colorSet = new this.vortexLib.Colorset();
 
-    modeData.colorset.forEach(hex => {
+    patData.colorset.forEach(hex => {
       let color = hex.replace('0x', '#');
       let rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
       if (rgb) {
@@ -90,11 +90,11 @@ export default class Lightshow {
   }
 
   setPatternAndArgs(mode) {
-    let patternId = this.vortexLib.intToPatternID(this.modeData.pattern_id);
+    let patternId = this.vortexLib.intToPatternID(this.patData.pattern_id);
     mode.setPattern(patternId, this.ledCount(), null, null);
 
     let patternArgs = new this.vortexLib.PatternArgs();
-    this.modeData.args.forEach(arg => patternArgs.addArgs(arg));
+    this.patData.args.forEach(arg => patternArgs.addArgs(arg));
     this.vortex.setPatternArgs(this.ledCount(), patternArgs, false);
 
     mode.init(); // Re-initialize to apply new args

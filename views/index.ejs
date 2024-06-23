@@ -15,10 +15,10 @@
               <% } %>
             </header>
             <p>We're excited to announce that Vortex Community is now officially in live beta! You can now make your account permanently then explore, upload, and share your favorite vortex modes. We hope this will be the start of a vibrant community.</p>
-            <h3>Top Upvoted Modes</h3>
-            <div class="mode-showcase">
-                <% topModes.forEach(mode => { %>
-                    <%- include('partials/mode-tile', { mode: mode }) %>
+            <h3>Top Upvoted Uploads</h3>
+            <div class="pat-showcase">
+                <% topPats.forEach(pat => { %>
+                    <%- include('partials/pat-tile', { pat: pat }) %>
                 <% }); %>
             </div>
         </section>

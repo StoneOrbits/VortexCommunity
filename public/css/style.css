@@ -70,13 +70,13 @@ footer {
     margin-top: 50px;
 }
 
-.mode-title {
+.pat-title {
     font-size: 20px;
     margin: 0;
     color: #FFF;
 }
 
-.mode-list {
+.pat-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 10px;
@@ -85,7 +85,7 @@ footer {
 }
 
 /* for the index page, different from the actual showcase */
-.mode-showcase {
+.pat-showcase {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 10px;
@@ -95,7 +95,7 @@ footer {
     margin-right: 20px;
 }
 
-.mode-item {
+.pat-item {
     display: flex;
     flex-direction: column;
     border: 1px solid #888;
@@ -109,17 +109,17 @@ footer {
     text-decoration: none;
 }
 
-.mode-item h2 {
+.pat-item h2 {
     font-size: 20px;
     margin-top: 0;
 }
 
-.mode-content {
+.pat-content {
     flex-grow: 1;
     margin-bottom: 10px;
 }
 
-.mode-blurb {
+.pat-blurb {
     font-size: 14px;
     font-style: italic;
     color: #aaa;
@@ -312,7 +312,7 @@ nav ul li a:hover {
     color: #aaa;
 }
 
-.mode-profile-page {
+.pat-profile-page {
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
@@ -321,14 +321,14 @@ nav ul li a:hover {
     border-radius: 10px;
 }
 
-.mode-profile-header {
+.pat-profile-header {
     margin-bottom: 5px;
     font-weight: bold;
     font-size: 14px;
 }
 
-.edit-mode-link,
-.delete-mode-link {
+.edit-pat-link,
+.delete-pat-link {
     color: #FFFFFF;
     text-decoration: underline;
     cursor: pointer;
@@ -336,7 +336,7 @@ nav ul li a:hover {
     margin: 0px;
 }
 
-.mode-profile-actions {
+.pat-profile-actions {
     display: flex;
     justify-content: flex-end; /* Aligns buttons to the right */
     position: absolute;
@@ -344,18 +344,18 @@ nav ul li a:hover {
     right: 20px;
 }
 
-.mode-title {
+.pat-title {
   margin-top: 0px;
 }
 
-.mode-icons {
+.pat-icons {
     margin: 0px;
     position: relative; /* This makes it the reference for absolute positioning */
     height: 0; /* It doesn't take up space */
     width: 100%;
 }
 
-.mode-profile-button {
+.pat-profile-button {
     text-decoration: none;
     color: #FFF;
     margin-top: 10px;
@@ -377,7 +377,7 @@ nav ul li a:hover {
     background-color: #16a085; /* A slightly darker teal on hover */
 }
 
-.mode-profile-blurb {
+.pat-profile-blurb {
     font-size: 14px;
     font-style: italic;
     color: #aaa;
@@ -386,20 +386,20 @@ nav ul li a:hover {
     text-overflow: ellipsis;
 }
 
-.mode-profile-details {
+.pat-profile-details {
     margin: 20px 0;
     padding-bottom: 50px;
 }
 
 @media (max-width: 768px) {
-  .mode-profile-details {
+  .pat-profile-details {
       margin: 20px 0;
       padding-bottom: 80px;
   }
 }
 
 @media (max-width: 338px) {
-  .mode-profile-button {
+  .pat-profile-button {
       text-decoration: none;
       color: #FFF;
       margin-top: 10px;
@@ -413,17 +413,17 @@ nav ul li a:hover {
     color: white;
 }
 
-.delete-mode-btn {
+.delete-pat-btn {
     color: red;
     font-size: 24px;
     padding: 0 5px; /* Reduce padding for alignment */
 }
 
-.edit-mode-btn img, .delete-mode-btn {
+.edit-pat-btn img, .delete-pat-btn {
     height: 20px; /* Standardize icon size */
 }
 
-.mode-profile-download-button {
+.pat-profile-download-button {
     background-color: #007bff; /* Blue background */
     color: white;
     padding: 10px 20px;
@@ -434,11 +434,11 @@ nav ul li a:hover {
     transition: background-color 0.3s; /* Smooth transition */
 }
 
-.mode-profile-download-button:hover {
+.pat-profile-download-button:hover {
     background-color: #0056b3; /* Darker blue on hover */
 }
 
-.mode-profile-led-strip-container {
+.pat-profile-led-strip-container {
     bottom: 10px;
     left: 10px;
     right: 10px;
@@ -451,7 +451,7 @@ nav ul li a:hover {
     background-color: #121212;
 }
 
-.mode-profile-page {
+.pat-profile-page {
     position: relative; /* Make sure the icons are positioned relative to this container */
 }
 
@@ -738,7 +738,7 @@ img {
     grid-gap: 15px;
 }
 
-.mode-edit-section {
+.pat-edit-section {
     display: flex;
     justify-content: center;
     width: 100%;
@@ -856,25 +856,25 @@ img {
     display: inline-block; /* Allows margin auto to work */
 }
 
-.mode-item-submission-content {
+.pat-item-submission-content {
     flex-grow: 1;
     margin-bottom: 10px;
 }
 
-.mode-submission-section {
+.pat-submission-section {
     max-width: 1200px;
     margin: 0 auto;
 }
 
 /* for the index page, different from the actual showcase */
-.mode-submission-showcase {
+.pat-submission-showcase {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 10px;
     margin: 20px;
 }
 
-.mode-item-submission {
+.pat-item-submission {
     box-sizing: border-box;
     margin-bottom: 30px;
     margin: 10px;
@@ -890,24 +890,24 @@ img {
     min-height: 225px;
 }
 
-.mode-item-submission.locked {
+.pat-item-submission.locked {
     background-color: #444; /* Darker background for locked items */
     color: #777; /* Greyed out text */
 }
 
-.mode-item-submission.locked .mode-title-input,
-.mode-item-submission.locked .mode-description-input {
+.pat-item-submission.locked .pat-title-input,
+.pat-item-submission.locked .pat-description-input {
     background-color: #555;
     color: #777;
     cursor: not-allowed;
 }
 
-.mode-item h2 {
+.pat-item h2 {
     font-size: 20px;
     margin-top: 0;
 }
 
-.mode-title-input {
+.pat-title-input {
     box-sizing: border-box;
     width: 100%;
     margin-bottom: 10px;
@@ -918,7 +918,7 @@ img {
     word-wrap: break-word; /* Prevents overflow */
 }
 
-.mode-description-input {
+.pat-description-input {
     margin-bottom: 10px;
     padding: 8px;
     box-sizing: border-box;

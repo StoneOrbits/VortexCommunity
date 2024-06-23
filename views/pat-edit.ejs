@@ -6,23 +6,23 @@
     <%- include('partials/nav') %>
     <main>
         <div class="container">
-            <section class="mode-edit-section">
-                <form action="/mode/<%= mode._id %>/edit" method="post">
-                    <h2>Edit Mode: <%= mode.name %></h2>
+            <section class="pat-edit-section">
+                <form action="/pat/<%= pat._id %>/edit" method="post">
+                    <h2>Edit Mode: <%= pat.name %></h2>
                     <div class="form-group">
-                        <label for="modeName">Name:</label>
-                        <input type="text" id="modeName" name="modeName" value="<%= mode.name %>" required>
+                        <label for="patName">Name:</label>
+                        <input type="text" id="patName" name="patName" value="<%= pat.name %>" required>
                     </div>
                     <div class="form-group">
-                        <label for="modeDescription">Description:</label>
-                        <textarea id="modeDescription" name="modeDescription" rows="4" required><%= mode.description %></textarea>
+                        <label for="patDescription">Description:</label>
+                        <textarea id="patDescription" name="patDescription" rows="4" required><%= pat.description %></textarea>
                     </div>
                     <!-- Add more fields here as needed -->
                     <div class="form-group">
                         <button type="submit">Save Changes</button>
                     </div>
                     <div class="form-group">
-                        <a href="/mode/<%= mode._id %>">Cancel</a>
+                        <a href="/pat/<%= pat._id %>">Cancel</a>
                     </div>
                 </form>
             </section>

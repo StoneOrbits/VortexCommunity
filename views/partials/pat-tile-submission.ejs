@@ -1,0 +1,18 @@
+<div class="pat-item-submission <%= pat.isDuplicate ? 'locked' : '' %>">
+    <div class="pat-item-submission-content">
+        <!-- Conditional class to visually indicate a locked state -->
+        <input type="checkbox" name="selectedPatternSets[]" value="<%= tempId %>" <%= pat.isDuplicate ? 'disabled' : '' %> checked>
+        <!-- Assuming a loop over pats, with 'i' being the current index -->
+        <input type="hidden" name="patIds[]" value="<%= tempId %>" <%= pat.isDuplicate ? 'disabled' : '' %> />
+        <input type="text" class="pat-title-input" name="patNames[<%= tempId %>]" placeholder="Enter pat name" value="<%= fileName %> <%= tempId + 1 %>" required <%= pat.isDuplicate ? 'disabled' : '' %>>
+        <textarea class="pat-description-input" name="patDescriptions[<%= tempId %>]" placeholder="Enter description" rows="2" <%= pat.isDuplicate ? 'disabled' : '' %>></textarea>
+        <% if(pat.isDuplicate) { %>
+            <div class="duplicate-message">This pat already exists and cannot be submitted again.</div>
+        <% } %>
+    </div>
+    <div class="led-strip-container">
+        <!-- Lightshow visualization -->
+        <%- include('lightshow', { pat: pat, tempId: tempId }) %>
+    </div>
+</div>
+

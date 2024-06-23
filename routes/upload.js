@@ -5,7 +5,7 @@ const upload = require('../config/userUpload');
 const path = require('path');
 const fetch = require('node-fetch');
 const router = express.Router();
-const Mode = require('../models/Mode');
+const PatternSet = require('../models/PatternSet');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 const { execSync } = require('child_process');
 const fs = require('fs');
@@ -45,10 +45,10 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
       }
 
       // Use the spread operator to concatenate arrays
-      processedPatterns = processedPatterns.concat(await prepareModesForSession(jsonData, set, fileName)); // Correctly accumulate patterns
+      processedPatterns = processedPatterns.concat(await preparePatternSetsForSession(jsonData, set, fileName)); // Correctly accumulate patterns
     }
 
-    req.session.temporaryModes = processedPatterns;
+    req.session.tempPats = processedPatterns;
     res.redirect('/upload/submit');
   } catch (error) {
     console.error(error);
@@ -74,10 +74,10 @@ function sortObjectKeys(obj) {
   return sortedObj;
 }
 
-async function prepareModesForSession(jsonData, processedSet, fileName) {
-  const processedPatternsPromises = jsonData.modes[0].single_pats.map(async (patData, index) => {
+async function preparePatternSetsForSession(jsonData, processedSet, fileName) {
+  const processedPatternsPromises = jsonData.modes[0].single_pats.map(async (data, index) => {
     // Process each pattern data asynchronously
-    const processedData = await processPatternData(patData, processedSet, fileName);
+    const processedData = await processPatternData(data, processedSet, fileName);
     return processedData ? { id: index, ...processedData } : null;
   });
 
@@ -88,94 +88,93 @@ async function prepareModesForSession(jsonData, processedSet, fileName) {
   return processedPatterns.filter(result => result !== null);
 }
 
-// Assuming processedSet is a Set of modeDataHashes for quick in-memory duplicate checks
-async function processPatternData(patData, processedSet, fileName) {
-    if (patData.colorset.length === 0 || patData.pattern_id === -1 || patData.pattern_id === 255) {
-        return null; // Skip invalid modes
+// Assuming processedSet is a Set of dataHashes for quick in-memory duplicate checks
+async function processPatternData(data, processedSet, fileName) {
+    if (data.colorset.length === 0 || data.pattern_id === -1 || data.pattern_id === 255) {
+        return null; // Skip invalid pats
     }
 
-    const sortedPatData = sortObjectKeys(patData);
+    const sortedPatData = sortObjectKeys(data);
     const serializedPatData = JSON.stringify(sortedPatData);
-    const modeDataHash = computeHash(serializedPatData);
+    const dataHash = computeHash(serializedPatData);
 
     // Check for in-memory duplicates within the same upload batch
-    if (processedSet.has(modeDataHash)) {
+    if (processedSet.has(dataHash)) {
         return null; // It's a duplicate within the upload, skip it
     }
 
     // Add the hash to the processed set to mark it as seen
-    processedSet.add(modeDataHash);
+    processedSet.add(dataHash);
 
-    // Check for existing mode in the database with the same pattern data hash
-    const existingMode = await Mode.findOne({ modeDataHash }).exec();
+    // Check for existing pat in the database with the same pattern data hash
+    const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
 
     // Return the pattern data with an additional isDuplicate flag
     return {
-        modeData: sortedPatData,
-        modeDataHash: modeDataHash,
-        isDuplicate: !!existingMode,
+        data: sortedPatData,
+        dataHash: dataHash,
+        isDuplicate: !!existingPatternSet,
         fileName: fileName,
     };
 }
 
 router.get('/submit', ensureAuthenticated, (req, res) => {
-  // Retrieve the temporary modes stored in the session
-  let temporaryModes = [];
-  if (req.session.temporaryModes) {
-    temporaryModes = req.session.temporaryModes;
+  // Retrieve the temporary pats stored in the session
+  let tempPats = [];
+  if (req.session.tempPats) {
+    tempPats = req.session.tempPats;
   }
 
-  // Render the mode selection page, passing the temporary modes for display
-  res.render('uploadSubmit', { modes: temporaryModes });
+  // Render the pat selection page, passing the temporary pats for display
+  res.render('uploadSubmit', { pats: tempPats });
 });
 
 router.post('/submit', ensureAuthenticated, async (req, res) => {
   // Destructure the submitted data; ensuring arrays for single or no selection scenarios
-  let { selectedModes, modeIds, modeNames, modeDescriptions } = req.body;
-  modeIds = Array.isArray(modeIds) ? modeIds : [modeIds];
-  modeNames = Array.isArray(modeNames) ? modeNames : [modeNames];
-  modeDescriptions = Array.isArray(modeDescriptions) ? modeDescriptions : [modeDescriptions];
+  let { selectedPatternSets, patIds, patNames, patDescriptions } = req.body;
+  patIds = Array.isArray(patIds) ? patIds : [patIds];
+  patNames = Array.isArray(patNames) ? patNames : [patNames];
+  patDescriptions = Array.isArray(patDescriptions) ? patDescriptions : [patDescriptions];
 
-  const temporaryModes = req.session.temporaryModes || [];
-  let modesToSave = [];
+  const tempPats = req.session.tempPats || [];
+  let patsToSave = [];
 
-  // Map modeIds to their names and descriptions
-  let nameDescriptionMap = modeIds.reduce((acc, modeId, idx) => {
-    acc[modeId] = { name: modeNames[idx], description: modeDescriptions[idx] };
+  // Map patIds to their names and descriptions
+  let nameDescriptionMap = patIds.reduce((acc, patId, idx) => {
+    acc[patId] = { name: patNames[idx], description: patDescriptions[idx] };
     return acc;
   }, {});
 
-  // Iterate over selectedModes, ensuring it's treated as an array
-  (Array.isArray(selectedModes) ? selectedModes : [selectedModes]).forEach(selectedIdx => {
+  // Iterate over selectedPatternSets, ensuring it's treated as an array
+  (Array.isArray(selectedPatternSets) ? selectedPatternSets : [selectedPatternSets]).forEach(selectedIdx => {
     const index = parseInt(selectedIdx, 10);
     // Ensure we have a corresponding entry in nameDescriptionMap
-    if (temporaryModes[index] && !temporaryModes[index].isDuplicate && nameDescriptionMap[selectedIdx]) {
+    if (tempPats[index] && !tempPats[index].isDuplicate && nameDescriptionMap[selectedIdx]) {
       const { name, description } = nameDescriptionMap[selectedIdx];
 
-      const modeData = temporaryModes[index].modeData;
-      const modeDataHash = computeHash(JSON.stringify(sortObjectKeys(modeData)));
+      const data = tempPats[index].data;
+      const dataHash = computeHash(JSON.stringify(sortObjectKeys(data)));
 
-      modesToSave.push(new Mode({
+      patsToSave.push(new PatternSet({
         _id: new mongoose.Types.ObjectId(),
-        name: name || 'Unnamed Mode',
+        name: name || 'Unnamed PatternSet',
         description: description || 'No description provided.',
-        modeData: modeData,
-        modeDataHash: modeDataHash,
+        data: data,
+        dataHash: dataHash,
         createdBy: req.user._id,
       }));
     }
   });
 
-
-  // Save each mode to the database
+  // Save each pat to the database
   try {
-    await Promise.all(modesToSave.map(mode => mode.save()));
-    req.flash('success', 'Modes successfully submitted!');
-    delete req.session.temporaryModes; // Clean up the session
-    res.redirect('/modes');
+    await Promise.all(patsToSave.map(pat => pat.save()));
+    req.flash('success', 'PatternSets successfully submitted!');
+    delete req.session.tempPats; // Clean up the session
+    res.redirect('/pats');
   } catch (error) {
-    console.error('Error saving modes:', error);
-    req.flash('error', 'An error occurred while submitting your modes.');
+    console.error('Error saving pats:', error);
+    req.flash('error', 'An error occurred while submitting your pats.');
     res.redirect('/upload/submit');
   }
 });
