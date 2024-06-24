@@ -21,6 +21,8 @@ jobs:
     - name: Build Vortex CLI Tool
       run: |
         cd VortexEngine/VortexEngine/VortexCLI
+        # fetch tags first to ensure versioning is correct
+        git fetch --tags origin
         make -j
 
     # Install Emscripten dependencies
