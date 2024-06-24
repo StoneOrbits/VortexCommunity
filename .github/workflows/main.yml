@@ -23,6 +23,7 @@ jobs:
         cd VortexEngine/VortexEngine/VortexCLI
         # fetch tags first to ensure versioning is correct
         git fetch --tags origin
+        git log
         make -j
 
     # Install Emscripten dependencies
