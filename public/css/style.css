@@ -990,3 +990,65 @@ input[type="text"]:disabled, textarea:disabled {
   background-color: #0056b3; /* Darker shade for hover */
 }
 
+.mode-submission-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #333;
+    border-radius: 5px;
+    color: #FFF;
+}
+
+.mode-info {
+    margin-bottom: 20px;
+}
+
+.pat-submission-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.pat-tile {
+    border: 1px solid #888;
+    padding: 10px;
+    margin: 10px;
+    background-color: #222;
+    border-radius: 5px;
+    color: #FFF;
+    transition: background-color 0.3s;
+}
+
+.pat-tile.duplicate {
+    background-color: #555;
+}
+
+.pat-tile.new {
+    background-color: #1abc9c;
+}
+
+.submit-button {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #888;
+    background-color: #222;
+    color: #FFF;
+    border-radius: 5px;
+}
+
