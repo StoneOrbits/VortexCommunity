@@ -20,7 +20,7 @@ jobs:
     - name: Fetch all tags and unshallow
       with:
         path: 'VortexEngine'
-        run: |
+      run: |
           git fetch --tags --force
           if [ -f .git/shallow ]; then
             git fetch --unshallow
