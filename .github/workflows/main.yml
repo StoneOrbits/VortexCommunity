@@ -13,18 +13,10 @@ jobs:
     - name: Checkout repository with Emscripten tool
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        fetch-depth: 0 # need this to get versioning correct
         repository: 'StoneOrbits/VortexEngine'
         path: 'VortexEngine'
         ref: 'desktop'
-    - name: Fetch all tags and unshallow
-      run: |
-          cd VortexEngine
-          git fetch --tags --force
-          if [ -f .git/shallow ]; then
-            git fetch --unshallow
-          fi
-          git fetch origin
 
     # Build Vortex cli tool
     - name: Build Vortex CLI Tool
