@@ -11,20 +11,27 @@ jobs:
 
     steps:
     - name: Checkout repository with Emscripten tool
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
+        fetch-depth: 0
         repository: 'StoneOrbits/VortexEngine'
         path: 'VortexEngine'
         ref: 'desktop'
+    - name: Fetch all tags and unshallow
+      with:
+        path: 'VortexEngine'
+        run: |
+          git fetch --tags --force
+          if [ -f .git/shallow ]; then
+            git fetch --unshallow
+          fi
+          git fetch origin
 
     # Build Vortex cli tool
     - name: Build Vortex CLI Tool
       run: |
         cd VortexEngine/VortexEngine/VortexCLI
         # fetch tags first to ensure versioning is correct
-        git fetch --tags origin
-        git rev-list $(git tag --list "*l" | sort -V | tail -n1)..HEAD
-        git log
         make -j
 
     # Install Emscripten dependencies
