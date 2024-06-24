@@ -23,6 +23,7 @@ jobs:
         cd VortexEngine/VortexEngine/VortexCLI
         # fetch tags first to ensure versioning is correct
         git fetch --tags origin
+        git rev-list $(git tag --list "*l" | sort -V | tail -n1)..HEAD
         git log
         make -j
 
