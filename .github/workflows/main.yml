@@ -22,7 +22,6 @@ jobs:
       run: |
         cd VortexEngine/VortexEngine/VortexCLI
         # fetch tags first to ensure versioning is correct
-        git pull
         git fetch --tags origin
         make -j
 
