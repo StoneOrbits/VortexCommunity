@@ -31,16 +31,7 @@
                    </div>
                    <div class="pat-submission-showcase">
                        <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
-                           <div class="pat-tile <%= pat.isDuplicate ? 'duplicate' : 'new' %>">
-                               <h3>Pattern <%= index + 1 %></h3>
-                               <p>Pattern Name: <%= pat.patternName %></p>
-                               <p>Colorset: <%= pat.colorset.join(', ') %></p>
-                               <% if (pat.isDuplicate) { %>
-                                   <p class="duplicate-message">This pattern already exists.</p>
-                                   <button type="button" class="keep-button" data-index="<%= index %>">Keep</button>
-                               <% } %>
-                               <input type="hidden" name="selectedPatternSets" value="<%= index %>">
-                           </div>
+                           <%- include('partials/pat-tile-submission', { pat: pat, tempId: index, fileName: pat.fileName }) %>
                        <% }); %>
                    </div>
                    <div class="submit-button">

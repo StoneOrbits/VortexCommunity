@@ -56,17 +56,22 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
             const deviceType = getDeviceTypeName(mode.num_leds);
             const flags = mode.flags;
 
-            // Check for existing patterns globally
-            mode.single_pats = await Promise.all(mode.single_pats.map(async (pat) => {
-                const sortedPatData = sortObjectKeys(pat);
-                const serializedPatData = JSON.stringify(sortedPatData);
-                const dataHash = computeHash(serializedPatData);
+			let internalSet = new Set();
+			mode.single_pats = await Promise.all(mode.single_pats.map(async (pat) => {
+				const sortedPatData = sortObjectKeys(pat);
+				const serializedPatData = JSON.stringify(sortedPatData);
+				const dataHash = computeHash(serializedPatData);
 
-                const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-                pat.isDuplicate = !!existingPatternSet;
+				if (internalSet.has(dataHash)) {
+					pat.isDuplicate = true;
+				} else {
+					internalSet.add(dataHash);
+					const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+					pat.isDuplicate = !!existingPatternSet;
+				}
 
-                return pat;
-            }));
+				return pat;
+			}));
 
             req.session.modeData = {
                 name: fileName,
@@ -109,40 +114,51 @@ router.get('/submit', ensureAuthenticated, (req, res) => {
 });
 
 router.post('/submit', ensureAuthenticated, async (req, res) => {
-  try {
-    const { name, description, deviceType, flags, jsonData } = req.session.modeData;
+    try {
+        const { name, description, deviceType, flags, jsonData } = req.session.modeData;
 
-    const patternSets = jsonData.modes[0].single_pats.map(data => new PatternSet({
-      _id: new mongoose.Types.ObjectId(),
-      name: data.name || 'Unnamed PatternSet',
-      description: data.description || 'No description provided.',
-      data: data,
-      dataHash: computeHash(JSON.stringify(sortObjectKeys(data))),
-      createdBy: req.user._id,
-    }));
+        const patternSets = await Promise.all(jsonData.modes[0].single_pats.map(async data => {
+            const dataHash = computeHash(JSON.stringify(sortObjectKeys(data)));
+            const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
 
-    await Promise.all(patternSets.map(pat => pat.save()));
+            if (!existingPatternSet) {
+                return new PatternSet({
+                    _id: new mongoose.Types.ObjectId(),
+                    name: data.name || 'Unnamed PatternSet',
+                    description: data.description || 'No description provided.',
+                    data: data,
+                    dataHash: dataHash,
+                    createdBy: req.user._id,
+                });
+            }
+            return null;
+        }));
 
-    const mode = new Mode({
-      name,
-      description,
-      deviceType,
-      patternSets: patternSets.map(pat => pat._id),
-      createdBy: req.user._id,
-      flags: parseInt(flags, 10),
-      dataHash: computeHash(JSON.stringify(patternSets.map(pat => pat._id)))
-    });
+        // Filter out null values (duplicate patterns)
+        const uniquePatternSets = patternSets.filter(pat => pat !== null);
 
-    await mode.save();
+        await Promise.all(uniquePatternSets.map(pat => pat.save()));
 
-    req.flash('success', 'Mode and PatternSets successfully submitted!');
-    delete req.session.modeData;
-    res.redirect('/modes');
-  } catch (error) {
-    console.error('Error saving modes and pats:', error);
-    req.flash('error', 'An error occurred while submitting your mode.');
-    res.redirect('/upload/submit');
-  }
+        const mode = new Mode({
+            name,
+            description,
+            deviceType,
+            patternSets: uniquePatternSets.map(pat => pat._id),
+            createdBy: req.user._id,
+            flags: parseInt(flags, 10),
+            dataHash: computeHash(JSON.stringify(uniquePatternSets.map(pat => pat._id)) + ":" + flags + ":" + deviceType)
+        });
+
+        await mode.save();
+
+        req.flash('success', 'Mode and PatternSets successfully submitted!');
+        delete req.session.modeData;
+        res.redirect('/modes');
+    } catch (error) {
+        console.error('Error saving modes and pats:', error);
+        req.flash('error', 'An error occurred while submitting your mode.');
+        res.redirect('/upload/submit');
+    }
 });
 
 module.exports = router;
