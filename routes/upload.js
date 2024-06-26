@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const express = require('express');
 const crypto = require('crypto');
 const upload = require('../config/userUpload');
@@ -103,50 +102,6 @@ function sortObjectKeys(obj) {
   return sortedObj;
 }
 
-async function preparePatternSetsForSession(jsonData, processedSet, fileName) {
-  const processedPatternsPromises = jsonData.modes[0].single_pats.map(async (data, index) => {
-    // Process each pattern data asynchronously
-    const processedData = await processPatternData(data, processedSet, fileName);
-    return processedData ? { id: index, ...processedData } : null;
-  });
-
-  // Await all promises to resolve
-  const processedPatterns = await Promise.all(processedPatternsPromises);
-
-  // Filter out any null results after async processing
-  return processedPatterns.filter(result => result !== null);
-}
-
-// Assuming processedSet is a Set of dataHashes for quick in-memory duplicate checks
-async function processPatternData(data, processedSet, fileName) {
-    if (data.colorset.length === 0 || data.pattern_id === -1 || data.pattern_id === 255) {
-        return null; // Skip invalid pats
-    }
-
-    const sortedPatData = sortObjectKeys(data);
-    const serializedPatData = JSON.stringify(sortedPatData);
-    const dataHash = computeHash(serializedPatData);
-
-    // Check for in-memory duplicates within the same upload batch
-    if (processedSet.has(dataHash)) {
-        return null; // It's a duplicate within the upload, skip it
-    }
-
-    // Add the hash to the processed set to mark it as seen
-    processedSet.add(dataHash);
-
-    // Check for existing pat in the database with the same pattern data hash
-    const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-
-    // Return the pattern data with an additional isDuplicate flag
-    return {
-        data: sortedPatData,
-        dataHash: dataHash,
-        isDuplicate: !!existingPatternSet,
-        fileName: fileName,
-    };
-}
-
 router.get('/submit', ensureAuthenticated, (req, res) => {
   const modeData = req.session.modeData || {};
 
@@ -191,3 +146,4 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
 });
 
 module.exports = router;
+

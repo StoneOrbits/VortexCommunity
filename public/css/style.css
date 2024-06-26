@@ -1052,3 +1052,25 @@ input[type="text"]:disabled, textarea:disabled {
     border-radius: 5px;
 }
 
+.duplicate-message {
+    color: #FF5733;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.keep-button {
+    background-color: #333;
+    color: #FFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.keep-button:hover {
+    background-color: #555;
+}
+

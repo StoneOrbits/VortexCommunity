@@ -37,6 +37,7 @@
                                <p>Colorset: <%= pat.colorset.join(', ') %></p>
                                <% if (pat.isDuplicate) { %>
                                    <p class="duplicate-message">This pattern already exists.</p>
+                                   <button type="button" class="keep-button" data-index="<%= index %>">Keep</button>
                                <% } %>
                                <input type="hidden" name="selectedPatternSets" value="<%= index %>">
                            </div>
@@ -51,5 +52,17 @@
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
+    <script>
+      document.querySelectorAll('.keep-button').forEach(button => {
+        button.addEventListener('click', function() {
+          const index = this.dataset.index;
+          const tile = this.closest('.pat-tile');
+          tile.classList.remove('duplicate');
+          tile.classList.add('new');
+          tile.querySelector('.duplicate-message').remove();
+          this.remove();
+        });
+      });
+    </script>
 </body>
 </html>

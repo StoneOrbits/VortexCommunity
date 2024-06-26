@@ -8,15 +8,29 @@
         <section class="search-bar">
             <form action="/pats" method="get">
                 <div class="search-container">
-                    <input type="text" class="search-input" name="search" placeholder="Search for pats..." value="<%= search || '' %>">
+                    <input type="text" class="search-input" name="search" placeholder="Search for patterns and modes..." value="<%= search || '' %>">
                 </div>
                 <button type="submit">Search</button>
             </form>
         </section>
-        <section class="pat-list">
-            <% pats.forEach(function(pat) { %>
-                <%- include('partials/pat-tile', { pat: pat }) %>
-            <% }); %>
+        <section class="showcase">
+            <h2>Modes</h2>
+            <div class="mode-list">
+                <% modes.forEach(function(mode) { %>
+                    <div class="mode-item">
+                        <h3><%= mode.name %></h3>
+                        <p>Device Type: <%= mode.deviceType %></p>
+                        <p>Flags: <%= mode.flags %></p>
+                        <a href="/modes/<%= mode._id %>">View Details</a>
+                    </div>
+                <% }); %>
+            </div>
+            <h2>Patterns</h2>
+            <div class="pat-list">
+                <% pats.forEach(function(pat) { %>
+                    <%- include('partials/pat-tile', { pat: pat }) %>
+                <% }); %>
+            </div>
         </section>
     </main>
     <%- include('partials/footer') %>
