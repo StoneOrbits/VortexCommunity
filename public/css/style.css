@@ -1,0 +1,1265 @@
+body.dark-theme {
+    background-color: #121212;
+    color: #FFFFFF;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* This will position the hamburger menu and the logo/title on opposite ends */
+    padding: 10px;
+    max-width: 1460px;
+    margin: 0 auto;
+}
+
+header img {
+    margin-right: 10px;
+    transition: width 0.3s, height 0.3s; /* Smooth transition for size changes */
+}
+
+header h1 {
+    font-size: 24px;
+    margin: 0; /* Removes any default margin */
+    transition: font-size 0.3s;
+    flex-grow: 1; /* Allows the title to take available space */
+    text-align: left; /* Aligns the title to the left */
+}
+
+nav {
+    /* Center the navigation and set a max-width */
+    margin: 0 auto; /* Center the nav container horizontally */
+    max-width: 1460px; /* Set a maximum width for the navigation */
+    padding: 10px 20px;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+nav li {
+    margin: 0 10px;
+}
+
+nav a {
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #FFFFFF;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+nav a:hover {
+    background-color: #FFFFFF;
+    color: #121212;
+}
+
+.showcase {
+    /* Center the content and set a max-width on desktop */
+    margin: 0 auto; /* Center the .showcase container horizontally */
+    max-width: 1400px; /* Set a maximum width for the content */
+    padding: 20px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.pat-title {
+    font-size: 20px;
+    margin: 0;
+    color: #FFF;
+}
+
+.pat-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+    margin: 0 auto;
+    max-width:1200px;
+}
+
+/* for the index page, different from the actual showcase */
+.pat-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+    max-height: calc(2 * (120px + 30px)); /* Limit to 2 rows */
+    overflow: hidden;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.pat-item {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #888;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    height: 120px;
+    position: relative;
+    background-color: #222;
+    color: #FFF;
+    text-decoration: none;
+}
+
+.pat-item h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+.pat-content {
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+
+.pat-blurb {
+    font-size: 14px;
+    font-style: italic;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.led-strip-container {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 40px;
+    overflow: hidden;
+    border: 2px solid #888;
+    border-radius: 5px;
+    background-color: #121212;
+    align-self: stretch; /* Ensures the container fills the width */
+    margin-bottom: 10px; /* Ensures spacing between this and any elements below */
+}
+
+.lightshow-container {
+    overflow: hidden; /* Add this to hide overflowing content */
+    box-sizing: border-box; /* Include padding and border in the element's size */
+    height: 40px;
+    width: 100%; /* Example width */
+    padding: 0; /* Adjust padding as needed */
+    margin: 0 auto; /* Center the container, remove margin if not needed */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+input[type="text"], textarea, input[type="file"] {
+    padding: 10px;
+    border: 1px solid #888;
+    background-color: #222;
+    color: #FFF;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: #FFF;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+.register-section, .login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 50px;
+}
+
+.form-group {
+    width: 100%; /* Ensure full width to contain the input fields */
+    max-width: 300px; /* Maintain a max width for better appearance on wider screens */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align the flex items */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.login-button, .register-button, .upload-button {
+    margin: 5px auto;
+}
+
+.g-recaptcha {
+    margin: 5px auto;
+}
+
+.form-group button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    color: #121212;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.form-group button:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.search-input {
+    width: 300px;
+    max-width: 100%; /* Ensures the input doesn't exceed the container's width */
+}
+
+.search-bar {
+    text-align: center; /* Center the search bar */
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center; /* Center the search bar horizontally */
+    align-items: center; /* Center the search bar vertically */
+    width: 100%; /* Take up the full width of the parent container */
+}
+
+.search-input {
+    width: 50%; /* Set the width of the search bar */
+    max-width: 300px; /* Set a maximum width */
+    margin-bottom: 10px;
+}
+
+nav {
+  padding: 10px 0;
+}
+
+nav ul {
+  display: flex;
+  justify-content: space-around;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav ul li {
+  flex-grow: 1;
+  text-align: center;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #fff;
+  padding: 10px 20px;
+  display: block;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+nav ul li a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1c40f;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1400px;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.profile-details {
+    flex-grow: 1;
+}
+
+.profile-blurb {
+    font-style: italic;
+    color: #aaa;
+}
+
+.pat-profile-page {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #222;
+    border: 2px solid #888;
+    border-radius: 10px;
+}
+
+.pat-profile-header {
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.edit-pat-link,
+.delete-pat-link {
+    color: #FFFFFF;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block; /* Aligns links next to each other */
+    margin: 0px;
+}
+
+.pat-profile-actions {
+    display: flex;
+    justify-content: flex-end; /* Aligns buttons to the right */
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+}
+
+.pat-title {
+  margin-top: 0px;
+}
+
+.pat-icons {
+    margin: 0px;
+    position: relative; /* This makes it the reference for absolute positioning */
+    height: 0; /* It doesn't take up space */
+    width: 100%;
+}
+
+.pat-profile-button {
+    text-decoration: none;
+    color: #FFF;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.lightshow-button {
+    background-color: #1abc9c; /* Teal background */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    margin-right: 10px;
+    margin-left: 20px;
+}
+
+.lightshow-button:hover {
+    background-color: #16a085; /* A slightly darker teal on hover */
+}
+
+.pat-profile-blurb {
+    font-size: 14px;
+    font-style: italic;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pat-profile-details {
+    margin: 20px 0;
+    padding-bottom: 50px;
+}
+
+@media (max-width: 768px) {
+  .pat-profile-details {
+      margin: 20px 0;
+      padding-bottom: 80px;
+  }
+}
+
+@media (max-width: 338px) {
+  .pat-profile-button {
+      text-decoration: none;
+      color: #FFF;
+      margin-top: 10px;
+      margin-left: 5px;
+      font-size: 12px;
+  }
+}
+
+.edit-details-btn {
+    background-color: #4CAF50; /* Green background for edit button */
+    color: white;
+}
+
+.delete-pat-btn {
+    color: red;
+    font-size: 24px;
+    padding: 0 5px; /* Reduce padding for alignment */
+}
+
+.edit-pat-btn img, .delete-pat-btn {
+    height: 20px; /* Standardize icon size */
+}
+
+.pat-profile-download-button {
+    background-color: #007bff; /* Blue background */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block; /* Aligns with other inline or inline-block elements */
+    margin-top: 20px; /* Space from the top elements */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.pat-profile-download-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.pat-profile-led-strip-container {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 40px;
+    width 3000px;
+    overflow: hidden;
+    margin-top: 20px;
+    border: 2px solid #888;
+    border-radius: 5px;
+    background-color: #121212;
+}
+
+.pat-profile-page {
+    position: relative; /* Make sure the icons are positioned relative to this container */
+}
+
+.votes-container {
+    position: absolute;
+    top: 0px;
+    right: 30px;
+}
+
+.upvote-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.votes-count {
+    display: block;
+    text-align: center;
+}
+
+.favorite-icon {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 20px;
+    height: 20px;
+}
+
+.icon-button {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer;
+    outline: none !important; /* Remove focus outline */
+    appearance: none !important; /* Remove browser-specific styling */
+    -webkit-appearance: none !important; /* Remove browser-specific styling for WebKit browsers */
+    -moz-appearance: none !important; /* Remove browser-specific styling for Mozilla browsers */
+    text-decoration: none !important; /* Remove underline */
+}
+
+.icon-button:hover,
+.icon-button:focus {
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    text-decoration: none !important;
+}
+
+/* Additional styling to remove padding and margin from the form */
+.votes-container,
+.favorite-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-block; /* Align the forms horizontally */
+}
+
+/* Style changes for small screens */
+@media (max-width: 768px) {
+    nav {
+        margin: 0 auto; /* Center the nav container horizontally on mobile */
+        max-width: 95%; /* Reduce the maximum width on mobile to ensure responsiveness */
+        padding: 10px; /* Reduce padding on mobile for better spacing */
+    }
+
+    /* Hide the list by default */
+    .nav-menu ul {
+        display: none;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    /* When nav-menu is active, display the list and stack items vertically */
+    .nav-menu.active ul {
+        display: block;
+    }
+
+    .nav-menu ul li {
+        display: block; /* Ensure list items stack vertically */
+        text-align: center;
+        padding: 10px 20px;
+    }
+
+    header h1 {
+        font-size: 20px; /* Reduce font size on smaller screens */
+    }
+
+    header img {
+        width: 48px; /* Reduce logo size on smaller screens */
+        height: 48px;
+    }
+
+    /* Style the hamburger icon */
+    .hamburger {
+        display: block;
+        position: absolute; /* Position the hamburger menu independently */
+        top: 20px;
+        right: 20px;
+    }
+
+    .hamburger div {
+        width: 30px; /* Width of the hamburger lines */
+        height: 3px; /* Height of the hamburger lines */
+        background-color: #fff;
+        margin: 6px 0;
+        transition: 0.4s;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .showcase {
+        margin: 0 auto; /* Center the .showcase container horizontally on mobile */
+        max-width: 95%; /* Reduce the maximum width on mobile to ensure responsiveness */
+        padding: 10px; /* Reduce padding on mobile for better spacing */
+    }
+}
+
+@media (max-width: 594px) {
+
+
+
+}
+
+/* Hide the hamburger icon on larger screens */
+@media (min-width: 769px) {
+    .hamburger {
+        display: none;
+    }
+}
+
+/* Downloads Section */
+.downloads-section {
+    margin: 20px auto;
+    max-width: 1400px;
+}
+
+.downloads-section h2 {
+    color: #FFF;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.download-category {
+    background-color: #282828;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.download-category-title {
+    color: #f1c40f;
+    margin-bottom: 10px;
+}
+
+/* Individual Download Item Styling */
+.download-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #888;
+    color: #FFF;
+}
+
+.download-item:last-child {
+    border-bottom: none;
+}
+
+.download-item h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.download-info {
+    font-size: 14px;
+    color: #aaa;
+}
+
+.download-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #007bff; /* Primary button color */
+    color: #ffffff; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.download-button:hover, .download-button:focus {
+    background-color: #0056b3; /* Darker shade on hover/focus */
+    color: #ffffff;
+}
+
+.download-button-disabled {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #aaaaaa; /* Primary button color */
+    color: #ffffff; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.download-button-disabled:hover, .download-button-disabled:focus {
+    background-color: #6c757d; /* Keep the same color on hover/focus */
+    color: #ffffff;
+}
+
+.button-container {
+    text-align: center; /* Centers the inline-block element within */
+}
+
+
+/* Ensure images do not exceed their containers */
+img {
+    max-width: 100%;
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .editor-section, .device-section {
+        padding: 10px; /* Reduce padding on smaller screens */
+    }
+
+    .button-container, .device-content, .image-gallery {
+        width: 100%; /* Ensure these elements don't exceed the screen width */
+        box-sizing: border-box; /* Include padding and border in the element's total width */
+    }
+}
+
+/* General style for content not to exceed the viewport width */
+.content-container, .editor-section, .device-section {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.editor-section {
+    background-color: #333;
+    padding: 20px;
+    margin: 50px auto;
+    border-radius: 10px;
+    max-width: 1400px;
+}
+
+.editor-section h2 {
+    color: #f1c40f;
+}
+
+.device-section {
+    background-color: #282828;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    max-width: 1300px;
+}
+
+.device-image {
+    width: auto;
+    max-height: 300px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+/* Admin Uploads Form */
+.admin-downloads {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #222;
+    border: 2px solid #888;
+    border-radius: 10px;
+}
+
+.admin-downloads h2 {
+    color: #FFF;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.admin-download-form {
+    display: grid;
+    grid-gap: 15px;
+}
+
+.pat-edit-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto; /* Centers the section */
+    padding: 20px;
+    border-radius: 10px; /* Optional styling */
+    color: #fff; /* Ensures text is visible against the dark background */
+}
+
+/* Form Group Styling */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: #FFF;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    background-color: #333;
+    color: #FFF;
+    border: 1px solid #888;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #f1c40f;
+}
+
+.form-group button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.form-group button:hover {
+    background-color: #555;
+}
+
+.editor-screenshot, .firmware-screenshot {
+    width: auto;
+    height: 350px; /* Set a fixed height to maintain aspect ratio without stretching */
+    object-fit: contain; /* Ensure content fits without being cropped or distorted */
+    display: block; /* Ensure images are block-level for correct spacing */
+    border-radius: 8px; /* Maintain rounded corners for aesthetics */
+}
+
+.image-gallery {
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap as needed */
+    justify-content: center; /* Center items horizontally */
+    gap: 20px; /* Optional: Adds some space between the images */
+}
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+    .editor-screenshot {
+        flex-basis: 100%; /* Allow each image to take full width on smaller screens */
+        max-width: 100%; /* Ensure images are responsive */
+        height: auto; /* Maintain aspect ratio */
+        flex-basis: calc(50% - 10px);
+    }
+}
+
+.content-container {
+    max-width: 800px;
+    margin: auto; /* Centers the container */
+    padding: 20px;
+    text-align: left; /* Ensures text alignment is readable */
+}
+
+.privacy-section, .terms-section { /* If you opt for a new class */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align the content for wider screens */
+    justify-content: start;
+    padding: 50px 0;
+}
+
+.fb-login-button button {
+    background-color: #4267B2; /* Facebook Blue */
+    color: white;
+    padding: 10px 15px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.fb-login-button button:hover {
+    background-color: #365899; /* Darker Facebook Blue */
+}
+
+.submit-button {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.submit-button button {
+    margin: 0 auto; /* Centers the button horizontally */
+    display: inline-block; /* Allows margin auto to work */
+}
+
+.pat-item-submission-content {
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+
+.pat-submission-section {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* for the index page, different from the actual showcase */
+.pat-submission-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+    margin: 20px auto;
+}
+
+.pat-item-submission {
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    margin: 10px auto;
+    padding: 15px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    background-color: #222;
+    color: #FFF;
+    transition: background-color 0.3s;
+    position: relative;
+    text-decoration: none;
+    min-width: 300px;
+    min-height: 225px;
+}
+
+.pat-item-submission.locked {
+    background-color: #444; /* Darker background for locked items */
+    color: #777; /* Greyed out text */
+}
+
+.pat-item-submission.locked .pat-title-input,
+.pat-item-submission.locked .pat-description-input {
+    background-color: #555;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.pat-item h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+.pat-title-input {
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    word-wrap: break-word; /* Prevents overflow */
+}
+
+.pat-description-input {
+    margin-bottom: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+    height: auto; /* Allows the height to grow as needed */
+    resize: none; /* Users can adjust vertically */
+    align-self: stretch; /* Ensures input fills container width */
+}
+
+/* Style adjustments for disabled input fields to indicate non-interactivity */
+input[type="text"]:disabled, textarea:disabled {
+    background-color: #555;
+    color: #777;
+    cursor: not-allowed; /* Change cursor to indicate disabled status */
+}
+
+.feedback {
+  margin-top: 8px; /* Adjust the value as needed */
+}
+
+.admin-panel {
+  max-width: 800px; /* Adjust based on your preference */
+  margin: 0 auto; /* Center the panel */
+  margin-top: 20px;
+  padding: 50px;
+  border-radius: 8px; /* Optional: adds rounded corners */
+  box-shadow: 0 6px 9px rgba(0,0,0,0.8); /* Optional: adds a subtle shadow */
+}
+
+.admin-panel h2 {
+  text-align: center;
+}
+
+.admin-panel table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.admin-panel th, .admin-panel td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ddd; /* Adds a line between rows */
+}
+
+.admin-panel th {
+  color: white;
+}
+
+.admin-panel button {
+  background-color: #007bff; /* Button background color */
+  color: white; /* Button text color */
+  margin: 5px 5px;
+  margin-left: 10px;
+  margin-right: 0px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.admin-panel button:hover {
+  background-color: #0056b3; /* Darker shade for hover */
+}
+
+.mode-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mode-tiles {
+    flex: 0 0 200px;
+    overflow-y: auto;
+    max-height: 400px;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+}
+
+.mode-preview {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.device-image {
+    max-width: 100%;
+    height: auto;
+}
+
+.pattern-strip {
+    width: 100%;
+    height: 50px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/*
+.pat-tile-submission {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #888;
+    background-color: #222;
+    border-radius: 5px;
+    color: #FFF;
+    transition: background-color 0.3s;
+    position: relative;
+}
+
+.pat-tile-submission.locked {
+    background-color: #555;
+}
+
+.pat-tile-submission.new {
+    background-color: #1abc9c;
+}
+*/
+
+.pat-title-input, .pat-description-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    background-color: #222;
+    color: #FFF;
+    border: 1px solid #888;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.duplicate-message {
+    color: #FF5733;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.pat-tile {
+    border: 1px solid #888;
+    padding: 10px;
+    margin: 10px;
+    background-color: #222;
+    border-radius: 5px;
+    color: #FFF;
+    transition: background-color 0.3s;
+}
+
+.pat-tile.duplicate {
+    background-color: #555;
+}
+
+.pat-tile.new {
+    background-color: #1abc9c;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #888;
+    background-color: #222;
+    color: #FFF;
+    border-radius: 5px;
+}
+
+.duplicate-message {
+    color: #FF5733;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.keep-button {
+    background-color: #333;
+    color: #FFF;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.keep-button:hover {
+    background-color: #555;
+}
+
+
+/* Mode Submission Styles */
+.mode-submission-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #333;
+    border-radius: 5px;
+    color: #FFF;
+    display: flex;
+    flex-direction: column;
+}
+
+.mode-info {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.mode-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.mode-header input {
+    flex: 1;
+    margin-right: 20px;
+    padding: 10px;
+    border: 1px solid #888;
+    background-color: #222;
+    color: #FFF;
+    border-radius: 5px;
+}
+
+.device-type img {
+    max-height: 80px;
+}
+
+.mode-info textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #888;
+    background-color: #222;
+    color: #FFF;
+    border-radius: 5px;
+    resize: none;
+    margin-bottom: 10px;
+}
+
+.mode-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mode-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mode-tiles {
+    flex: 0 0 200px;
+    overflow-y: auto;
+    max-height: 400px;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+}
+
+.mode-preview {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.device-image {
+    max-width: 100%;
+    height: auto;
+}
+
+.pattern-strip {
+    width: 100%;
+    height: 50px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.submit-button {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* PAT Tile Styles */
+.pat-tile-submission {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #888;
+    background-color: #222;
+    border-radius: 5px;
+    color: #FFF;
+    transition: background-color 0.3s;
+    position: relative;
+}
+
+.pat-tile-submission.locked {
+    background-color: #555;
+}
+
+.pat-tile-submission.new {
+    background-color: #1abc9c;
+}
+
+.pat-title-input, .pat-description-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    background-color: #222;
+    color: #FFF;
+    border: 1px solid #888;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.duplicate-message {
+    color: #FF5733;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .mode-content {
+        flex-direction: column;
+    }
+
+    .mode-tiles {
+        max-height: 200px;
+    }
+}
+

@@ -31,6 +31,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Use the setPageStyles middleware to inject css
+app.use(require('./middleware/setPageStyles'));
+
 // Session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET,

@@ -79,7 +79,7 @@ input[type="text"]:disabled, textarea:disabled {
 }
 
 .keep-button {
-    background-color: #333;
+    background-color: #121212;
     color: #FFF;
     padding: 5px 10px;
     border: none;
