@@ -1,0 +1,24 @@
+.profile-section {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1400px;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.profile-details {
+    flex-grow: 1;
+}
+
+.profile-blurb {
+    font-style: italic;
+    color: #aaa;
+}
+

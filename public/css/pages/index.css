@@ -1,0 +1,16 @@
+.showcase {
+    margin: 0 auto;
+    max-width: 1400px;
+    padding: 20px;
+}
+
+.pat-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+    max-height: calc(2 * (120px + 30px));
+    overflow: hidden;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
