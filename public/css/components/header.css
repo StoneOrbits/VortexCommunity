@@ -10,14 +10,14 @@ header {
 }
 
 header img {
-    width: 50px; /* Ensure a consistent size for the logo */
+    width: 80px; /* Ensure a consistent size for the logo */
     height: auto; /* Maintain aspect ratio */
     margin-right: 10px;
     transition: width 0.3s, height 0.3s;
 }
 
 header h1 {
-    font-size: 24px;
+    font-size: 32px;
     margin: 0;
     transition: font-size 0.3s;
     flex-grow: 1;

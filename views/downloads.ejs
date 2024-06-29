@@ -34,7 +34,7 @@
                             <p class="device-description">Released on <%= latestDownloads[device]['firmware'].releaseDate %></p>
                             <p class="device-description">Latest firmware version: <%= latestDownloads[device]['firmware'].version %></p>
                             <% if (user || 1) { %>
-                              <a href="<%= latestDownloads[device]['firmware'].fileUrl %>" class="download-button">Download Latest Firmware</a>
+                              <a href="<%= latestDownloads[device]['firmware'].fileUrl %>" class="download-button">Download Firmware</a>
                             <% } else { %>
                               <a href="/login" class="download-button-disabled">Login to Download</a>
                             <% } %>
