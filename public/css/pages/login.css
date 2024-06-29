@@ -1,4 +1,6 @@
-.login-section, .register-section {
+/* login.css */
+
+.login-section {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -6,17 +8,12 @@
     padding-top: 50px;
 }
 
-.form-group {
+.login-section .form-group {
     width: 100%;
     max-width: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 10px;
 }
 
 .login-button, .register-button, .upload-button {
@@ -25,19 +22,5 @@
 
 .g-recaptcha {
     margin: 5px auto;
-}
-
-.form-group button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #FFFFFF;
-    color: #121212;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.form-group button:hover {
-    background-color: rgba(255, 255, 255, 0.8);
 }
 

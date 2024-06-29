@@ -1,22 +1,37 @@
+/* header.css */
+
 header {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Adjust this based on your layout needs */
+    justify-content: space-between;
     padding: 10px;
-    max-width: 1200px; /* Adjust based on your layout */
-    margin: 0 0; /* Center the header */
-    background-color: #121212; /* Add background color if needed */
+    max-width: 1460px;
+    margin: 0 auto;
 }
 
 header img {
+    width: 50px; /* Ensure a consistent size for the logo */
+    height: auto; /* Maintain aspect ratio */
     margin-right: 10px;
-    width: 64px; /* Ensure consistent size */
-    height: 64px;
+    transition: width 0.3s, height 0.3s;
 }
 
 header h1 {
     font-size: 24px;
     margin: 0;
-    color: #FFF; /* Ensure title text color is white */
+    transition: font-size 0.3s;
+    flex-grow: 1;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 20px;
+    }
+
+    header img {
+        width: 48px; /* Reduce logo size on smaller screens */
+        height: 48px;
+    }
 }
 

@@ -1,3 +1,6 @@
+/* downloads.css */
+
+/* General Section Styles */
 .downloads-section {
     margin: 20px auto;
     max-width: 1400px;
@@ -75,5 +78,81 @@
 
 .button-container {
     text-align: center;
+}
+
+/* Editor Section */
+.editor-section {
+    background-color: #333;
+    padding: 20px;
+    margin: 50px auto;
+    border-radius: 10px;
+    max-width: 1400px;
+}
+
+.editor-section h2 {
+    color: #f1c40f;
+}
+
+.editor-screenshot {
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 8px;
+}
+
+.image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .editor-screenshot {
+        flex-basis: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* Firmware Section */
+.device-section {
+    background-color: #282828;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    max-width: 1300px;
+    display: flex;
+    align-items: center;
+}
+
+.device-image {
+    width: auto;
+    max-height: 200px; /* Make the image no more than 200px wide */
+    padding: 10px;
+    margin-right: 20px; /* Add space between image and content */
+    flex-shrink: 0; /* Prevent the image from shrinking */
+}
+
+.device-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.device-details {
+    text-align: left;
+}
+
+.device-details h3 {
+    color: #f1c40f;
+}
+
+.device-details p {
+    color: #aaa;
+}
+
+.download-button, .download-button-disabled {
 }
 

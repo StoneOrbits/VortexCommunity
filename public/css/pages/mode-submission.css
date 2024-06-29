@@ -1,9 +1,11 @@
+/* mode-submission.css */
+
 .mode-submission-section {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
-    background-color: #121212;
+    background-color: #333;
     border-radius: 5px;
     color: #FFF;
     display: flex;
@@ -93,41 +95,13 @@
     margin-top: 20px;
 }
 
-.pat-tile-submission {
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #888;
-    background-color: #222;
-    border-radius: 5px;
-    color: #FFF;
-    transition: background-color 0.3s;
-    position: relative;
-}
+@media (max-width: 768px) {
+    .mode-content {
+        flex-direction: column;
+    }
 
-.pat-tile-submission.locked {
-    background-color: #555;
-}
-
-.pat-tile-submission.new {
-    background-color: #1abc9c;
-}
-
-.pat-title-input, .pat-description-input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 10px;
-    font-size: 16px;
-    background-color: #222;
-    color: #FFF;
-    border: 1px solid #888;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-.duplicate-message {
-    color: #FF5733;
-    font-size: 14px;
-    text-align: center;
-    margin-top: 5px;
+    .mode-tiles {
+        max-height: 200px;
+    }
 }
 
