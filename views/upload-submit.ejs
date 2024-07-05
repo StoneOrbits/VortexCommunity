@@ -8,23 +8,18 @@
         <div class="container">
             <section class="mode-submission-section">
                 <form action="/upload/submit" method="post">
-                    <div class="mode-info">
-                        <div class="mode-header">
-                            <input type="text" id="name" name="name" value="<%= modeData.name %>" placeholder="Mode Title" required>
-                        </div>
-                        <textarea id="description" name="description" placeholder="Enter description..." rows="2"></textarea>
-                        <div class="mode-details">
-                            <!--<span>Flags: <%= modeData.flags %></span>-->
-                        </div>
+                    <div class="mode-header">
+                        <input type="text" id="name" name="name" value="<%= modeData.name %>" placeholder="Mode Title" required>
+                        <textarea id="description" name="description" placeholder="Enter description..." rows="1"></textarea>
                     </div>
                     <div class="mode-content">
-                        <div class="mode-tiles">
+                        <div class="mode-patterns">
                             <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
                                 <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName }) %>
                             <% }); %>
                         </div>
                         <div class="mode-preview">
-                            <img class="device-image" src="/images/gloves-logo-square-512.png" alt="Device Image">
+                            <img class="device-image" src="/images/gloves.png" alt="Device Image">
                             <div class="pattern-strip">
                                 <!-- Rendered pattern strip -->
                             </div>
@@ -39,18 +34,6 @@
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
-    <script>
-        document.querySelectorAll('.keep-button').forEach(button => {
-            button.addEventListener('click', function() {
-                const index = this.dataset.index;
-                const tile = this.closest('.pat-tile');
-                tile.classList.remove('duplicate');
-                tile.classList.add('new');
-                tile.querySelector('.duplicate-message').remove();
-                this.remove();
-            });
-        });
-    </script>
 </body>
 </html>
 

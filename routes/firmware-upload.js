@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const uploadFirmware = require('../config/firmwareUpload'); // Adjust the path as necessary
+const uploadFirmware = require('../config/firmware-upload'); // Adjust the path as necessary
 const Download = require('../models/Download'); // Adjust the path as necessary
 require('dotenv').config();
 

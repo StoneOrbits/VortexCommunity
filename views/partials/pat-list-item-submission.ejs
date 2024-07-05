@@ -1,0 +1,10 @@
+<div class="pat-tile-submission <%= pat.isDuplicate ? 'locked' : '' %>">
+    <div class="pat-tile-submission-content">
+        <input type="hidden" name="patIds[]" value="<%= tempId %>" <%= pat.isDuplicate ? 'disabled' : '' %> />
+    </div>
+    <div class="submission-led-strip-container">
+        <!-- Lightshow visualization -->
+        <%- include('submission-lightshow', { pat: pat, tempId: tempId }) %>
+    </div>
+</div>
+

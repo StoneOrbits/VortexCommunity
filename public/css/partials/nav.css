@@ -4,9 +4,15 @@ nav {
   width: 100%;
   background-color: #121212;
   padding: 10px 20px;
+  box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.nav-menu {
+    width: 100%; /* Ensure nav-menu takes full width */
 }
 
 nav .nav-container {
+    width: 100%;
     max-width: 1460px;
     margin: 0 auto;
     display: flex;
@@ -15,9 +21,10 @@ nav .nav-container {
 }
 
 nav ul {
+    width: 100%;
     list-style-type: none;
-    width: 1460px;
     padding: 0;
+    margin: 0;
     display: flex;
     justify-content: space-between;
 }
@@ -72,41 +79,38 @@ nav ul li a:hover {
 }
 
 @media (max-width: 768px) {
-    nav {
-        margin: 0 auto;
-        max-width: 95%;
-        padding: 10px;
-    }
-
     nav .nav-container {
         flex-direction: column;
         align-items: flex-start;
+        width: 100%;  /* Added */
+        padding: 0 10px;
     }
 
     .nav-menu ul {
         display: none;
+        flex-direction: column;  /* Added */
+        width: 100%;  /* Added */
         padding: 0;
         margin: 0;
         list-style: none;
+        box-sizing: border-box;
     }
 
     .nav-menu.active ul {
-        display: block;
+        display: flex;  /* Changed from block to flex */
+        width: 100%;
     }
 
     .nav-menu ul li {
-        display: block;
         text-align: center;
-        padding: 10px 20px;
+        width: 100%;  /* Added */
+        padding: 10px 0px;
     }
 
-    header h1 {
-        font-size: 20px;
-    }
-
-    header img {
-        width: 48px;
-        height: 48px;
+    .nav-menu ul li a {
+      width: calc(100% - 40px); /* Ensure a takes full width */
+      box-sizing: border-box; /* Include padding in width */
+      padding: 10px 20px; /* Adjust padding for mobile view */
     }
 
     .hamburger {
@@ -126,12 +130,6 @@ nav ul li a:hover {
 
     .search-input {
         width: 100%;
-    }
-
-    .showcase {
-        margin: 0 auto;
-        max-width: 95%;
-        padding: 10px;
     }
 }
 

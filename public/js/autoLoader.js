@@ -1,8 +1,10 @@
 var path = window.location.pathname;
 var segments = path.split("/").filter(Boolean); // Filter out empty segments
 
-var page = segments.length > 0 ? segments[0] : 'home'; // Default to 'home' if no significant segment
-
+var page = segments.join('_'); // Join all segments with an underscore to form the script name
+if (page.length == 0) {
+  page = 'home';
+}
 var scriptName = 'page_' + page + '.js';
 var scriptPath = '/js/' + scriptName;
 
@@ -18,3 +20,4 @@ script.onerror = function() {
 };
 
 document.body.appendChild(script);
+

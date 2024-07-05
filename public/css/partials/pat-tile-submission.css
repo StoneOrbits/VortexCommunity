@@ -1,0 +1,46 @@
+/* pat-tile-submission.css */
+
+.pat-tile-submission {
+    padding: 5px;
+    margin: 2px;
+    border: 1px solid #888;
+    background-color: #222;
+    border-radius: 1px;
+    color: #FFF;
+    transition: background-color 0.3s;
+    position: relative;
+}
+
+.pat-tile-submission.locked {
+    background-color: #555;
+}
+
+.pat-tile-submission.new {
+    background-color: #1abc9c;
+}
+
+.pat-title-input, .pat-description-input {
+    width: 100%;
+    max-height: 30px;
+    padding: 8px;
+    margin-top: 10px;
+    font-size: 14px;
+    background-color: #222;
+    color: #FFF;
+    border: 1px solid #888;
+    border-radius: 1px;
+    box-sizing: border-box;
+}
+
+.duplicate-message {
+    color: #FF5733;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 1px;
+}
+
+.submission-led-strip-container {
+  max-height: 10px;
+  margin: 0;
+  padding-bottom: 5px;
+}

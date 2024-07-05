@@ -1,0 +1,63 @@
+/* forms.css */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+input[type="text"], input[type="email"], input[type="password"], textarea, input[type="file"] {
+    padding: 10px;
+    border: 1px solid #888;
+    background-color: #222;
+    color: #FFF;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: #FFF;
+    outline: none;
+}
+
+input[type="text"]:disabled, input[type="email"]:disabled, input[type="password"]:disabled, textarea:disabled {
+    background-color: #555;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.register-section, .login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 50px;
+}
+
+.form-group {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.login-button, .register-button, .upload-button {
+    margin: 5px auto;
+}
+
+.g-recaptcha {
+    margin: 5px auto;
+}
+

@@ -1,0 +1,20 @@
+/* pat-tile.css */
+
+.pat-tile {
+    border: 1px solid #888;
+    padding: 10px;
+    margin: 10px;
+    background-color: #222;
+    border-radius: 5px;
+    color: #FFF;
+    transition: background-color 0.3s;
+}
+
+.pat-tile.duplicate {
+    background-color: #555;
+}
+
+.pat-tile.new {
+    background-color: #1abc9c;
+}
+

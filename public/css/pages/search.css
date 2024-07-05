@@ -1,10 +1,5 @@
 /* search.css */
 
-.search-input {
-    width: 300px;
-    max-width: 100%;
-}
-
 .search-bar {
     text-align: center;
     padding: 10px;
@@ -13,16 +8,36 @@
 }
 
 .search-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
     width: 100%;
+    max-width: 400px; /* Adjust as needed */
+    margin: 0 auto;
 }
 
 .search-input {
-    width: 50%;
-    max-width: 300px;
-    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px 40px 10px 10px; /* Adjust padding to fit the icon */
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.search-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    font-size: 20px;
+    color: #ccc;
+}
+
+.search-button:hover {
+    color: #333; /* Adjust hover color as needed */
 }
 
 @media (max-width: 768px) {
@@ -30,4 +45,5 @@
         width: 100%;
     }
 }
+
 

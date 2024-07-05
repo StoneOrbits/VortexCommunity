@@ -1,0 +1,54 @@
+/* pat-list-item-submission.css */
+
+.pat-item-submission {
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    margin: 10px auto;
+    padding: 15px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    background-color: #222;
+    color: #FFF;
+    transition: background-color 0.3s;
+    position: relative;
+    text-decoration: none;
+    min-width: 300px;
+    min-height: 225px;
+}
+
+.pat-item-submission.locked {
+    background-color: #444;
+    color: #777;
+}
+
+.pat-item-submission.locked .pat-title-input,
+.pat-item-submission.locked .pat-description-input {
+    background-color: #555;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.pat-title-input, .pat-description-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    background-color: #222;
+    color: #FFF;
+    border: 1px solid #888;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.duplicate-message {
+    color: #FF5733;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.pat-item-submission-content {
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+

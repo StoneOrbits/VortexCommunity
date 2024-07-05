@@ -73,7 +73,7 @@ app.use('/upload', uploadLimiter);
 // Routes
 var indexRouter = require('./routes/index');
 var userUploadRouter = require('./routes/upload');
-var firmwareUploadRouter = require('./routes/firmwareUpload');
+var firmwareUploadRouter = require('./routes/firmware-upload');
 var userRouter = require('./routes/user');
 var patsRouter = require('./routes/pats');
 var downloadsRouter = require('./routes/downloads');
