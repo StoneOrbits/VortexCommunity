@@ -1,6 +1,7 @@
-// sub-routes that need autoloading
+// Sub-routes that need autoloading
 var subRoutes = new Set([
     'upload/submit',
+    // Add more sub-routes as needed
 ]);
 
 // Helper function to determine the script based on the route segments
@@ -14,14 +15,15 @@ function getScriptName(path) {
             return 'page_' + path.replace(/\//g, '_') + '.js';
         }
     } else if (segments.length === 1) {
-        // handle direct routes automatically
+        // Handle direct routes automatically
         return 'page_' + segments[0] + '.js';
     }
-    // handle empty route as home
+    // Handle empty route as home
     return 'page_home.js';
 }
 
-function autoLoad(path) {
+// Helper function to autoload script into DOM based on script path in public/
+function autoLoad(scriptPath) {
     var script = document.createElement('script');
     script.src = scriptPath;
     script.type = 'module'; // Specify that the script is a module
