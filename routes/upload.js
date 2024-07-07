@@ -57,29 +57,30 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
       const deviceType = getDeviceTypeName(mode.num_leds);
       const flags = mode.flags;
 
+      // calculate duplicates
+      let isDuplicates = [];
       let internalSet = new Set();
-      mode.single_pats = await Promise.all(mode.single_pats.map(async (pat) => {
+      for (const pat of jsonData.modes[0].single_pats) {
         const sortedPatData = sortObjectKeys(pat);
         const serializedPatData = JSON.stringify(sortedPatData);
         const dataHash = computeHash(serializedPatData);
 
-        if (internalSet.has(dataHash)) {
-          pat.isDuplicate = true;
+        const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+        if (internalSet.has(dataHash) || existingPatternSet) {
+          isDuplicates.push(true);
         } else {
           internalSet.add(dataHash);
-          const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-          pat.isDuplicate = !!existingPatternSet;
+          isDuplicates.push(false);
         }
-
-        return pat;
-      }));
+      }
 
       req.session.modeData = {
         name: fileName,
         description: '',
         deviceType,
         flags,
-        jsonData
+        jsonData,
+        isDuplicates
       };
     }
 
@@ -116,39 +117,79 @@ router.get('/submit', ensureAuthenticated, (req, res) => {
 
 router.post('/submit', ensureAuthenticated, async (req, res) => {
   try {
-    const { name, description } = req.body; // Use the data from the form submission
+    const { name, description } = req.body;
     const { deviceType, flags, jsonData } = req.session.modeData;
 
-    // Find or create PatternSets
-    const patternSetPromises = jsonData.modes[0].single_pats.map(async pat => {
+    // re-calculate duplicates just in case
+    let isDuplicates = [];
+    let internalSet = new Set();
+    for (const pat of jsonData.modes[0].single_pats) {
+      const sortedPatData = sortObjectKeys(pat);
+      const serializedPatData = JSON.stringify(sortedPatData);
+      const dataHash = computeHash(serializedPatData);
+
+      const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+      if (internalSet.has(dataHash) || existingPatternSet) {
+        isDuplicates.push(true);
+      } else {
+        internalSet.add(dataHash);
+        isDuplicates.push(false);
+      }
+    }
+    const patternSetIds = new Map(); // Map to track pattern hash to patternSetId
+
+    // Loop through patterns and deduplicate
+    for (let i = 0; i < jsonData.modes[0].single_pats.length; i++) {
+      const pat = jsonData.modes[0].single_pats[i];
       const sortedPatData = sortObjectKeys(pat);
       const dataHash = computeHash(JSON.stringify(sortedPatData));
-      let existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
 
-      if (!existingPatternSet) {
-        // If the pattern doesn't exist, create a new one
-        existingPatternSet = new PatternSet({
-          _id: new mongoose.Types.ObjectId(),
-          name: pat.name || 'Unnamed PatternSet',
-          description: pat.description || 'No description provided.',
-          data: sortedPatData,
-          dataHash: dataHash,
-          createdBy: req.user._id,
-        });
-        await existingPatternSet.save();
+      if (!isDuplicates[i]) {
+        // Check for existing pattern in the database
+        let existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+        if (!existingPatternSet) {
+          // If the pattern doesn't exist, create a new one
+          existingPatternSet = new PatternSet({
+            _id: new mongoose.Types.ObjectId(),
+            name: pat.name || 'Unnamed PatternSet',
+            description: pat.description || 'No description provided.',
+            data: sortedPatData,
+            dataHash: dataHash,
+            createdBy: req.user._id,
+          });
+          await existingPatternSet.save();
+          console.log(`Pattern created with dataHash: ${dataHash}`);
+        } else {
+          console.log(`Pattern already exists with dataHash: ${dataHash}`);
+        }
+
+        // Add patternSetId to the map
+        patternSetIds.set(dataHash, existingPatternSet._id);
+      } else {
+        // Find the existing pattern in the database to get the ID
+        let existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+        if (existingPatternSet) {
+          patternSetIds.set(dataHash, existingPatternSet._id);
+        }
       }
+    }
 
-      return existingPatternSet._id;
+    // Ensure patternSetIds map is correctly populated
+    console.log('PatternSet IDs map:', Array.from(patternSetIds.entries()));
+
+    // Create a list of patternSetIds for the Mode
+    const patternSets = jsonData.modes[0].single_pats.map(pat => {
+      const sortedPatData = sortObjectKeys(pat);
+      const dataHash = computeHash(JSON.stringify(sortedPatData));
+      return patternSetIds.get(dataHash);
     });
-
-    const patternSets = await Promise.all(patternSetPromises);
 
     // Create the new Mode
     const mode = new Mode({
       name,
       description,
       deviceType,
-      patternSets: patternSets,
+      patternSets,
       createdBy: req.user._id,
       flags: parseInt(flags, 10),
       dataHash: computeHash(JSON.stringify(patternSets) + ":" + flags + ":" + deviceType)
@@ -158,7 +199,7 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
 
     req.flash('success', 'Mode and PatternSets successfully submitted!');
     delete req.session.modeData;
-    res.redirect('/modes');
+    res.redirect('/pats');
   } catch (error) {
     console.error('Error saving modes and patterns:', error);
     req.flash('error', 'An error occurred while submitting your mode.');

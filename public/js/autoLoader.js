@@ -1,6 +1,6 @@
 // Sub-routes that need autoloading
 var subRoutes = new Set([
-    'upload/submit',
+    '/upload/submit',
     // Add more sub-routes as needed
 ]);
 
@@ -11,8 +11,8 @@ function getScriptName(path) {
 
     if (segments.length > 1) {
         if (subRoutes.has(path)) {
-            // Handle sub-routes dynamically
-            return 'page_' + path.replace(/\//g, '_') + '.js';
+            // Handle sub-routes manually in Set above
+            return 'page' + path.replace(/\//g, '_') + '.js';
         }
     } else if (segments.length === 1) {
         // Handle direct routes automatically

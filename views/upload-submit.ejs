@@ -15,7 +15,7 @@
                     <div class="mode-content">
                         <div class="mode-patterns">
                             <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
-                                <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName }) %>
+                                <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName, isDuplicate: modeData.isDuplicates[index] }) %>
                             <% }); %>
                         </div>
                         <div class="mode-preview">

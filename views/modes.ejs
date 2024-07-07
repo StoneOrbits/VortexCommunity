@@ -6,7 +6,7 @@
         <%- include('partials/nav') %>
         <main>
             <section class="search-bar">
-                <form action="/pats" method="get">
+                <form action="/modes" method="get">
                     <div class="search-container">
                         <input type="text" class="search-input" placeholder="Search...">
                         <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
@@ -14,11 +14,11 @@
                 </form>
             </section>
             <section class="showcase">
-                <h2>Patterns</h2>
-                <div class="pat-list">
-                    <% pats.forEach(function(pat) { %>
-                        <%- include('partials/pat-tile', { pat: pat }) %>
-                    <% }); %>
+                <h2>Modes</h2>
+                <div class="modes-list">
+                    <% modes.forEach(mode => { %>
+                        <%- include('partials/mode-tile', { modeName: mode.name, modeDescription: mode.description, deviceType: mode.deviceType }) %>
+                    <% }) %>
                 </div>
             </section>
         </main>
