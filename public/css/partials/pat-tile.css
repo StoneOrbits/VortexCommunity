@@ -8,6 +8,7 @@
     border-radius: 5px;
     color: #FFF;
     transition: background-color 0.3s;
+    transition: transform 0.2s; /* Add a little animation for hover effect */
 }
 
 .pat-tile.duplicate {

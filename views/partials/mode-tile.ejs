@@ -1,8 +1,7 @@
-<div class="mode-tile">
-  <div class="device-icon <%= deviceType.toLowerCase() %>"></div>
+<a href="/mode/<%= mode._id %>" class="mode-tile">
+  <div class="device-icon <%= mode.deviceType.toLowerCase() %>"></div>
   <div class="mode-content">
-    <h3><%= modeName %></h3>
-    <p><%= modeDescription %></p>
-    <!-- Other mode details can go here -->
+    <h3><%= mode.name %></h3>
+    <p><%= mode.description %></p>
   </div>
-</div>
+</a>

@@ -16,6 +16,10 @@ const ModeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'PatternSet'
   }],
+  ledPatternOrder: [{
+    type: Number,
+    required: true
+  }],
   flags: {
     type: Number,
     required: true

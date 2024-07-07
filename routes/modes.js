@@ -6,8 +6,21 @@ const { ensureAuthenticated } = require('../middleware/checkAuth');
 
 router.get('/', async (req, res) => {
   try {
-    const modes = await Mode.find({ createdBy: req.user._id }).exec();
-    res.render('modes', { modes });
+    const page = req.query.page || 1;
+    const searchQuery = req.query.search;
+
+    let modesForCurrentPage = await Mode.find().sort({ votes: -1 }).exec();
+
+    if (searchQuery) {
+      modesForCurrentPage = modesForCurrentPage.filter(mode => mode.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
+
+    res.render('modes', {
+      modes: modesForCurrentPage,
+      user: req.user,
+      currentPage: page,
+      search: req.query.search
+    });
   } catch (error) {
     console.error('Error fetching modes:', error);
     req.flash('error', 'An error occurred while fetching modes.');

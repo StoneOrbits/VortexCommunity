@@ -4,10 +4,13 @@
   padding: 20px;
   border-radius: 10px;
   border: 1px solid #ccc;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 10px;
-  background-color: #fff;
+  background-color: #212121;
   overflow: hidden;
+  color: #FFF; /* Ensure text color is readable */
+  text-decoration: none; /* Remove link underline */
+  display: block; /* Ensure the entire area is clickable */
+  transition: transform 0.2s; /* Add a little animation for hover effect */
 }
 
 .device-icon {
@@ -20,26 +23,37 @@
 }
 
 .device-icon.gloves {
-  background-image: url('/icons/gloves-icon.png'); /* Replace with the path to your icon */
+  background-image: url('/images/gloves-logo-square-64.png'); /* Replace with the correct path */
 }
 
 .device-icon.orbit {
-  background-image: url('/icons/orbit-icon.png'); /* Replace with the path to your icon */
+  background-image: url('/images/orbit-logo-square-64.png'); /* Replace with the correct path */
 }
 
 .device-icon.handle {
-  background-image: url('/icons/handle-icon.png'); /* Replace with the path to your icon */
+  background-image: url('/images/handle-logo-square-64.png'); /* Replace with the correct path */
 }
 
 .device-icon.duo {
-  background-image: url('/icons/duo-icon.png'); /* Replace with the path to your icon */
+  background-image: url('/images/duo-logo-square-64.png'); /* Replace with the correct path */
 }
 
 .device-icon.chromadeck {
-  background-image: url('/icons/chromadeck-icon.png'); /* Replace with the path to your icon */
+  background-image: url('/images/chromadeck-logo-square-64.png'); /* Replace with the correct path */
 }
 
 .mode-content {
   margin-top: 60px; /* Adjust if necessary to make space for the icon */
+}
+
+.mode-content h3 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.mode-content p {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
 }
 

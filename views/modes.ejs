@@ -17,7 +17,7 @@
                 <h2>Modes</h2>
                 <div class="modes-list">
                     <% modes.forEach(mode => { %>
-                        <%- include('partials/mode-tile', { modeName: mode.name, modeDescription: mode.description, deviceType: mode.deviceType }) %>
+                        <%- include('partials/mode-tile', { mode: mode }) %>
                     <% }) %>
                 </div>
             </section>

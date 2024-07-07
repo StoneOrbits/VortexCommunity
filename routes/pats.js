@@ -10,16 +10,13 @@ router.get('/', async (req, res) => {
   const searchQuery = req.query.search;
 
   let patsForCurrentPage = await PatternSet.find().sort({ votes: -1 }).exec();
-  let modesForCurrentPage = await Mode.find().sort({ votes: -1 }).populate('patternSets').exec();
 
   if (searchQuery) {
     patsForCurrentPage = patsForCurrentPage.filter(pat => pat.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    modesForCurrentPage = modesForCurrentPage.filter(mode => mode.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }
 
   res.render('pats', {
     pats: patsForCurrentPage,
-    modes: modesForCurrentPage,
     user: req.user,
     currentPage: page,
     search: req.query.search

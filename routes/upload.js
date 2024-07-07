@@ -199,7 +199,7 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
 
     req.flash('success', 'Mode and PatternSets successfully submitted!');
     delete req.session.modeData;
-    res.redirect('/pats');
+    res.redirect('/modes');
   } catch (error) {
     console.error('Error saving modes and patterns:', error);
     req.flash('error', 'An error occurred while submitting your mode.');
