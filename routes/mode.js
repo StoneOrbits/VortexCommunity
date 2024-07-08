@@ -225,7 +225,6 @@ router.post('/create', async (req, res) => {
 });
 
 // Download mode
-// TODO: download modeset as separate .vtxmode file?
 router.get('/:modeId/download', ensureAuthenticated, async (req, res) => {
   try {
     const mode = await Mode.findOne({ _id: req.params.modeId });
@@ -246,10 +245,9 @@ router.get('/:modeId/download', ensureAuthenticated, async (req, res) => {
       modes: [ await buildMode(mode) ],
     };
 
-
     const modeDataJson = JSON.stringify(wrappedModeData);
     console.log(modeDataJson);
-    const command = `/usr/local/bin/vortex --silent --quick --led-count 1 --write-mode ${tempVtxmodeFile.path} --json-in`;
+    const command = `/usr/local/bin/vortex --silent --quick --led-count ${mode.num_leds} --write-mode ${tempVtxmodeFile.path} --json-in`;
     const vortex = spawn(command, [], { shell: true, stdio: ['pipe', 'ignore', 'pipe'] });
 
     vortex.stderr.on('data', (data) => {
