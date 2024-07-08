@@ -2,17 +2,18 @@
 
 .mode-tile {
   position: relative;
-  width: 200px;
+  width: 240px;
   padding: 20px;
   border-radius: 10px;
   border: 1px solid #ccc;
-  margin: 10px;
+  margin: 15px 0;
   background-color: #212121;
   overflow: hidden;
   color: #FFF; /* Ensure text color is readable */
   text-decoration: none; /* Remove link underline */
   display: block; /* Ensure the entire area is clickable */
   transition: transform 0.2s; /* Add a little animation for hover effect */
+  text-overflow: ellipsis; /* Use ellipsis for overflow text */
 }
 
 .device-icon {
@@ -22,6 +23,7 @@
   width: 40px;
   height: 40px;
   background-size: cover;
+  display: block; /* Ensure it is a block element */
 }
 
 .device-icon.gloves {
@@ -46,6 +48,8 @@
 
 .mode-content {
   margin-top: 60px; /* Adjust if necessary to make space for the icon */
+  flex-grow: 1;
+  margin-bottom: 10px;
 }
 
 .mode-content h3 {
@@ -57,5 +61,20 @@
   font-size: 14px;
   color: #555;
   margin-top: 5px;
+}
+
+.mode-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px; /* Add some space below the title */
+}
+
+.mode-description p {
+  font-size: 14px;
+  font-style: italic;
+  color: #aaa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 

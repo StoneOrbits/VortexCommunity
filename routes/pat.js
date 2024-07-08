@@ -204,6 +204,7 @@ router.post('/create', async (req, res) => {
 });
 
 // Download pat
+// TODO: download patset as separate .vtxpat file?
 router.get('/:patId/download', ensureAuthenticated, async (req, res) => {
   try {
     const pat = await PatternSet.findOne({ _id: req.params.patId });
