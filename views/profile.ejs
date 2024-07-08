@@ -18,16 +18,32 @@
         </section>
         <section class="showcase">
             <% if (user && user.id == profileUser.id) { %>
-              <h3>Your PatternSets</h3>
+              <h3>Your Modes</h3>
             <% } else { %>
-              <h3><%= profileUser.username %>'s PatternSets</h3>
+              <h3><%= profileUser.username %>'s Modes</h3>
             <% } %>
 
-            <% if (!profileUser.pats.length) { %>
+            <% if (!userModes.length) { %>
+                <p>No modes available.</p>
+            <% } else { %>
+                <div class="pat-showcase">
+                    <% userModes.forEach(mode => { %>
+                        <%- include('partials/mode-tile', { mode: mode }) %>
+                    <% }); %>
+                </div>
+            <% } %>
+
+            <% if (user && user.id == profileUser.id) { %>
+              <h3>Your Patterns</h3>
+            <% } else { %>
+              <h3><%= profileUser.username %>'s Patterns</h3>
+            <% } %>
+
+            <% if (!userPats.length) { %>
                 <p>No pats available.</p>
             <% } else { %>
                 <div class="pat-showcase">
-                    <% profileUser.pats.forEach(pat => { %>
+                    <% userPats.forEach(pat => { %>
                         <%- include('partials/pat-tile', { pat: pat }) %>
                     <% }); %>
                 </div>

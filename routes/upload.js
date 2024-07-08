@@ -54,6 +54,7 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
           default: return 'Unknown';
         }
       };
+      console.log(JSON.stringify(jsonData));
       const deviceType = getDeviceTypeName(mode.num_leds);
       const flags = mode.flags;
 
@@ -177,11 +178,18 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
     // Ensure patternSetIds map is correctly populated
     console.log('PatternSet IDs map:', Array.from(patternSetIds.entries()));
 
-    // Create a list of patternSetIds for the Mode
-    const patternSets = jsonData.modes[0].single_pats.map(pat => {
+    // Create a deduplicated list of patternSetIds for the Mode
+    const deduplicatedPatternSets = Array.from(new Set(jsonData.modes[0].single_pats.map(pat => {
       const sortedPatData = sortObjectKeys(pat);
       const dataHash = computeHash(JSON.stringify(sortedPatData));
       return patternSetIds.get(dataHash);
+    })));
+
+    // Create the ledPatternOrder array
+    const ledPatternOrder = jsonData.modes[0].single_pats.map(pat => {
+      const sortedPatData = sortObjectKeys(pat);
+      const dataHash = computeHash(JSON.stringify(sortedPatData));
+      return deduplicatedPatternSets.indexOf(patternSetIds.get(dataHash));
     });
 
     // Create the new Mode
@@ -189,10 +197,11 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
       name,
       description,
       deviceType,
-      patternSets,
+      patternSets: deduplicatedPatternSets,
+      ledPatternOrder,
       createdBy: req.user._id,
       flags: parseInt(flags, 10),
-      dataHash: computeHash(JSON.stringify(patternSets) + ":" + flags + ":" + deviceType)
+      dataHash: computeHash(JSON.stringify(deduplicatedPatternSets) + ":" + JSON.stringify(ledPatternOrder) + ":" + flags + ":" + deviceType)
     });
 
     await mode.save();

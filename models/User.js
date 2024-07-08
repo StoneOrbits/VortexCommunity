@@ -17,15 +17,15 @@ const UserSchema = new mongoose.Schema({
   },
   profilePic: String,
   bio: String,
-  // List of references to pats uploaded by user (PatternSets)
-  pats: [{
-    type: Schema.Types.ObjectId,
-    ref: 'PatternSet'
-  }],
   // List of references to favorite pats
   favPats: [{
     type: Schema.Types.ObjectId,
     ref: 'PatternSet'
+  }],
+  // List of references to favorite modes
+  favModes: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Mode'
   }],
   emailVerified: { type: Boolean, default: false },
   verificationToken: { type: String, required: false }

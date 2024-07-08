@@ -31,6 +31,9 @@ nav ul {
 
 nav li {
     margin: 0 10px;
+    position: relative; /* Add this line for dropdown positioning */
+    flex-grow: 1;
+    text-align: center;
 }
 
 nav a {
@@ -78,59 +81,135 @@ nav ul li a:hover {
     color: #f1c40f;
 }
 
+/* General dropdown styles for desktop */
+nav ul ul.dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #333; /* Dark background to match the theme */
+    padding: 0;
+    border-bottom-left-radius: 5px; /* Bottom left radius */
+    border-bottom-right-radius: 5px; /* Bottom right radius */
+    list-style: none;
+    width: 100%; /* Fixed width for dropdown */
+    z-index: 1000; /* Ensure dropdown appears above other content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for better visibility */
+}
+
+nav ul li:hover ul.dropdown,
+nav ul li.open ul.dropdown {
+    display: block; /* Show dropdown when parent is hovered or open */
+}
+
+nav ul ul.dropdown li {
+    display: block;
+    margin: 0;
+}
+
+nav ul ul.dropdown li a {
+    padding: 10px; /* Match the padding of other nav items */
+    border: none;
+    border-radius: 0; /* Remove border radius for dropdown items */
+    display: block; /* Ensure full width clickable area */
+    color: #FFF; /* White text color */
+    background-color: #333; /* Dark background */
+    text-align: center; /* Center text in dropdown items */
+    border-bottom-left-radius: 5px; /* Bottom left radius */
+    border-bottom-right-radius: 5px; /* Bottom right radius */
+}
+
+nav ul ul.dropdown li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f1c40f; /* Highlight color on hover */
+}
+
 @media (max-width: 768px) {
-    nav .nav-container {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;  /* Added */
-        padding: 0 10px;
-    }
+  nav {
+    width: 100%;
+    background-color: #121212;
+    padding: 10px 50px;
+  }
 
-    .nav-menu ul {
-        display: none;
-        flex-direction: column;  /* Added */
-        width: 100%;  /* Added */
-        padding: 0;
-        margin: 0;
-        list-style: none;
-        box-sizing: border-box;
-    }
 
-    .nav-menu.active ul {
-        display: flex;  /* Changed from block to flex */
-        width: 100%;
-    }
+  nav .nav-container {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin: 0;
+  }
 
-    .nav-menu ul li {
-        text-align: center;
-        width: 100%;  /* Added */
-        padding: 10px 0px;
-    }
+  .nav-menu ul {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    box-sizing: border-box;
+  }
 
-    .nav-menu ul li a {
-      width: calc(100% - 40px); /* Ensure a takes full width */
-      box-sizing: border-box; /* Include padding in width */
-      padding: 10px 20px; /* Adjust padding for mobile view */
-    }
+  .nav-menu.active ul {
+    display: flex;
+    width: 100%;
+  }
 
-    .hamburger {
-        display: block;
-        position: absolute;
-        top: 20px;
-        right: 20px;
-    }
+  .nav-menu ul li {
+    text-align: center;
+    width: 100%;
+    padding: 10px 0;
+    position: relative;
+    margin: 0;
+  }
 
-    .hamburger div {
-        width: 30px;
-        height: 3px;
-        background-color: #fff;
-        margin: 6px 0;
-        transition: 0.4s;
-    }
+  .nav-menu ul li a {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    display: block;
+  }
 
-    .search-input {
-        width: 100%;
-    }
+  .nav-menu ul ul.dropdown {
+    position: static;
+    display: none;
+    width: 100%;
+    padding: 0;
+    border-radius: 0;
+    background-color: rgb(51, 51, 51);
+    box-sizing: border-box;
+    border-bottom-left-radius: 5px; /* Bottom left radius */
+    border-bottom-right-radius: 5px; /* Bottom right radius */
+  }
+
+  nav ul li.open ul.dropdown {
+    display: block;
+  }
+
+  nav ul ul.dropdown li a {
+    padding: 10px 20px;
+    text-align: center;
+    background-color: rgb(51, 51, 51);
+    color: rgb(255, 255, 255);
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom-left-radius: 5px; /* Bottom left radius */
+    border-bottom-right-radius: 5px; /* Bottom right radius */
+  }
+
+  .hamburger {
+    display: block;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+
+  .hamburger div {
+    width: 30px;
+    height: 3px;
+    background-color: #fff;
+    margin: 6px 0;
+    transition: 0.4s;
+  }
 }
 
 @media (min-width: 769px) {
