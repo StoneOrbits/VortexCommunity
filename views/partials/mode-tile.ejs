@@ -1,4 +1,4 @@
-<a href="/mode/<%= mode._id %>" class="mode-tile">
+<a href="/mode/<%= mode._id %>" class="mode-tile" data-device-type="<%= mode.deviceType.toLowerCase() %>">
   <div class="mode-tile-content">
       <h2 class="mode-tile-title"><%= mode.name %></h2>
       <p class="mode-tile-description"><%= mode.description %></p>

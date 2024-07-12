@@ -17,3 +17,79 @@
     margin-left: 20px;
     margin-right: 20px;
 }
+
+.filter-bar {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    margin-bottom: 5px;
+}
+
+.device-filter {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background-color: #121212;
+    border-radius: 5px;
+    color: #FFF;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+.filter-button input[type="checkbox"] {
+    display: none;
+}
+
+.filter-button input[type="checkbox"] + label {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin: 0 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+.filter-button input[type="checkbox"] + label img {
+    margin-right: 10px;
+    margin-left: 0px;
+    height: 22px; /* Adjust the size as needed */
+    width: 22px;  /* Adjust the size as needed */
+}
+
+.filter-button input[type="checkbox"]:checked + label {
+    background-color: #1abc9c;
+    color: #FFF;
+    border-color: #1abc9c;
+    transform: scale(1.05);
+}
+
+.filter-button input[type="checkbox"]:not(:checked) + label {
+    background-color: #555;
+    color: #AAA;
+    border-color: #555;
+    transform: scale(1);
+}
+
+.filter-button input[type="checkbox"]:not(:checked) + label:hover {
+    background-color: #666;
+    border-color: #666;
+    color: #FFF;
+    transform: scale(1.05);
+}
+
+.filter-button input[type="checkbox"]:checked + label:hover {
+    background-color: #16a085;
+    border-color: #16a085;
+    color: #FFF;
+    transform: scale(1.05);
+}
+
