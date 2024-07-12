@@ -1,29 +1,67 @@
 /* mode-tile.css */
 
 .mode-tile {
-  position: relative;
-  width: 240px;
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  margin: 15px 0;
-  background-color: #212121;
-  overflow: hidden;
-  color: #FFF; /* Ensure text color is readable */
-  text-decoration: none; /* Remove link underline */
-  display: block; /* Ensure the entire area is clickable */
-  transition: transform 0.2s; /* Add a little animation for hover effect */
-  text-overflow: ellipsis; /* Use ellipsis for overflow text */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #888;
+    padding: 10px;
+    border-radius: 5px;
+    height: 120px;
+    position: relative; /* Ensure the device icon stays within the tile */
+    background-color: #222;
+    color: #FFF;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    transition: transform 0.2s; /* Add a little animation for hover effect */
+}
+
+.mode-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .device-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 40px;
-  height: 40px;
-  background-size: cover;
-  display: block; /* Ensure it is a block element */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 50px;
+    width: 50px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.mode-tile-content {
+    flex-direction: column;
+    margin-top: 70px; /* Add space for the device icon */
+    text-align: left;
+}
+
+.mode-tile-title {
+    font-size: 20px;
+    margin: 5px 0px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    max-width: calc(100% - 80px); /* Adjust max-width to prevent overflow */
+    max-height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mode-tile-description {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 10px;
+    max-width: 100%;
+    max-height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mode-details {
+    font-size: 12px;
+    color: #ccc;
 }
 
 .device-icon.gloves {
@@ -44,37 +82,5 @@
 
 .device-icon.chromadeck {
   background-image: url('/images/chromadeck-logo-square-64.png'); /* Replace with the correct path */
-}
-
-.mode-content {
-  margin-top: 60px; /* Adjust if necessary to make space for the icon */
-  flex-grow: 1;
-  margin-bottom: 10px;
-}
-
-.mode-content h3 {
-  font-size: 20px;
-  margin: 0;
-}
-
-.mode-content p {
-  font-size: 14px;
-  color: #555;
-  margin-top: 5px;
-}
-
-.mode-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px; /* Add some space below the title */
-}
-
-.mode-description p {
-  font-size: 14px;
-  font-style: italic;
-  color: #aaa;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 

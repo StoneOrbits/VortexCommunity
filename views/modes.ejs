@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('partials/head') %>
-    <body class="dark-theme">
-        <%- include('partials/header') %>
-        <%- include('partials/nav') %>
-        <main>
-            <section class="search-bar">
-                <form action="/modes" method="get">
-                    <div class="search-container">
-                        <input type="text" class="search-input" placeholder="Search...">
-                        <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
-                    </div>
-                </form>
-            </section>
-            <section class="showcase">
-                <h2>Modes</h2>
-                <div class="modes-list">
-                    <% modes.forEach(mode => { %>
-                        <%- include('partials/mode-tile', { mode: mode }) %>
-                    <% }) %>
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <section class="search-bar">
+            <form action="/modes" method="get">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search...">
+                    <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
                 </div>
-            </section>
-        </main>
-        <%- include('partials/footer') %>
-        <%- include('partials/script') %>
-    </body>
+            </form>
+        </section>
+        <section class="showcase">
+            <div class="modes-list">
+                <% modes.forEach(mode => { %>
+                    <%- include('partials/mode-tile', { mode: mode }) %>
+                <% }) %>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+</body>
 </html>
 

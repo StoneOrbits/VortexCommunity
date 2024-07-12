@@ -24,7 +24,7 @@
         <p>Uploaded by <a href="/user/<%= mode.createdBy._id %>"><%= mode.createdBy.username %></a> on <%= new Date(mode.uploadDate).toLocaleDateString() %></p>
       </div>
       <div class="mode-profile-details">
-        <p><%= mode.description %></p>
+        <p class="mode-profile-description"><%= mode.description %></p>
         <% if (user && user._id.toString() === mode.createdBy._id.toString()) { %>
           <a href="/mode/<%= mode._id %>/edit" class="edit-mode-link">Edit</a>
           <a href="#" class="delete-mode-link" onclick="confirmDelete()">Delete</a>
