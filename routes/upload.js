@@ -54,14 +54,13 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
           default: return 'Unknown';
         }
       };
-      console.log(JSON.stringify(jsonData));
       const deviceType = getDeviceTypeName(mode.num_leds);
       const flags = mode.flags;
 
       // calculate duplicates
       let isDuplicates = [];
       let internalSet = new Set();
-      for (const pat of jsonData.modes[0].single_pats) {
+      for (const pat of mode.single_pats) {
         const sortedPatData = sortObjectKeys(pat);
         const serializedPatData = JSON.stringify(sortedPatData);
         const dataHash = computeHash(serializedPatData);
@@ -109,6 +108,65 @@ function sortObjectKeys(obj) {
   });
   return sortedObj;
 }
+
+router.get('/json', ensureAuthenticated, async (req, res) => {
+  const base64Data = req.query.data;
+  if (!base64Data) {
+    req.flash('error', 'No data provided');
+    return res.redirect('/upload');
+  }
+
+  const jsonData = JSON.parse(Buffer.from(base64Data, 'base64').toString());
+
+  try {
+    const mode = jsonData;
+    const getDeviceTypeName = (numLeds) => {
+      switch (numLeds) {
+        case 10: return 'Gloves';
+        case 28: return 'Orbit';
+        case 3: return 'Handle';
+        case 2: return 'Duo';
+        case 20: return 'Chromadeck';
+        default: return 'Unknown';
+      }
+    };
+
+    const deviceType = getDeviceTypeName(mode.num_leds);
+    const flags = mode.flags;
+
+    // calculate duplicates
+    let isDuplicates = [];
+    let internalSet = new Set();
+    for (const pat of mode.single_pats) {
+      const sortedPatData = sortObjectKeys(pat);
+      const serializedPatData = JSON.stringify(sortedPatData);
+      const dataHash = computeHash(serializedPatData);
+
+      const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+      if (internalSet.has(dataHash) || existingPatternSet) {
+        isDuplicates.push(true);
+      } else {
+        internalSet.add(dataHash);
+        isDuplicates.push(false);
+      }
+    }
+
+    req.session.modeData = {
+      name: jsonData.name || 'Unnamed Mode',
+      description: jsonData.description || '',
+      deviceType,
+      flags,
+      jsonData: { modes: [ jsonData ] },
+      isDuplicates
+    };
+
+    res.redirect('/upload/submit');
+  } catch (error) {
+    console.error(error);
+    req.flash('error', 'An error occurred during processing');
+    res.redirect('/upload');
+  }
+});
 
 router.get('/submit', ensureAuthenticated, (req, res) => {
   const modeData = req.session.modeData || {};
@@ -174,9 +232,6 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
         }
       }
     }
-
-    // Ensure patternSetIds map is correctly populated
-    console.log('PatternSet IDs map:', Array.from(patternSetIds.entries()));
 
     // Create a deduplicated list of patternSetIds for the Mode
     const deduplicatedPatternSets = Array.from(new Set(jsonData.modes[0].single_pats.map(pat => {
