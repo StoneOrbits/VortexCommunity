@@ -176,10 +176,10 @@ router.get('/submit', ensureAuthenticated, (req, res) => {
 
 router.post('/submit', ensureAuthenticated, async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, patternNames, patternDescriptions } = req.body;
     const { deviceType, flags, jsonData } = req.session.modeData;
 
-    // re-calculate duplicates just in case
+    // Recalculate duplicates just in case
     let isDuplicates = [];
     let internalSet = new Set();
     for (const pat of jsonData.modes[0].single_pats) {
@@ -195,6 +195,7 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
         isDuplicates.push(false);
       }
     }
+
     const patternSetIds = new Map(); // Map to track pattern hash to patternSetId
 
     // Loop through patterns and deduplicate
@@ -210,8 +211,8 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
           // If the pattern doesn't exist, create a new one
           existingPatternSet = new PatternSet({
             _id: new mongoose.Types.ObjectId(),
-            name: pat.name || 'Unnamed PatternSet',
-            description: pat.description || 'No description provided.',
+            name: patternNames[i] || pat.name || 'Unnamed PatternSet',
+            description: patternDescriptions[i] || pat.description || 'No description provided.',
             data: sortedPatData,
             dataHash: dataHash,
             createdBy: req.user._id,
