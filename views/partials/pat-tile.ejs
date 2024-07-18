@@ -3,8 +3,5 @@
         <h2 class="pat-title"><%= pat.name %></h2>
         <p class="pat-blurb"><%= pat.description %></p>
     </div>
-    <div class="led-strip-container">
-        <%- include('lightshow', { pat: pat }) %>
-    </div>
+    <%- include('lightshow', { pat: pat }) %>
 </a>
-

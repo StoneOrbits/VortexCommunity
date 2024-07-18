@@ -45,7 +45,7 @@ router.get('/:modeId', async (req, res) => {
     }
 
     const base64Json = Buffer.from(JSON.stringify(await buildMode(mode))).toString('base64');
-    const lightshowUrl = `https://lightshow.lol/importMode?data=${base64Json}`;
+    const lightshowUrl = `http://127.0.0.1:8000/?data=${base64Json}`;
 
     const uploadDate = mode.uploadDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 

@@ -2,38 +2,41 @@
 <html lang="en">
 <%- include('partials/head') %>
 <body class="dark-theme">
-    <%- include('partials/header') %>
-    <%- include('partials/nav') %>
-    <main>
-        <div class="container">
-            <section class="mode-submission-section">
-                <form action="/upload/submit" method="post">
-                    <div class="mode-header">
-                        <input type="text" id="name" name="name" value="<%= modeData.name %>" placeholder="Mode Title" required>
-                        <textarea id="description" name="description" placeholder="Enter description..." rows="1"></textarea>
-                    </div>
-                    <div class="mode-content">
-                        <div class="mode-patterns">
-                            <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
-                                <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName, isDuplicate: modeData.isDuplicates[index] }) %>
-                            <% }); %>
-                        </div>
-                        <div class="mode-preview">
-                            <img class="device-image" src="/images/gloves.png" alt="Device Image">
-                            <div class="pattern-strip">
-                                <!-- Rendered pattern strip -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="submit-button">
-                        <button type="submit">Submit Mode</button>
-                    </div>
-                </form>
-            </section>
-        </div>
-    </main>
-    <%- include('partials/footer') %>
-    <%- include('partials/script') %>
+  <%- include('partials/header') %>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="container">
+      <section class="mode-submission-section">
+        <form action="/upload/submit" method="post">
+          <div class="mode-header">
+            <input type="text" id="name" name="name" value="<%= modeData.name %>" placeholder="Mode Title" required>
+            <textarea id="description" name="description" placeholder="Enter description..." rows="1"></textarea>
+          </div>
+          <div class="mode-content">
+            <div class="mode-patterns">
+              <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
+                  <!-- Lightshow visualization -->
+                  <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName, isDuplicate: modeData.isDuplicates[index] }) %>
+              <% }); %>
+            </div>
+            <div class="mode-preview">
+              <img class="device-image" src="<%= modeData.deviceType === 'Gloves' ? '/images/gloves.png' : modeData.deviceType === 'Orbit' ? '/images/orbit.png' : modeData.deviceType === 'Handle' ? '/images/handle.png' : modeData.deviceType === 'Duo' ? '/images/duo.png' : '/images/chromadeck.png' %>" alt="Device Image">
+              <div class="pattern-edit">
+                <input type="text" id="pattern-name" placeholder="Pattern Name">
+                <textarea id="pattern-description" placeholder="Pattern Description"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="submit-button">
+            <button type="submit">Submit Mode</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+  <%- include('partials/footer') %>
+  <%- include('partials/script') %>
+  <script src="/js/page_upload_submit.js"></script>
 </body>
 </html>
 

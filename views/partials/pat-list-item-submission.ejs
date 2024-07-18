@@ -1,10 +1,8 @@
-<div class="pat-tile-submission <%= isDuplicate ? 'locked' : '' %>">
-    <div class="pat-tile-submission-content">
+<div class="pat-item-submission <%= isDuplicate ? 'duplicate' : '' %>" data-index="<%= tempId %>" <%= isDuplicate ? 'disabled' : '' %>>
+    <div class="pat-item-submission-content" <%= isDuplicate ? 'disabled' : 'onclick="selectPattern(' + tempId + ')"' %>>
         <input type="hidden" name="patIds[]" value="<%= tempId %>" <%= isDuplicate ? 'disabled' : '' %> />
+        <p class="pat-name"><%= pat.name || 'Unnamed Pattern' %></p>
     </div>
-    <div class="submission-led-strip-container">
-        <!-- Lightshow visualization -->
-        <%- include('submission-lightshow', { pat: pat, tempId: tempId }) %>
-    </div>
+    <!-- Lightshow visualization -->
+    <%- include('submission-lightshow', { pat: pat, tempId: tempId }) %>
 </div>
-

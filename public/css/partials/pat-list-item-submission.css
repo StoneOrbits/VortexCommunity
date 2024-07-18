@@ -1,10 +1,10 @@
 /* pat-list-item-submission.css */
 
 .pat-item-submission {
-    box-sizing: border-box;
-    margin-bottom: 30px;
-    margin: 10px auto;
-    padding: 15px;
+    display:flex;
+    align-items:center;
+    margin: 5px auto;
+    padding: 0 10px;
     border: 1px solid #888;
     border-radius: 5px;
     background-color: #222;
@@ -12,20 +12,30 @@
     transition: background-color 0.3s;
     position: relative;
     text-decoration: none;
-    min-width: 300px;
-    min-height: 225px;
+    transition: background-color 0.3s;
+    transition: transform 0.2s; /* Add a little animation for hover effect */
+    height: auto;
 }
 
-.pat-item-submission.locked {
+.pat-item-submission:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.pat-item-submission.duplicate {
     background-color: #444;
     color: #777;
 }
 
-.pat-item-submission.locked .pat-title-input,
-.pat-item-submission.locked .pat-description-input {
+.pat-item-submission.duplicate .pat-title-input,
+.pat-item-submission.duplicate .pat-description-input {
     background-color: #555;
     color: #777;
     cursor: not-allowed;
+}
+
+.pat-name {
+    margin: 5px 0;
 }
 
 .pat-title-input, .pat-description-input {
@@ -46,9 +56,3 @@
     text-align: center;
     margin-top: 5px;
 }
-
-.pat-item-submission-content {
-    flex-grow: 1;
-    margin-bottom: 10px;
-}
-

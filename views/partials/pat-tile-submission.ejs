@@ -10,9 +10,7 @@
             <div class="duplicate-message">This pat already exists and cannot be submitted again.</div>
         <% } %>
     </div>
-    <div class="led-strip-container">
-        <!-- Lightshow visualization -->
-        <%- include('lightshow', { pat: pat, tempId: tempId }) %>
-    </div>
+    <!-- Lightshow visualization -->
+    <%- include('lightshow', { pat: pat, tempId: tempId }) %>
 </div>
 
