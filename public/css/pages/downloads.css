@@ -127,7 +127,7 @@
     align-items: center;
 }
 
-.device-image {
+.download-device-image {
     width: auto;
     max-height: 200px; /* Make the image no more than 200px wide */
     padding: 10px;

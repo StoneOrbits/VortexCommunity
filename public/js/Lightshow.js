@@ -1,17 +1,20 @@
 export default class Lightshow {
   static count = 0;
 
-  constructor(vortexLib, canvasId, sectionCount = 20) {
+  constructor(vortexLib, canvasId, options = {}) {
     this.id = Lightshow.count++;
+    this.type = options.type || 'scrolling'; // Default to 'scrolling' if no type is provided
     this.setupCanvas(canvasId);
     this.setupOffScreenCanvas(canvasId);
     this.initializeVortex(vortexLib);
-    this.configureDisplay(sectionCount);
+    this.configureDisplay(options.sectionCount || 20);
     this.loadPatData();
     this.clearCanvas();
+    this.boundScrollingDraw = this.scrollingDraw.bind(this); // Bind the scrolling draw function
+    this.boundFlashDraw = this.flashDraw.bind(this); // Bind the flash draw function
   }
 
-  setupCanvas(canvasId, width, height) {
+  setupCanvas(canvasId) {
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) throw new Error(`Canvas with ID ${canvasId} not found`);
 
@@ -24,7 +27,7 @@ export default class Lightshow {
     this.patId = canvasId.split('_')[1];
   }
 
-  setupOffScreenCanvas(canvasId, width, height) {
+  setupOffScreenCanvas(canvasId) {
     this.offScreenCanvas = document.createElement('canvas');
     this.offScreenCanvas.width = this.canvas.width;
     this.offScreenCanvas.height = this.canvas.height;
@@ -44,7 +47,6 @@ export default class Lightshow {
     this.sectionCount = sectionCount;
     this.sectionWidth = this.canvas.width / this.sectionCount;
     this.history = [];
-    this.boundDraw = this.draw.bind(this);
     this.animationFrameId = null;
   }
 
@@ -104,7 +106,7 @@ export default class Lightshow {
     return this.vortex.engine().leds().ledCount();
   }
 
-  draw() {
+  scrollingDraw() {
     if (this._pause) return;
 
     // Perform drawing operations on the off-screen canvas
@@ -123,7 +125,19 @@ export default class Lightshow {
     // Copy the off-screen canvas to the on-screen canvas in one operation
     this.ctx.drawImage(this.offScreenCanvas, 0, 0);
 
-    this.animationFrameId = requestAnimationFrame(this.boundDraw);
+    this.animationFrameId = requestAnimationFrame(this.boundScrollingDraw);
+  }
+
+  flashDraw() {
+    if (this._pause) return;
+
+    const newColor = this.vortexLib.RunTick(this.vortex);
+    if (newColor) {
+      this.ctx.fillStyle = `rgba(${newColor[0].red}, ${newColor[0].green}, ${newColor[0].blue}, 1)`;
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    this.animationFrameId = requestAnimationFrame(this.boundFlashDraw);
   }
 
   drawSegment(segment) {
@@ -137,7 +151,11 @@ export default class Lightshow {
   start() {
     this._pause = false;
     if (!this.animationFrameId) {
-      this.animationFrameId = requestAnimationFrame(this.boundDraw);
+      if (this.type === 'flashing') {
+        this.animationFrameId = requestAnimationFrame(this.boundFlashDraw);
+      } else {
+        this.animationFrameId = requestAnimationFrame(this.boundScrollingDraw);
+      }
     }
   }
 
@@ -227,3 +245,4 @@ export default class Lightshow {
     }
   }
 }
+

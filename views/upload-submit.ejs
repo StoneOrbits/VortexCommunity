@@ -20,7 +20,18 @@
               <% }); %>
             </div>
             <div class="mode-preview">
-              <img class="device-image" src="<%= modeData.deviceType === 'Gloves' ? '/images/gloves.png' : modeData.deviceType === 'Orbit' ? '/images/orbit.png' : modeData.deviceType === 'Handle' ? '/images/handle.png' : modeData.deviceType === 'Duo' ? '/images/duo.png' : '/images/chromadeck.png' %>" alt="Device Image">
+              <div class="device-preview-container">
+                <div class="led-container">
+                  <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
+                    <!-- Lightshow visualization -->
+                    <%- include('partials/submission-preview-led-lightshow', { pat: pat, tempId: index }) %>
+                  <% }); %>
+                </div>
+                <img class="upload-device-image" src="<%= modeData.deviceType === 'Gloves' ? '/images/gloves.png' : modeData.deviceType === 'Orbit' ? '/images/orbit.png' : modeData.deviceType === 'Handle' ? '/images/handle.png' : modeData.deviceType === 'Duo' ? '/images/duo.png' : '/images/chromadeck.png' %>" alt="Device Image">
+                <div class="highlight-container">
+                  <!-- Highlight divs will be dynamically inserted here by JavaScript -->
+                </div>
+              </div>
               <div class="pattern-edit">
                 <input type="text" id="pattern-name" placeholder="Pattern Name">
                 <textarea id="pattern-description" placeholder="Pattern Description"></textarea>

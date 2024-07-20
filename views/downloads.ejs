@@ -28,7 +28,7 @@
             <% if (latestDownloads[device] && latestDownloads[device]['firmware']) { %>
                 <section class="device-section" id="vortex-<%= device %>">
                     <div class="device-content">
-                        <img src="/images/<%= device %>-logo.png" alt="Vortex <%= device.charAt(0).toUpperCase() + device.slice(1) %>" class="device-image">
+                        <img src="/images/<%= device %>-logo.png" alt="Vortex <%= device.charAt(0).toUpperCase() + device.slice(1) %>" class="download-device-image">
                         <div class="device-details">
                             <h3>Vortex <%= device.charAt(0).toUpperCase() + device.slice(1) %></h3>
                             <p class="device-description">Released on <%= latestDownloads[device]['firmware'].releaseDate %></p>

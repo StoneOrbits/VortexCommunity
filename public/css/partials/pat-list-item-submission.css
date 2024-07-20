@@ -4,7 +4,7 @@
     display:flex;
     align-items:center;
     margin: 5px auto;
-    padding: 0 10px;
+    padding: 0 5px;
     border: 1px solid #888;
     border-radius: 5px;
     background-color: #222;
@@ -15,6 +15,7 @@
     transition: background-color 0.3s;
     transition: transform 0.2s; /* Add a little animation for hover effect */
     height: auto;
+    cursor: pointer;
 }
 
 .pat-item-submission:hover {

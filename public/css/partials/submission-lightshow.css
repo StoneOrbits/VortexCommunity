@@ -6,7 +6,17 @@
     border: 2px solid #888;
     border-radius: 5px;
     background-color: #121212;
-    padding: 0; /* Ensure no padding is adding extra height */
-    margin: 0; /* Ensure no margin is adding extra height */
+    padding: 0;
+    margin: 0;
+    margin-left: 5px;
 }
 
+.submission-preview-led-strip-container {
+    width: 15px;
+    height: 15px;
+    overflow: hidden;
+    border-radius: 50%;
+    background-color: #121212;
+    padding: 0;
+    margin: 0;
+}
