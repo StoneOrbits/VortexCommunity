@@ -22,7 +22,7 @@ patternItems.forEach(item => {
 
 const deviceImage = document.querySelector('.upload-device-image');
 const src = deviceImage.getAttribute('src');
-const deviceTypeMatch = src.match(/\/images\/(.*?)\.png/);
+const deviceTypeMatch = src.match(/\/images\/(.*?)-leds\.png/);
 const deviceType = deviceTypeMatch ? deviceTypeMatch[1] : null;
 const ledSize = 22;
 if (deviceType) {
