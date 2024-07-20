@@ -79,7 +79,6 @@
 .device-preview-container {
     position: relative;
     width: 100%;
-    max-width: 300px;
 }
 
 .upload-device-image {

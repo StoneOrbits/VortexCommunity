@@ -66,12 +66,17 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         const dataHash = computeHash(serializedPatData);
 
         const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-        if (internalSet.has(dataHash) || existingPatternSet) {
-          isDuplicates.push(true);
-        } else {
+        let duplicateFlags = (internalSet.has(dataHash) ? 1 : 0) | (existingPatternSet ? 2 : 0);
+        // if it's not a duplicate then add it to the internalSet
+        if (duplicateFlags == 0) {
           internalSet.add(dataHash);
-          isDuplicates.push(false);
         }
+        // otherwise track whther it's a duplicate in this array
+        //  0 = not duplicate
+        //  1 = local duplicate
+        //  2 = global duplicate
+        //  3 = local + global duplicate
+        isDuplicates.push(duplicateFlags);
       }
 
       req.session.modeData = {
@@ -143,12 +148,17 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
       const dataHash = computeHash(serializedPatData);
 
       const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-      if (internalSet.has(dataHash) || existingPatternSet) {
-        isDuplicates.push(true);
-      } else {
+      let duplicateFlags = (internalSet.has(dataHash) ? 1 : 0) | (existingPatternSet ? 2 : 0);
+      // if it's not a duplicate then add it to the internalSet
+      if (duplicateFlags == 0) {
         internalSet.add(dataHash);
-        isDuplicates.push(false);
       }
+      // otherwise track whther it's a duplicate in this array
+      //  0 = not duplicate
+      //  1 = local duplicate
+      //  2 = global duplicate
+      //  3 = local + global duplicate
+      isDuplicates.push(duplicateFlags);
     }
 
     req.session.modeData = {
@@ -188,12 +198,17 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
       const dataHash = computeHash(serializedPatData);
 
       const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-      if (internalSet.has(dataHash) || existingPatternSet) {
-        isDuplicates.push(true);
-      } else {
+      let duplicateFlags = (internalSet.has(dataHash) ? 1 : 0) | (existingPatternSet ? 2 : 0);
+      // if it's not a duplicate then add it to the internalSet
+      if (duplicateFlags == 0) {
         internalSet.add(dataHash);
-        isDuplicates.push(false);
       }
+      // otherwise track whther it's a duplicate in this array
+      //  0 = not duplicate
+      //  1 = local duplicate
+      //  2 = global duplicate
+      //  3 = local + global duplicate
+      isDuplicates.push(duplicateFlags);
     }
 
     const patternSetIds = new Map(); // Map to track pattern hash to patternSetId

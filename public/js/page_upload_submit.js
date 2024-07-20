@@ -24,7 +24,7 @@ const deviceImage = document.querySelector('.upload-device-image');
 const src = deviceImage.getAttribute('src');
 const deviceTypeMatch = src.match(/\/images\/(.*?)-leds\.png/);
 const deviceType = deviceTypeMatch ? deviceTypeMatch[1] : null;
-const ledSize = 22;
+const ledSize = deviceType == 'orbit' ? 24 : 26;
 if (deviceType) {
   // Function to load LED points from JSON and render lightshows
   fetch(`/data/${deviceType}-led-positions.json`)
@@ -58,7 +58,13 @@ if (deviceType) {
         item.style.position = 'absolute'; // Ensure the canvas has absolute positioning
         item.style.left = `${points[index].x}px`; // Set left position with scaling
         item.style.top = `${points[index].y}px`; // Set top position with scaling
+        if (deviceType == 'orbit') {
+          // render them as circles for orbit
+          item.style.borderRadius = '50%';
+        }
         item.setAttribute('title', points[index].name);
+
+        item.setAttribute('data-index', index);
       });
     })
     .catch(error => {
