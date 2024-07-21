@@ -1,143 +1,144 @@
 /* upload-submit.css */
 
 .mode-submission-section {
-    max-width: 800px;
-    margin: 30px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    background-color: #333;
-    border-radius: 5px;
-    color: #FFF;
-    display: flex;
-    flex-direction: column;
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  background-color: #333;
+  border-radius: 5px;
+  color: #FFF;
+  display: flex;
+  flex-direction: column;
 }
 
 .mode-info {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
 }
 
 .mode-info textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #888;
-    background-color: #222;
-    color: #FFF;
-    border-radius: 5px;
-    resize: none;
-    margin-bottom: 10px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #888;
+  background-color: #222;
+  color: #FFF;
+  border-radius: 5px;
+  resize: none;
+  margin-bottom: 10px;
 }
 
 .mode-header {
-    display: flex;
-    flex-direction: column; /* Changed to column to ensure proper alignment */
-    margin-bottom: 10px;
+  display: flex;
+  flex-direction: column; /* Changed to column to ensure proper alignment */
+  margin-bottom: 10px;
 }
 
 .mode-header input,
 .mode-header textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #888;
-    background-color: #222;
-    color: #FFF;
-    border-radius: 5px;
-    margin: 0;
-    margin-bottom: 10px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #888;
+  background-color: #222;
+  color: #FFF;
+  border-radius: 5px;
+  margin: 0;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .mode-header textarea {
-    resize: none; /* Disable resizing */
-    overflow: hidden; /* Hide scrollbars */
+  resize: none; /* Disable resizing */
+  overflow: hidden; /* Hide scrollbars */
 }
 
 .device-type img {
-    max-height: 80px;
+  max-height: 80px;
 }
 
 .mode-details {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .mode-content {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .mode-preview {
-    flex: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .device-preview-container {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .upload-device-image {
-    display: block;
-    width: 100%;
-    height: auto;
-    position: relative;
-    z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 2;
 }
 
 .led-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  z-index: 1;
 }
 
 .pattern-edit {
-    margin-top: 20px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .pattern-edit input,
 .pattern-edit textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #888;
-    background-color: #222;
-    color: #FFF;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #888;
+  background-color: #222;
+  color: #FFF;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .submit-button {
-    text-align: center;
-    margin-top: 20px;
+  text-align: center;
+  margin-top: 20px;
 }
 
 .mode-patterns {
-    flex: 0 0 240px;
-    overflow-y: auto;
-    max-height: 400px;
-    padding-right: 10px;
-    border-right: 1px solid #ccc;
+  flex: 0 0 240px;
+  overflow-y: auto;
+  max-height: 400px;
+  padding-right: 10px;
+  border-right: 1px solid #ccc;
 }
 
 @media (max-width: 768px) {
-    .mode-content {
-        flex-direction: column;
-    }
+  .mode-content {
+    flex-direction: column;
+  }
 
-    .mode-tiles {
-        max-height: 200px;
-    }
+  .mode-tiles {
+    max-height: 200px;
+  }
 }
 

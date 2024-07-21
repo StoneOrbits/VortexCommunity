@@ -1,59 +1,78 @@
 /* pat-list-item-submission.css */
 
 .pat-item-submission {
-    display:flex;
-    align-items:center;
-    margin: 5px auto;
-    padding: 0 5px;
-    border: 1px solid #888;
-    border-radius: 5px;
-    background-color: #222;
-    color: #FFF;
-    transition: background-color 0.3s;
-    position: relative;
-    text-decoration: none;
-    transition: background-color 0.3s;
-    transition: transform 0.2s; /* Add a little animation for hover effect */
-    height: auto;
-    cursor: pointer;
+  display:flex;
+  align-items:center;
+  margin: 5px auto;
+  padding: 0 5px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  background-color: #222;
+  color: #FFF;
+  transition: background-color 0.3s;
+  position: relative;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  transition: transform 0.2s; /* Add a little animation for hover effect */
+  height: auto;
+  cursor: pointer;
 }
 
 .pat-item-submission:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.pat-item-submission.highlighted {
+  border: 2px solid #0ad;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.pat-item-submission.selected {
+  border: 2px solid #ad0;
+  background-color: #060606;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .pat-item-submission.duplicate {
-    background-color: #444;
-    color: #777;
+  background-color: #444;
+  color: #777;
 }
 
 .pat-item-submission.duplicate .pat-title-input,
 .pat-item-submission.duplicate .pat-description-input {
-    background-color: #555;
-    color: #777;
-    cursor: not-allowed;
+  background-color: #555;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.pat-item-submission-content {
+  width: 60%;
+  text-overflow: ellipsis;
 }
 
 .pat-name {
-    margin: 5px 0;
+  margin: 5px 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .pat-title-input, .pat-description-input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 10px;
-    font-size: 16px;
-    background-color: #222;
-    color: #FFF;
-    border: 1px solid #888;
-    border-radius: 5px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  font-size: 16px;
+  background-color: #222;
+  color: #FFF;
+  border: 1px solid #888;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
 .duplicate-message {
-    color: #FF5733;
-    font-size: 14px;
-    text-align: center;
-    margin-top: 5px;
+  color: #FF5733;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 5px;
 }

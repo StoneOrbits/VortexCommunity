@@ -20,6 +20,35 @@ function computeHash(data) {
   return crypto.createHash('sha256').update(data).digest('hex');
 }
 
+async function calculateDuplicates(mode) {
+  let isDuplicates = [];
+  let duplicateNames = [];
+  let internalSet = new Set();
+
+  for (const pat of mode.single_pats) {
+    const sortedPatData = sortObjectKeys(pat);
+    const serializedPatData = JSON.stringify(sortedPatData);
+    const dataHash = computeHash(serializedPatData);
+
+    const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+    let duplicateFlags = (internalSet.has(dataHash) ? 1 : 0) + (existingPatternSet ? 2 : 0);
+
+    if ((duplicateFlags & 1) == 0) {
+      internalSet.add(dataHash);
+    }
+
+    if (existingPatternSet) {
+      duplicateNames.push(existingPatternSet.name);
+    } else {
+      duplicateNames.push(null);
+    }
+
+    isDuplicates.push(duplicateFlags);
+  }
+
+  return { isDuplicates, duplicateNames };
+}
+
 router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res) => {
   const { 'g-recaptcha-response': recaptchaToken } = req.body;
   const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -57,27 +86,7 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
       const deviceType = getDeviceTypeName(mode.num_leds);
       const flags = mode.flags;
 
-      // calculate duplicates
-      let isDuplicates = [];
-      let internalSet = new Set();
-      for (const pat of mode.single_pats) {
-        const sortedPatData = sortObjectKeys(pat);
-        const serializedPatData = JSON.stringify(sortedPatData);
-        const dataHash = computeHash(serializedPatData);
-
-        const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-        let duplicateFlags = (internalSet.has(dataHash) ? 1 : 0) | (existingPatternSet ? 2 : 0);
-        // if it's not a duplicate then add it to the internalSet
-        if (duplicateFlags == 0) {
-          internalSet.add(dataHash);
-        }
-        // otherwise track whther it's a duplicate in this array
-        //  0 = not duplicate
-        //  1 = local duplicate
-        //  2 = global duplicate
-        //  3 = local + global duplicate
-        isDuplicates.push(duplicateFlags);
-      }
+      const { isDuplicates, duplicateNames } = await calculateDuplicates(mode);
 
       req.session.modeData = {
         name: fileName,
@@ -85,7 +94,8 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         deviceType,
         flags,
         jsonData,
-        isDuplicates
+        isDuplicates,
+        duplicateNames
       };
     }
 
@@ -99,17 +109,16 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
 
 function sortObjectKeys(obj) {
   if (typeof obj !== 'object' || obj === null) {
-    return obj; // Return the value if it's not an object
+    return obj;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(sortObjectKeys); // Recursively sort array elements that are objects
+    return obj.map(sortObjectKeys);
   }
 
-  // Recursively create a sorted object
   const sortedObj = {};
   Object.keys(obj).sort().forEach(key => {
-    sortedObj[key] = sortObjectKeys(obj[key]); // Recursively apply sorting to nested objects
+    sortedObj[key] = sortObjectKeys(obj[key]);
   });
   return sortedObj;
 }
@@ -139,35 +148,16 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
     const deviceType = getDeviceTypeName(mode.num_leds);
     const flags = mode.flags;
 
-    // calculate duplicates
-    let isDuplicates = [];
-    let internalSet = new Set();
-    for (const pat of mode.single_pats) {
-      const sortedPatData = sortObjectKeys(pat);
-      const serializedPatData = JSON.stringify(sortedPatData);
-      const dataHash = computeHash(serializedPatData);
-
-      const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-      let duplicateFlags = (internalSet.has(dataHash) ? 1 : 0) | (existingPatternSet ? 2 : 0);
-      // if it's not a duplicate then add it to the internalSet
-      if (duplicateFlags == 0) {
-        internalSet.add(dataHash);
-      }
-      // otherwise track whther it's a duplicate in this array
-      //  0 = not duplicate
-      //  1 = local duplicate
-      //  2 = global duplicate
-      //  3 = local + global duplicate
-      isDuplicates.push(duplicateFlags);
-    }
+    const { isDuplicates, duplicateNames } = await calculateDuplicates(mode);
 
     req.session.modeData = {
       name: jsonData.name || 'Unnamed Mode',
       description: jsonData.description || '',
       deviceType,
       flags,
-      jsonData: { modes: [ jsonData ] },
-      isDuplicates
+      jsonData: { modes: [jsonData] },
+      isDuplicates,
+      duplicateNames
     };
 
     res.redirect('/upload/submit');
@@ -187,43 +177,18 @@ router.get('/submit', ensureAuthenticated, (req, res) => {
 router.post('/submit', ensureAuthenticated, async (req, res) => {
   try {
     const { name, description, patternNames, patternDescriptions } = req.body;
-    const { deviceType, flags, jsonData } = req.session.modeData;
+    const { deviceType, flags, jsonData, isDuplicates } = req.session.modeData;
 
-    // Recalculate duplicates just in case
-    let isDuplicates = [];
-    let internalSet = new Set();
-    for (const pat of jsonData.modes[0].single_pats) {
-      const sortedPatData = sortObjectKeys(pat);
-      const serializedPatData = JSON.stringify(sortedPatData);
-      const dataHash = computeHash(serializedPatData);
+    const patternSetIds = new Map();
 
-      const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-      let duplicateFlags = (internalSet.has(dataHash) ? 1 : 0) | (existingPatternSet ? 2 : 0);
-      // if it's not a duplicate then add it to the internalSet
-      if (duplicateFlags == 0) {
-        internalSet.add(dataHash);
-      }
-      // otherwise track whther it's a duplicate in this array
-      //  0 = not duplicate
-      //  1 = local duplicate
-      //  2 = global duplicate
-      //  3 = local + global duplicate
-      isDuplicates.push(duplicateFlags);
-    }
-
-    const patternSetIds = new Map(); // Map to track pattern hash to patternSetId
-
-    // Loop through patterns and deduplicate
     for (let i = 0; i < jsonData.modes[0].single_pats.length; i++) {
       const pat = jsonData.modes[0].single_pats[i];
       const sortedPatData = sortObjectKeys(pat);
       const dataHash = computeHash(JSON.stringify(sortedPatData));
 
       if (!isDuplicates[i]) {
-        // Check for existing pattern in the database
         let existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
         if (!existingPatternSet) {
-          // If the pattern doesn't exist, create a new one
           existingPatternSet = new PatternSet({
             _id: new mongoose.Types.ObjectId(),
             name: patternNames[i] || pat.name || 'Unnamed PatternSet',
@@ -233,15 +198,10 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
             createdBy: req.user._id,
           });
           await existingPatternSet.save();
-          console.log(`Pattern created with dataHash: ${dataHash}`);
-        } else {
-          console.log(`Pattern already exists with dataHash: ${dataHash}`);
         }
 
-        // Add patternSetId to the map
         patternSetIds.set(dataHash, existingPatternSet._id);
       } else {
-        // Find the existing pattern in the database to get the ID
         let existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
         if (existingPatternSet) {
           patternSetIds.set(dataHash, existingPatternSet._id);
@@ -249,21 +209,18 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
       }
     }
 
-    // Create a deduplicated list of patternSetIds for the Mode
     const deduplicatedPatternSets = Array.from(new Set(jsonData.modes[0].single_pats.map(pat => {
       const sortedPatData = sortObjectKeys(pat);
       const dataHash = computeHash(JSON.stringify(sortedPatData));
       return patternSetIds.get(dataHash);
     })));
 
-    // Create the ledPatternOrder array
     const ledPatternOrder = jsonData.modes[0].single_pats.map(pat => {
       const sortedPatData = sortObjectKeys(pat);
       const dataHash = computeHash(JSON.stringify(sortedPatData));
       return deduplicatedPatternSets.indexOf(patternSetIds.get(dataHash));
     });
 
-    // Create the new Mode
     const mode = new Mode({
       name,
       description,
@@ -288,3 +245,4 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
 });
 
 module.exports = router;
+
