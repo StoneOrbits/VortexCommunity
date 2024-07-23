@@ -6,20 +6,51 @@ const { ensureAuthenticated } = require('../middleware/checkAuth');
 
 router.get('/', async (req, res) => {
   try {
-    const page = req.query.page || 1;
-    const searchQuery = req.query.search;
+    const page = parseInt(req.query.page || 1, 10);
+    const pageSize = parseInt(req.query.pageSize || 40, 10);
+    const searchQuery = req.query.search || '';
+    const sortQuery = req.query.sort || 'votes'; // Default sorting by votes
+    const sortOrder = req.query.order === 'asc' ? 1 : -1; // Default descending order
 
-    let modesForCurrentPage = await Mode.find().sort({ votes: -1 }).exec();
+    const query = searchQuery ? { name: { $regex: new RegExp(searchQuery, 'i') } } : {};
 
-    if (searchQuery) {
-      modesForCurrentPage = modesForCurrentPage.filter(mode => mode.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    }
+    const totalCount = await Mode.countDocuments(query);
+    const modes = await Mode.find(query)
+      .sort({ [sortQuery]: sortOrder })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .populate('patternSets') // Assuming 'patternSets' is a reference field in the Mode schema
+      .exec();
+
+    const orderedPatternSetsArray = await Promise.all(modes.map(async (mode) => {
+      const patternSets = await PatternSet.find({ _id: { $in: mode.patternSets } }).exec();
+      const patternSetMap = {};
+      patternSets.forEach(ps => {
+        patternSetMap[ps._id] = ps;
+      });
+      const orderedPatternSets = mode.ledPatternOrder.map(orderIndex => {
+        if (orderIndex >= 0 && orderIndex < mode.patternSets.length) {
+          return patternSetMap[mode.patternSets[orderIndex]._id];
+        } else {
+          // return the first one if for some reason the map has a bad index
+          return patternSetMap[mode.patternSets[0]._id];
+        }
+      });
+
+      return orderedPatternSets;
+    }));
 
     res.render('modes', {
-      modes: modesForCurrentPage,
+      modes: modes,
+      orderedPatternSetsArray: orderedPatternSetsArray,
       user: req.user,
       currentPage: page,
-      search: req.query.search
+      pageSize: pageSize,
+      pageCount: Math.ceil(totalCount / pageSize),
+      totalCount: totalCount,
+      search: searchQuery,
+      sort: sortQuery,
+      order: req.query.order || 'desc'
     });
   } catch (error) {
     console.error('Error fetching modes:', error);

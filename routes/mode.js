@@ -55,7 +55,26 @@ router.get('/:modeId', async (req, res) => {
       patternSetMap[ps._id] = ps;
     });
     const ledPatternOrder = mode.ledPatternOrder;
-    const orderedPatternSets = ledPatternOrder.map(orderIndex => patternSetMap[mode.patternSets[orderIndex]._id]);
+
+    const orderedPatternSets = await Promise.all(mode.ledPatternOrder.map(async (orderIndex) => {
+        if (orderIndex >= 0 && orderIndex < mode.patternSets.length) {
+            if (!mode.patternSets[orderIndex]) {
+                console.log("Error! Missing pattern in mode [" + mode._id + "] pattern index " + orderIndex);
+                console.log(JSON.stringify(mode.patternSets));
+                console.log(JSON.stringify(mode.ledPatternOrder));
+
+                // Perform asynchronous deletion and ensure it is awaited
+                await Mode.deleteOne({ _id: mode._id });
+
+                return patternSetMap[mode.patternSets[0]._id];
+            }
+            return patternSetMap[mode.patternSets[orderIndex]._id];
+        } else {
+            // Return the first one if for some reason the map has a bad index
+            return patternSetMap[mode.patternSets[0]._id];
+        }
+    })); // Remove any null values
+
 
     res.render('mode', {
       vortexMode: vortexMode,

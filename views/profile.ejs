@@ -27,8 +27,8 @@
                 <p>No modes available.</p>
             <% } else { %>
                 <div class="pat-showcase">
-                    <% userModes.forEach(mode => { %>
-                        <%- include('partials/mode-tile', { mode: mode }) %>
+                    <% userModes.forEach((mode, index) => { %>
+                        <%- include('partials/mode-tile', { mode: mode, orderedPatternSets: orderedPatternSetsArray[index] }) %>
                     <% }); %>
                 </div>
             <% } %>

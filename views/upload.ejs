@@ -8,21 +8,26 @@
     <main>
         <div class="container">
             <section class="upload-section">
-                <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-                    <div id="drop_area" class="form-group">
-                      <label for="modeFile">Upload .vtxmode File(s):</label>
-                      <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
-                      <div id="fileError" class="feedback" style="display: none; color: red;"></div>
-                    </div>
-                    <div class="form-group">
-                      <button type="button" class="g-recaptcha"
-                              data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk"
-                              data-callback='onSubmit' data-action='submit'>Upload</button>
-                    </div>
-                    <div class="progress-bar" id="progressBar" style="display: none;">
-                        <div class="progress" id="progress" style="width: 0%;"></div>
-                    </div>
-                </form>
+                <h2>Share Your Modes</h2>
+                <div class="form-group">
+                    <a href="https://lightshow.lol" target="_blank" class="lightshow-button">Create on Lightshow.lol →</a>
+                    <h3> - or -</h3>
+                    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                        <div id="drop_area" class="form-group">
+                            <label for="modeFile">Upload .vtxmode File(s):</label>
+                            <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
+                            <div id="fileError" class="feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="g-recaptcha"
+                                    data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk"
+                                    data-callback='onSubmit' data-action='submit'>Upload</button>
+                        </div>
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress" id="progress"></div>
+                        </div>
+                    </form>
+                </div>
             </section>
         </div>
     </main>
@@ -36,3 +41,4 @@
     </script>
 </body>
 </html>
+

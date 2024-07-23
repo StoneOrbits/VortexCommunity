@@ -9,18 +9,11 @@ const PatternSet = require('../models/PatternSet');
 const Mode = require('../models/Mode');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 const { execSync } = require('child_process');
-const { uniqueNamesGenerator, adjectives, animals, fantasy, names } = require('unique-names-generator');
 const fs = require('fs');
 require('dotenv').config();
 
 function generateRandomName() {
-  const dictionaries = [adjectives, animals, fantasy, names];
-  return uniqueNamesGenerator({
-    dictionaries: dictionaries,
-    length: Math.floor(((Math.random() * 3) + 2)),
-    separator: ' ',
-    style: 'capital',
-  });
+  return 'Generated Name';
 }
 
 function sortObjectKeys(obj) {
@@ -207,42 +200,50 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
     const { deviceType, flags, jsonData, isDuplicates } = req.session.modeData;
 
     const patternSetIds = new Map();
+    const createdPatternSets = [];
 
+    // Insert or fetch pattern sets based on isDuplicates flags
     for (let i = 0; i < jsonData.modes[0].single_pats.length; i++) {
       const pat = jsonData.modes[0].single_pats[i];
       const sortedPatData = sortObjectKeys(pat);
       const dataHash = computeHash(JSON.stringify(sortedPatData));
 
-      if (!isDuplicates[i]) {
-        let existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-        if (!existingPatternSet) {
-          existingPatternSet = new PatternSet({
-            _id: new mongoose.Types.ObjectId(),
-            name: patternNames[i] || pat.name || 'Unnamed PatternSet',
-            description: patternDescriptions[i] || pat.description || 'No description provided.',
-            data: sortedPatData,
-            dataHash: dataHash,
-            createdBy: req.user._id,
-          });
-          await existingPatternSet.save();
-        }
+      let existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+      if (!existingPatternSet) {
+        existingPatternSet = new PatternSet({
+          _id: new mongoose.Types.ObjectId(),
+          name: patternNames[i] || pat.name || 'Unnamed PatternSet',
+          description: patternDescriptions[i] || pat.description || 'No description provided.',
+          data: sortedPatData,
+          dataHash: dataHash,
+          createdBy: req.user._id,
+        });
+        await existingPatternSet.save();
+        createdPatternSets.push(existingPatternSet._id);
+      }
 
+      if (existingPatternSet) {
         patternSetIds.set(dataHash, existingPatternSet._id);
       } else {
-        let existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-        if (existingPatternSet) {
-          patternSetIds.set(dataHash, existingPatternSet._id);
-        }
+        console.error(`Error! PatternSet not found or created for dataHash: ${dataHash}`);
+        throw new Error(`PatternSet not found or created for dataHash: ${dataHash}`);
       }
     }
 
+    // Populate patternSets array with IDs
     const deduplicatedPatternSets = Array.from(new Set(jsonData.modes[0].single_pats.map(pat => {
       const sortedPatData = sortObjectKeys(pat);
       const dataHash = computeHash(JSON.stringify(sortedPatData));
       return patternSetIds.get(dataHash);
     })));
 
-    const ledPatternOrder = jsonData.modes[0].single_pats.map(pat => {
+    // Ensure all pattern sets are valid
+    if (deduplicatedPatternSets.includes(undefined)) {
+      throw new Error("Error! Undefined pattern set found in deduplicatedPatternSets.");
+    }
+
+    // Update ledPatternOrder to reference patternSets
+    const updatedLedPatternOrder = jsonData.modes[0].single_pats.map(pat => {
       const sortedPatData = sortObjectKeys(pat);
       const dataHash = computeHash(JSON.stringify(sortedPatData));
       return deduplicatedPatternSets.indexOf(patternSetIds.get(dataHash));
@@ -253,10 +254,10 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
       description,
       deviceType,
       patternSets: deduplicatedPatternSets,
-      ledPatternOrder,
+      ledPatternOrder: updatedLedPatternOrder,
       createdBy: req.user._id,
       flags: parseInt(flags, 10),
-      dataHash: computeHash(JSON.stringify(deduplicatedPatternSets) + ":" + JSON.stringify(ledPatternOrder) + ":" + flags + ":" + deviceType)
+      dataHash: computeHash(JSON.stringify(deduplicatedPatternSets) + ":" + JSON.stringify(updatedLedPatternOrder) + ":" + flags + ":" + deviceType)
     });
 
     await mode.save();
@@ -266,6 +267,15 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
     res.redirect('/modes');
   } catch (error) {
     console.error('Error saving modes and patterns:', error);
+
+    // Clean up: delete any created pattern sets and mode
+    if (createdPatternSets.length > 0) {
+      await PatternSet.deleteMany({ _id: { $in: createdPatternSets } }).exec();
+    }
+    if (mode && mode._id) {
+      await Mode.findByIdAndDelete(mode._id).exec();
+    }
+
     req.flash('error', 'An error occurred while submitting your mode.');
     res.redirect('/upload/submit');
   }

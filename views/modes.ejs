@@ -40,8 +40,8 @@
         </section>
         <section class="showcase">
             <div class="modes-list" id="modes-list">
-                <% modes.forEach(mode => { %>
-                    <%- include('partials/mode-tile', { mode: mode }) %>
+                <% modes.forEach((mode, index) => { %>
+                    <%- include('partials/mode-tile', { mode: mode, orderedPatternSets: orderedPatternSetsArray[index] }) %>
                 <% }) %>
             </div>
         </section>

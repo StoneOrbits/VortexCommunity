@@ -73,8 +73,8 @@ const deviceImage = document.querySelector('.upload-device-image');
 const src = deviceImage.getAttribute('src');
 const deviceTypeMatch = src.match(/\/images\/(.*?)-leds\.png/);
 const deviceType = deviceTypeMatch ? deviceTypeMatch[1] : null;
-const ledSize = deviceType == 'orbit' ? 24 : 26;
-const highlightSize = deviceType == 'orbit' ? 36 : (deviceType == 'handle' ? 42 : 39);
+const ledSize = deviceType == 'orbit' ? 28 : 26;
+const highlightSize = 34;
 
 if (deviceType) {
   fetch(`/data/${deviceType}-led-positions.json`)
@@ -102,11 +102,20 @@ if (deviceType) {
         y -= (ledSize / 2);
         x *= scaleX;
         y *= scaleY;
+
         item.style.position = 'absolute';
         item.style.left = `${x}px`;
         item.style.top = `${y}px`;
+        item.style.width = `${ledSize}px`;
+        item.style.height = `${ledSize}px`;
 
         if (deviceType == 'orbit') {
+          if (index === 3 || index === 10 || index === 17 || index === 24) {
+              item.style.width = '20px';
+              item.style.height = '20px';
+              item.style.left = `${x + 5}px`;
+              item.style.top = `${y + 5}px`;
+          }
           item.style.borderRadius = '50%';
         }
         item.setAttribute('title', points[index].name);
@@ -126,6 +135,8 @@ if (deviceType) {
         item.style.position = 'absolute';
         item.style.left = `${x}px`;
         item.style.top = `${y}px`;
+        item.style.width = `${highlightSize}px`;
+        item.style.height = `${highlightSize}px`;
         if (deviceType == 'orbit') {
           item.style.borderRadius = '50%';
         }
@@ -142,12 +153,20 @@ if (deviceType) {
 }
 
 function highlightPattern(index) {
+  // Get the mode data from the data attribute
+  const modeDataContainer = document.getElementById('mode-data-container');
+  const mode = JSON.parse(modeDataContainer.getAttribute('data-mode'));
+
+  // Find the index in ledPatternOrder that matches the provided index
+  const ledPatternOrderIndex = mode.ledPatternOrder.indexOf(parseInt(index, 10));
+
   // Highlight the selected item
   document.querySelectorAll('.pat-item-submission').forEach(i => i.classList.remove('highlighted'));
   document.querySelector(`.pat-item-submission[data-index="${index}"]`).classList.add('highlighted');
 
+
   // Highlight LEDs that use the selected pattern
-  highlightLEDs(index);
+  highlightLEDs(ledPatternOrderIndex);
 }
 
 function patternsEqual(pat1, pat2) {

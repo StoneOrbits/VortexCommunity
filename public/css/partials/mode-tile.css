@@ -6,7 +6,7 @@
     border: 1px solid #888;
     padding: 10px;
     border-radius: 5px;
-    height: 120px;
+    height: 200px;
     position: relative; /* Ensure the device icon stays within the tile */
     background-color: #222;
     color: #FFF;
@@ -33,7 +33,7 @@
 
 .mode-tile-content {
     flex-direction: column;
-    margin-top: 70px; /* Add space for the device icon */
+    margin-top: 50px; /* Add space for the device icon */
     text-align: left;
 }
 
@@ -53,6 +53,7 @@
     font-size: 14px;
     color: #aaa;
     margin-bottom: 10px;
+    margin-top: 0px;
     max-width: 100%;
     max-height: 40px;
     overflow: hidden;

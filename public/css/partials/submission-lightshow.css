@@ -12,9 +12,8 @@
 }
 
 .submission-preview-led-strip-container {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
+    width: 1px;
+    height: 1px;
     overflow: hidden;
     background-color: #333;
     padding: 0;
