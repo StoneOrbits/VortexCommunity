@@ -1,5 +1,8 @@
 import './initLightshow.js';
 
+const modeDataContainer = document.getElementById('mode-data-container');
+const modeData = JSON.parse(modeDataContainer.getAttribute('data-mode-data'));
+
 // Event listener for pattern items
 const patternItems = document.querySelectorAll('.pat-item-submission');
 const modeDetails = document.querySelector('.mode-details');
@@ -51,11 +54,14 @@ function updatePatternData() {
   if (!selectedPatternElement) return;
 
   const selectedPatternIndex = selectedPatternElement.dataset.index;
-  const modeData = window.modeData;
 
   if (selectedPatternIndex !== undefined) {
     modeData.jsonData.modes[0].single_pats[selectedPatternIndex].name = patternNameField.value;
     modeData.jsonData.modes[0].single_pats[selectedPatternIndex].description = patternDescriptionField.value;
+
+    // Update the hidden input fields
+    document.getElementById(`patternName-${selectedPatternIndex}`).value = patternNameField.value;
+    document.getElementById(`patternDescription-${selectedPatternIndex}`).value = patternDescriptionField.value;
 
     // Update the name in the left list
     const patternNameElement = selectedPatternElement.querySelector('.pat-name');
@@ -136,8 +142,6 @@ if (deviceType) {
 }
 
 function highlightPattern(index) {
-  const modeData = window.modeData; // Accessing modeData from the global scope
-
   // Highlight the selected item
   document.querySelectorAll('.pat-item-submission').forEach(i => i.classList.remove('highlighted'));
   document.querySelector(`.pat-item-submission[data-index="${index}"]`).classList.add('highlighted');
@@ -151,7 +155,6 @@ function patternsEqual(pat1, pat2) {
 }
 
 function highlightLEDs(patternIndex) {
-  const modeData = window.modeData; // Accessing modeData from the global scope
   const pat = modeData.jsonData.modes[0].single_pats[patternIndex];
   const highlights = document.querySelectorAll('.highlight');
 
@@ -166,8 +169,6 @@ function highlightLEDs(patternIndex) {
 }
 
 function selectPattern(index) {
-  const modeData = window.modeData; // Accessing modeData from the global scope
-
   // Highlight the selected item
   document.querySelectorAll('.pat-item-submission').forEach(i => {
     i.classList.remove('selected');

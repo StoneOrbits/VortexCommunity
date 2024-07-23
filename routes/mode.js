@@ -39,21 +39,31 @@ async function buildMode(mode) {
 
 router.get('/:modeId', async (req, res) => {
   try {
-    const mode = await Mode.findOne({ _id: req.params.modeId }).populate('createdBy');
+    const mode = await Mode.findOne({ _id: req.params.modeId })
+      .populate('createdBy');
     if (!mode) {
       return res.status(404).render('not-found');
     }
 
-    const base64Json = Buffer.from(JSON.stringify(await buildMode(mode))).toString('base64');
+    const vortexMode = await buildMode(mode);
+    const base64Json = Buffer.from(JSON.stringify(vortexMode)).toString('base64');
     const lightshowUrl = `http://127.0.0.1:8000/?data=${base64Json}`;
 
-    const uploadDate = mode.uploadDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const patternSets = await PatternSet.find({ _id: { $in: mode.patternSets } }).exec();
+    const patternSetMap = {};
+    patternSets.forEach(ps => {
+      patternSetMap[ps._id] = ps;
+    });
+    const ledPatternOrder = mode.ledPatternOrder;
+    const orderedPatternSets = ledPatternOrder.map(orderIndex => patternSetMap[mode.patternSets[orderIndex]._id]);
 
     res.render('mode', {
+      vortexMode: vortexMode,
       mode: mode,
-      uploadDate: uploadDate,
       user: req.user,
-      lightshowUrl: lightshowUrl
+      lightshowUrl: lightshowUrl,
+      patternSets: patternSets,
+      orderedPatternSets: orderedPatternSets
     });
   } catch (err) {
     console.error(err);

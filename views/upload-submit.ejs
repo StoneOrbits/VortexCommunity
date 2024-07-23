@@ -5,7 +5,7 @@
   <%- include('partials/header') %>
   <%- include('partials/nav') %>
   <main>
-    <div class="container">
+    <div class="container" id="mode-data-container" data-mode-data='<%= JSON.stringify(modeData) %>'>
       <section class="mode-submission-section">
         <form action="/upload/submit" method="post">
           <div class="mode-header">
@@ -15,7 +15,14 @@
           <div class="mode-content">
             <div class="mode-patterns">
               <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
-                <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName, isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
+                <% if ((modeData.isDuplicates[index] & 2) === 0) { %>
+                  <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName, isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
+                <% } %>
+              <% }); %>
+              <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
+                <% if ((modeData.isDuplicates[index] & 2) !== 0) { %>
+                  <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName, isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
+                <% } %>
               <% }); %>
             </div>
             <div class="mode-preview">
@@ -49,9 +56,6 @@
   </main>
   <%- include('partials/footer') %>
   <%- include('partials/script') %>
-  <script>
-    window.modeData = <%- JSON.stringify(modeData) %>; // Pass modeData to the global scope
-  </script>
 </body>
 </html>
 

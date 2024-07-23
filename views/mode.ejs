@@ -4,56 +4,47 @@
 <body class="dark-theme">
   <%- include('partials/header') %>
   <%- include('partials/nav') %>
-  <main class="main-container">
-    <section class="mode-profile-page">
-      <div class="mode-icons">
-        <form action="/mode/<%= mode._id %>/<%= user && mode.upvotedBy.includes(user._id) ? 'unvote' : 'upvote' %>" method="post" class="votes-container">
-          <button type="submit" class="icon-button">
-            <img src="<%= user && mode.upvotedBy.includes(user._id) ? '/images/color-upvote-icon.png' : '/images/bw-upvote-icon.png' %>" alt="Upvote" class="upvote-icon">
-          </button>
-          <span class="votes-count"><%= mode.votes %></span>
-        </form>
-        <form action="/mode/<%= mode._id %>/<%= user && user.favModes.includes(mode._id.toString()) ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
-          <button type="submit" class="icon-button">
-            <img src="<%= user && user.favModes.includes(mode._id.toString()) ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
-          </button>
-        </form>
-      </div>
-      <h2 class="mode-title"><%= mode.name %></h2>
-      <div class="mode-profile-header">
-        <p>Uploaded by <a href="/user/<%= mode.createdBy._id %>"><%= mode.createdBy.username %></a> on <%= new Date(mode.uploadDate).toLocaleDateString() %></p>
-      </div>
-      <div class="mode-profile-details">
-        <p class="mode-profile-description"><%= mode.description %></p>
-        <% if (user && user._id.toString() === mode.createdBy._id.toString()) { %>
-          <a href="/mode/<%= mode._id %>/edit" class="edit-mode-link">Edit</a>
-          <a href="#" class="delete-mode-link" onclick="confirmDelete()">Delete</a>
-        <% } %>
-        <div id="deleteConfirmModal" style="display:none;">
-          <p>Are you sure you want to delete this?</p>
-          <button onclick="document.getElementById('deleteForm').submit();">Yes, Delete</button>
-          <button onclick="document.getElementById('deleteConfirmModal').style.display='none';">Cancel</button>
+  <main>
+    <div class="container" id="mode-data-container" data-mode='<%= JSON.stringify(mode) %>' data-vortex-mode='<%= JSON.stringify(vortexMode) %>'>
+      <section class="mode-submission-section">
+        <div class="mode-header">
+          <h2 class="mode-title"><%= mode.name %></h2>
+          <p class="mode-profile-description"><%= mode.description %></p>
         </div>
-      </div>
-      <div class="mode-profile-image-container">
-        <img src="<%= mode.deviceType === 'Gloves' ? '/images/gloves.png' : mode.deviceType === 'Orbit' ? '/images/orbit.png' : mode.deviceType === 'Handle' ? '/images/handle.png' : mode.deviceType === 'Duo' ? '/images/duo.png' : '/images/chromadeck.png' %>" alt="Device Image" class="mode-device-image">
-      </div>
-      <div class="mode-profile-actions">
-        <a href="<%= lightshowUrl %>" id="openOnLightshow" class="mode-profile-button lightshow-button">lightshow.lol →</a>
-        <% if (user) { %>
-          <a href="/mode/<%= mode._id %>/download" class="mode-profile-button download-button">Download</a>
-        <% } else { %>
-          <a href="/login" class="mode-profile-button download-button-disabled">Login to Download</a>
-        <% } %>
-      </div>
-      <script>
-        function confirmDelete() {
-          var modal = document.getElementById('deleteConfirmModal');
-          modal.style.display = 'block';
-        }
-      </script>
-      <form id="deleteForm" action="/mode/<%= mode._id %>/delete" method="post" style="display:none;"></form>
-    </section>
+        <div class="mode-content">
+          <div class="mode-patterns">
+            <% patternSets.forEach((pat, index) => { %>
+              <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.name, isDuplicate: false }) %>
+            <% }); %>
+          </div>
+          <div class="mode-preview">
+            <div class="device-preview-container">
+              <div class="led-container">
+                <% orderedPatternSets.forEach((pat, index) => { %>
+                  <!-- Lightshow visualization -->
+                  <%- include('partials/submission-preview-led-lightshow', { pat: pat, tempId: index }) %>
+                <% }); %>
+              </div>
+              <img class="upload-device-image" src="<%= mode.deviceType === 'Gloves' ? '/images/gloves-leds.png' : mode.deviceType === 'Orbit' ? '/images/orbit-leds.png' : mode.deviceType === 'Handle' ? '/images/handle-leds.png' : mode.deviceType === 'Duo' ? '/images/duo-leds.png' : '/images/chromadeck-leds.png' %>" alt="Device Image">
+              <div class="highlight-container">
+                <% orderedPatternSets.forEach((pat, index) => { %>
+                  <!-- Highlight visualization -->
+                  <%- include('partials/submission-preview-led-highlight', { ledIndex: index }) %>
+                <% }); %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mode-profile-actions">
+          <a href="<%= lightshowUrl %>" id="openOnLightshow" class="mode-profile-button lightshow-button">lightshow.lol →</a>
+          <% if (user) { %>
+            <a href="/mode/<%= mode._id %>/download" class="mode-profile-button download-button">Download</a>
+          <% } else { %>
+            <a href="/login" class="mode-profile-button download-button-disabled">Login to Download</a>
+          <% } %>
+        </div>
+      </section>
+    </div>
   </main>
   <%- include('partials/footer') %>
   <%- include('partials/script') %>

@@ -4,8 +4,21 @@ var subRoutes = new Set([
     // Add more sub-routes as needed
 ]);
 
+// Known patterns for dynamic routes and their corresponding scripts
+var dynamicRoutePatterns = [
+    { pattern: /^\/mode\/[a-fA-F0-9]{24}$/, script: 'page_mode.js' },
+    // Add more patterns here as needed
+];
+
 // Helper function to determine the script based on the route segments
 function getScriptName(path) {
+    // Check if path matches any dynamic route pattern
+    for (var i = 0; i < dynamicRoutePatterns.length; i++) {
+        if (dynamicRoutePatterns[i].pattern.test(path)) {
+            return dynamicRoutePatterns[i].script;
+        }
+    }
+
     // Split path and filter out empty segments
     var segments = path.split("/").filter(Boolean);
 
@@ -18,6 +31,7 @@ function getScriptName(path) {
         // Handle direct routes automatically
         return 'page_' + segments[0] + '.js';
     }
+
     // Handle empty route as home
     return 'page_home.js';
 }
@@ -38,3 +52,4 @@ function autoLoad(scriptPath) {
 
 // Determine the script name based on the route and autoload it
 autoLoad('/js/' + getScriptName(window.location.pathname));
+

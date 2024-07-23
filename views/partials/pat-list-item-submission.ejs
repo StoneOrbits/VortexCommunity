@@ -10,3 +10,5 @@
         <%- include('submission-lightshow', { pat: pat, tempId: tempId }) %>
     </div>
 <% } %>
+<input type="hidden" name="patternNames[]" id="patternName-<%= tempId %>" value="<%= pat.name || '' %>">
+<input type="hidden" name="patternDescriptions[]" id="patternDescription-<%= tempId %>" value="<%= pat.description || '' %>">

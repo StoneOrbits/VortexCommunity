@@ -9,12 +9,35 @@ const PatternSet = require('../models/PatternSet');
 const Mode = require('../models/Mode');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 const { execSync } = require('child_process');
+const { uniqueNamesGenerator, adjectives, animals, fantasy, names } = require('unique-names-generator');
 const fs = require('fs');
 require('dotenv').config();
 
-router.get('/', ensureAuthenticated, async (req, res) => {
-  res.render('upload');
-});
+function generateRandomName() {
+  const dictionaries = [adjectives, animals, fantasy, names];
+  return uniqueNamesGenerator({
+    dictionaries: dictionaries,
+    length: Math.floor(((Math.random() * 3) + 2)),
+    separator: ' ',
+    style: 'capital',
+  });
+}
+
+function sortObjectKeys(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(sortObjectKeys);
+  }
+
+  const sortedObj = {};
+  Object.keys(obj).sort().forEach(key => {
+    sortedObj[key] = sortObjectKeys(obj[key]);
+  });
+  return sortedObj;
+}
 
 function computeHash(data) {
   return crypto.createHash('sha256').update(data).digest('hex');
@@ -48,6 +71,10 @@ async function calculateDuplicates(mode) {
 
   return { isDuplicates, duplicateNames };
 }
+
+router.get('/', ensureAuthenticated, async (req, res) => {
+  res.render('upload');
+});
 
 router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res) => {
   const { 'g-recaptcha-response': recaptchaToken } = req.body;
@@ -88,8 +115,16 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
 
       const { isDuplicates, duplicateNames } = await calculateDuplicates(mode);
 
+      // Generate mode name
+      const modeName = await generateRandomName();
+
+      // Generate pattern names
+      for (let pat of mode.single_pats) {
+        pat.name = await generateRandomName();
+      }
+
       req.session.modeData = {
-        name: fileName,
+        name: modeName || fileName,
         description: '',
         deviceType,
         flags,
@@ -106,22 +141,6 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
     res.redirect('/upload');
   }
 });
-
-function sortObjectKeys(obj) {
-  if (typeof obj !== 'object' || obj === null) {
-    return obj;
-  }
-
-  if (Array.isArray(obj)) {
-    return obj.map(sortObjectKeys);
-  }
-
-  const sortedObj = {};
-  Object.keys(obj).sort().forEach(key => {
-    sortedObj[key] = sortObjectKeys(obj[key]);
-  });
-  return sortedObj;
-}
 
 router.get('/json', ensureAuthenticated, async (req, res) => {
   const base64Data = req.query.data;
@@ -150,8 +169,16 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
 
     const { isDuplicates, duplicateNames } = await calculateDuplicates(mode);
 
+    // Generate mode name
+    const modeName = await generateRandomName();
+
+    // Generate pattern names
+    for (let pat of jsonData.single_pats) {
+      pat.name = await generateRandomName();
+    }
+
     req.session.modeData = {
-      name: jsonData.name || 'Unnamed Mode',
+      name: jsonData.name || modeName,
       description: jsonData.description || '',
       deviceType,
       flags,
