@@ -1,4 +1,5 @@
-/* mode-profile.css */
+/* mode.css */
+
 .mode-profile-page {
     max-width: 800px;
     margin: 20px auto;
@@ -220,5 +221,16 @@
         margin-left: 5px;
         font-size: 12px;
     }
+}
+
+/* Specific CSS for mode icons */
+.mode-profile-page .votes-container {
+    top: 15px; /* Adjust to align with the mode title */
+    right: 70px; /* Adjust to provide space for the favorite icon */
+}
+
+.mode-profile-page .favorite-container {
+    top: 15px; /* Adjust to align with the mode title */
+    right: 30px; /* Adjust to position next to the votes container */
 }
 

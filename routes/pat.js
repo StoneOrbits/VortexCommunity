@@ -157,8 +157,8 @@ router.post('/:patId/favorite', ensureAuthenticated, async (req, res) => {
     }
 
     const user = await User.findById(req.user._id);
-    if (!user.favorites.includes(req.params.patId)) {
-      user.favorites.push(req.params.patId);
+    if (!user.favPats.includes(req.params.patId)) {
+      user.favPats.push(req.params.patId);
       await user.save();
     }
 
@@ -173,9 +173,9 @@ router.post('/:patId/favorite', ensureAuthenticated, async (req, res) => {
 router.post('/:patId/unfavorite', ensureAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    const index = user.favorites.indexOf(req.params.patId);
+    const index = user.favPats.indexOf(req.params.patId);
     if (index > -1) {
-      user.favorites.splice(index, 1);
+      user.favPats.splice(index, 1);
       await user.save();
     }
 

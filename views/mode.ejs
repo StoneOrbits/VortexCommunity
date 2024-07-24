@@ -7,10 +7,24 @@
   <main>
     <div class="container" id="mode-data-container" data-mode='<%= JSON.stringify(mode) %>' data-vortex-mode='<%= JSON.stringify(vortexMode) %>'>
       <section class="mode-submission-section">
+        <div class="mode-icons">
+          <form action="/mode/<%= mode._id %>/<%= user && mode.upvotedBy.includes(user._id) ? 'unvote' : 'upvote' %>" method="post" class="votes-container">
+            <button type="submit" class="icon-button">
+              <img src="<%= user && mode.upvotedBy.includes(user._id) ? '/images/color-upvote-icon.png' : '/images/bw-upvote-icon.png' %>" alt="Upvote" class="upvote-icon">
+            </button>
+            <span class="votes-count"><%= mode.votes %></span>
+          </form>
+          <form action="/mode/<%= mode._id %>/<%= user && user.favModes.includes(mode._id.toString()) ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
+            <button type="submit" class="icon-button">
+              <img src="<%= user && user.favModes.includes(mode._id.toString()) ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
+            </button>
+          </form>
+        </div>
         <div class="mode-header">
           <h2 class="mode-title"><%= mode.name %></h2>
           <p class="mode-profile-description"><%= mode.description %></p>
         </div>
+
         <div class="mode-content">
           <div class="mode-patterns">
             <% patternSets.forEach((pat, index) => { %>
