@@ -9,28 +9,22 @@ const PatternSet = require('../models/PatternSet');
 const Mode = require('../models/Mode');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 const { execSync } = require('child_process');
-const fs = require('fs');
+const fs = require('fs').promises;
 require('dotenv').config();
 
 let prefixes = [];
 let nouns = [];
 
-function loadWords() {
-  fs.readFile(path.join(__dirname, '../public/data/words-adjectives.json'), 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading words-adjectives.json:', err);
-      return;
-    }
-    prefixes = JSON.parse(data);
-  });
-
-  fs.readFile(path.join(__dirname, '../public/data/words-nouns.json'), 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading words-nouns.json:', err);
-      return;
-    }
-    nouns = JSON.parse(data);
-  });
+// Asynchronously load the word files during server startup
+async function loadWords() {
+  try {
+    const adjectivesData = await fs.readFile(path.join(__dirname, '../config/words-adjectives.json'), 'utf8');
+    prefixes = JSON.parse(adjectivesData);
+    const nounsData = await fs.readFile(path.join(__dirname, '../config/words-nouns.json'), 'utf8');
+    nouns = JSON.parse(nounsData);
+  } catch (err) {
+    console.error('Error reading word files:', err);
+  }
 }
 
 function getRandomItem(array) {
@@ -312,3 +306,5 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
 
 module.exports = router;
 
+// Load words when the server starts
+loadWords();
