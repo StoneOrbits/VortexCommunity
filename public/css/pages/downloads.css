@@ -1,0 +1,158 @@
+/* downloads.css */
+
+/* General Section Styles */
+.downloads-section {
+    margin: 20px auto;
+    max-width: 1400px;
+}
+
+.downloads-section h2 {
+    color: #FFF;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.download-category {
+    background-color: #282828;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.download-category-title {
+    color: #f1c40f;
+    margin-bottom: 10px;
+}
+
+.download-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #888;
+    color: #FFF;
+}
+
+.download-item:last-child {
+    border-bottom: none;
+}
+
+.download-item h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.download-info {
+    font-size: 14px;
+    color: #aaa;
+}
+
+.download-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.download-button:hover, .download-button:focus {
+    background-color: #0056b3;
+    color: #ffffff;
+}
+
+.download-button-disabled {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #aaaaaa;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.download-button-disabled:hover, .download-button-disabled:focus {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+.button-container {
+    text-align: center;
+}
+
+/* Editor Section */
+.editor-section {
+    background-color: #333;
+    padding: 20px;
+    margin: 50px auto;
+    border-radius: 10px;
+    max-width: 1400px;
+}
+
+.editor-section h2 {
+    color: #f1c40f;
+}
+
+.editor-screenshot {
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 8px;
+}
+
+.image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .editor-screenshot {
+        flex-basis: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* Firmware Section */
+.device-section {
+    background-color: #282828;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    max-width: 1300px;
+    display: flex;
+    align-items: center;
+}
+
+.download-device-image {
+    width: auto;
+    max-height: 200px; /* Make the image no more than 200px wide */
+    padding: 10px;
+    margin-right: 20px; /* Add space between image and content */
+    flex-shrink: 0; /* Prevent the image from shrinking */
+}
+
+.device-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.device-details {
+    text-align: left;
+}
+
+.device-details h3 {
+    color: #f1c40f;
+}
+
+.device-details p {
+    color: #aaa;
+}
+
+.download-button, .download-button-disabled {
+}
+

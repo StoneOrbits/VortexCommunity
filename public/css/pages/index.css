@@ -1,0 +1,16 @@
+/* index.css */
+
+.showcase {
+    margin: 0 auto;
+    max-width: 1400px;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .showcase {
+        margin: 0 auto;
+        max-width: 95%;
+        padding: 10px;
+    }
+}
+

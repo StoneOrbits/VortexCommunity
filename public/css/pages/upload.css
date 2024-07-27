@@ -1,0 +1,30 @@
+/* upload.css */
+
+.upload-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 50px;
+}
+
+.upload-section .form-group {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.feedback {
+    margin-top: 8px;
+}
+
+.progress-bar {
+    display: none;
+}
+
+.progress {
+    width: 0%;
+}
+

@@ -1,0 +1,66 @@
+/* admin.css */
+
+.admin-panel {
+    max-width: 800px;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding: 50px;
+    border-radius: 8px;
+    box-shadow: 0 6px 9px rgba(0,0,0,0.8);
+}
+
+.admin-panel h2 {
+    text-align: center;
+}
+
+.admin-panel table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.admin-panel th, .admin-panel td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-panel th {
+    color: white;
+}
+
+.admin-panel button {
+    background-color: #007bff;
+    color: white;
+    margin: 5px 5px;
+    margin-left: 10px;
+    margin-right: 0px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.admin-panel button:hover {
+    background-color: #0056b3;
+}
+
+.admin-downloads {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #222;
+    border: 2px solid #888;
+    border-radius: 10px;
+}
+
+.admin-downloads h2 {
+    color: #FFF;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.admin-download-form {
+    display: grid;
+    grid-gap: 15px;
+}
+

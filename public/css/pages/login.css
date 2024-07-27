@@ -1,0 +1,26 @@
+/* login.css */
+
+.login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 50px;
+}
+
+.login-section .form-group {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-button, .register-button, .upload-button {
+    margin: 5px auto;
+}
+
+.g-recaptcha {
+    margin: 5px auto;
+}
+

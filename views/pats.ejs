@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('partials/head') %>
-<body class="dark-theme">
-    <%- include('partials/header') %>
-    <%- include('partials/nav') %>
-    <main>
-        <section class="search-bar">
-            <form action="/pats" method="get">
-                <div class="search-container">
-                    <input type="text" class="search-input" name="search" placeholder="Search for pats..." value="<%= search || '' %>">
+    <%- include('partials/head') %>
+    <body class="dark-theme">
+        <%- include('partials/header') %>
+        <%- include('partials/nav') %>
+        <main>
+            <section class="search-bar">
+                <form id="search-form" action="/pats" method="get">
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search...">
+                        <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+                    </div>
+                </form>
+            </section>
+            <section class="showcase">
+                <div class="pat-list">
+                    <% pats.forEach(function(pat) { %>
+                        <%- include('partials/pat-tile', { pat: pat }) %>
+                    <% }); %>
                 </div>
-                <button type="submit">Search</button>
-            </form>
-        </section>
-        <section class="pat-list">
-            <% pats.forEach(function(pat) { %>
-                <%- include('partials/pat-tile', { pat: pat }) %>
-            <% }); %>
-        </section>
-    </main>
-    <%- include('partials/footer') %>
-    <%- include('partials/script') %>
-</body>
+            </section>
+        </main>
+        <%- include('partials/footer') %>
+        <%- include('partials/script') %>
+    </body>
 </html>
 

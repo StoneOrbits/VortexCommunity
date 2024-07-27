@@ -1,0 +1,14 @@
+<a href="/mode/<%= mode._id %>" class="mode-tile" data-device-type="<%= mode.deviceType.toLowerCase() %>" data-mode='<%= JSON.stringify(mode) %>'>
+  <div class="mode-tile-content">
+      <h2 class="mode-tile-title"><%= mode.name %></h2>
+  </div>
+  <div class="mode-tile-preview-container">
+    <div class="device-preview-container">
+        <% orderedPatternSets.forEach((pat, index) => { %>
+          <%- include('mode-tile-preview-lightshow', { mode: mode, pat: pat, tempId: index }) %>
+        <% }); %>
+      <img class="upload-device-image" src="<%= mode.deviceType === 'Gloves' ? '/images/gloves-leds.png' : mode.deviceType === 'Orbit' ? '/images/orbit-leds.png' : mode.deviceType === 'Handle' ? '/images/handle-leds.png' : mode.deviceType === 'Duo' ? '/images/duo-leds.png' : '/images/chromadeck-leds.png' %>" alt="Device Image">
+    </div>
+  </div>
+</a>
+

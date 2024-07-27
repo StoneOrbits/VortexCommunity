@@ -1,20 +1,55 @@
-var path = window.location.pathname;
-var segments = path.split("/").filter(Boolean); // Filter out empty segments
+// Sub-routes that need autoloading
+var subRoutes = new Set([
+    '/upload/submit',
+    // Add more sub-routes as needed
+]);
 
-var page = segments.length > 0 ? segments[0] : 'home'; // Default to 'home' if no significant segment
+// Known patterns for dynamic routes and their corresponding scripts
+var dynamicRoutePatterns = [
+    { pattern: /^\/mode\/[a-fA-F0-9]{24}$/, script: 'page_mode.js' },
+    // Add more patterns here as needed
+];
 
-var scriptName = 'page_' + page + '.js';
-var scriptPath = '/js/' + scriptName;
+// Helper function to determine the script based on the route segments
+function getScriptName(path) {
+    // Check if path matches any dynamic route pattern
+    for (var i = 0; i < dynamicRoutePatterns.length; i++) {
+        if (dynamicRoutePatterns[i].pattern.test(path)) {
+            return dynamicRoutePatterns[i].script;
+        }
+    }
 
-// if the script for this page exists then load it
-var script = document.createElement('script');
-script.src = scriptPath;
-script.type = 'module'; // Specify that the script is a module
-script.onload = function() {
-  console.log(scriptName + ' loaded successfully.');
-};
-script.onerror = function() {
-  console.log('Error loading script: ' + scriptName);
-};
+    // Split path and filter out empty segments
+    var segments = path.split("/").filter(Boolean);
 
-document.body.appendChild(script);
+    if (segments.length > 1) {
+        if (subRoutes.has(path)) {
+            // Handle sub-routes manually in Set above
+            return 'page' + path.replace(/\//g, '_') + '.js';
+        }
+    } else if (segments.length === 1) {
+        // Handle direct routes automatically
+        return 'page_' + segments[0] + '.js';
+    }
+
+    // Handle empty route as home
+    return 'page_home.js';
+}
+
+// Helper function to autoload script into DOM based on script path in public/
+function autoLoad(scriptPath) {
+    var script = document.createElement('script');
+    script.src = scriptPath;
+    script.type = 'module'; // Specify that the script is a module
+    script.onload = function() {
+        console.log(script.src + ' loaded successfully.');
+    };
+    script.onerror = function() {
+        console.log('Error loading script: ' + script.src);
+    };
+    document.body.appendChild(script);
+}
+
+// Determine the script name based on the route and autoload it
+autoLoad('/js/' + getScriptName(window.location.pathname));
+

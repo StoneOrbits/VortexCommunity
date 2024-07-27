@@ -1,3 +1,4 @@
+<!-- upload.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/head') %>
@@ -6,20 +7,27 @@
     <%- include('partials/nav') %>
     <main>
         <div class="container">
-            <section class="login-section">
-                <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                      <label for="modeFile">Upload .vtxmode File(s):</label>
-                    </div>
-                    <div class="form-group" id="drop_area">
-                        <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
-                    </div>
-                    <div class="form-group">
-                      <button type="button" class="g-recaptcha"
-                              data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk"
-                              data-callback='onSubmit' data-action='submit'>Upload</button>
-                    </div>
-                </form>
+            <section class="upload-section">
+                <h2>Share Your Modes</h2>
+                <div class="form-group">
+                    <a href="https://lightshow.lol" target="_blank" class="lightshow-button">Create on Lightshow.lol →</a>
+                    <h3> - or -</h3>
+                    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                        <div id="drop_area" class="form-group">
+                            <label for="modeFile">Upload .vtxmode File(s):</label>
+                            <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
+                            <div id="fileError" class="feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="g-recaptcha"
+                                    data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk"
+                                    data-callback='onSubmit' data-action='submit'>Upload</button>
+                        </div>
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress" id="progress"></div>
+                        </div>
+                    </form>
+                </div>
             </section>
         </div>
     </main>
@@ -27,49 +35,9 @@
     <%- include('partials/script') %>
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
-      function onSubmit(token) {
-        document.getElementById("uploadForm").submit();
-      }
-
-      // JavaScript for handling drag and drop
-      const dropArea = document.getElementById('drop_area');
-
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false)
-      });
-
-      function preventDefaults (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-
-      // Highlight drop area when item is dragged over it
-      ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false)
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false)
-      });
-
-      function highlight(e) {
-        dropArea.classList.add('highlight');
-      }
-
-      function unhighlight(e) {
-        dropArea.classList.remove('highlight');
-      }
-
-      // Handle dropped files
-      dropArea.addEventListener('drop', handleDrop, false);
-
-      function handleDrop(e) {
-        let dt = e.dataTransfer;
-        let files = dt.files;
-
-        // Process the files
-        document.getElementById('modeFile').files = files;
-      }
+        function onSubmit(token) {
+            document.getElementById("uploadForm").submit();
+        }
     </script>
 </body>
 </html>

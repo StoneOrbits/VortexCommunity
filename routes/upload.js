@@ -1,23 +1,96 @@
-const mongoose = require('mongoose');
 const express = require('express');
 const crypto = require('crypto');
-const upload = require('../config/userUpload');
+const upload = require('../config/user-upload');
 const path = require('path');
 const fetch = require('node-fetch');
 const router = express.Router();
+const mongoose = require('mongoose');
 const PatternSet = require('../models/PatternSet');
+const Mode = require('../models/Mode');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 const { execSync } = require('child_process');
-const fs = require('fs');
+const fs = require('fs').promises;
 require('dotenv').config();
 
-router.get('/', ensureAuthenticated, async (req, res) => {
-  res.render('upload');
-});
+let prefixes = [];
+let nouns = [];
+
+// Asynchronously load the word files during server startup
+async function loadWords() {
+  try {
+    const adjectivesData = await fs.readFile(path.join(__dirname, '../config/words-adjectives.json'), 'utf8');
+    prefixes = JSON.parse(adjectivesData);
+    const nounsData = await fs.readFile(path.join(__dirname, '../config/words-nouns.json'), 'utf8');
+    nouns = JSON.parse(nounsData);
+  } catch (err) {
+    console.error('Error reading word files:', err);
+  }
+}
+
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function generateRandomName() {
+  const useTwoAdjectives = Math.random() < 0.5;
+  const prefix1 = getRandomItem(prefixes);
+  const prefix2 = useTwoAdjectives ? getRandomItem(prefixes) : "";
+  const noun = getRandomItem(nouns);
+  return useTwoAdjectives ? `${prefix1} ${prefix2} ${noun}` : `${prefix1} ${noun}`;
+}
+
+function sortObjectKeys(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(sortObjectKeys);
+  }
+
+  const sortedObj = {};
+  Object.keys(obj).sort().forEach(key => {
+    sortedObj[key] = sortObjectKeys(obj[key]);
+  });
+  return sortedObj;
+}
 
 function computeHash(data) {
   return crypto.createHash('sha256').update(data).digest('hex');
 }
+
+async function calculateDuplicates(mode) {
+  let isDuplicates = [];
+  let duplicateNames = [];
+  let internalSet = new Set();
+
+  for (const pat of mode.single_pats) {
+    const sortedPatData = sortObjectKeys(pat);
+    const serializedPatData = JSON.stringify(sortedPatData);
+    const dataHash = computeHash(serializedPatData);
+
+    const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+    let duplicateFlags = (internalSet.has(dataHash) ? 1 : 0) + (existingPatternSet ? 2 : 0);
+
+    if ((duplicateFlags & 1) == 0) {
+      internalSet.add(dataHash);
+    }
+
+    if (existingPatternSet) {
+      duplicateNames.push(existingPatternSet.name);
+    } else {
+      duplicateNames.push(null);
+    }
+
+    isDuplicates.push(duplicateFlags);
+  }
+
+  return { isDuplicates, duplicateNames };
+}
+
+router.get('/', ensureAuthenticated, async (req, res) => {
+  res.render('upload');
+});
 
 router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res) => {
   const { 'g-recaptcha-response': recaptchaToken } = req.body;
@@ -32,8 +105,6 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
       return res.status(400).send("reCAPTCHA validation failed.");
     }
 
-    let set = new Set();
-    let processedPatterns = []; // Initialize as an array
     for (const file of req.files) {
       const filePath = file.path;
       const fileName = path.basename(file.originalname, path.extname(file.originalname));
@@ -44,11 +115,41 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         throw new Error("Invalid JSON data");
       }
 
-      // Use the spread operator to concatenate arrays
-      processedPatterns = processedPatterns.concat(await preparePatternSetsForSession(jsonData, set, fileName)); // Correctly accumulate patterns
+      const mode = jsonData.modes[0];
+      const getDeviceTypeName = (numLeds) => {
+        switch (numLeds) {
+          case 10: return 'Gloves';
+          case 28: return 'Orbit';
+          case 3: return 'Handle';
+          case 2: return 'Duo';
+          case 20: return 'Chromadeck';
+          default: return 'Unknown';
+        }
+      };
+      const deviceType = getDeviceTypeName(mode.num_leds);
+      const flags = mode.flags;
+
+      const { isDuplicates, duplicateNames } = await calculateDuplicates(mode);
+
+      // Generate mode name
+      const modeName = await generateRandomName();
+
+      // Generate pattern names
+      for (let pat of mode.single_pats) {
+        pat.name = await generateRandomName();
+      }
+
+      req.session.modeData = {
+        name: modeName || fileName,
+        description: '',
+        deviceType,
+        flags,
+        jsonData,
+        isDuplicates,
+        duplicateNames
+      };
     }
 
-    req.session.tempPats = processedPatterns;
     res.redirect('/upload/submit');
   } catch (error) {
     console.error(error);
@@ -57,126 +158,153 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
   }
 });
 
-function sortObjectKeys(obj) {
-  if (typeof obj !== 'object' || obj === null) {
-    return obj; // Return the value if it's not an object
+router.get('/json', ensureAuthenticated, async (req, res) => {
+  const base64Data = req.query.data;
+  if (!base64Data) {
+    req.flash('error', 'No data provided');
+    return res.redirect('/upload');
   }
 
-  if (Array.isArray(obj)) {
-    return obj.map(sortObjectKeys); // Recursively sort array elements that are objects
-  }
+  const jsonData = JSON.parse(Buffer.from(base64Data, 'base64').toString());
 
-  // Recursively create a sorted object
-  const sortedObj = {};
-  Object.keys(obj).sort().forEach(key => {
-    sortedObj[key] = sortObjectKeys(obj[key]); // Recursively apply sorting to nested objects
-  });
-  return sortedObj;
-}
-
-async function preparePatternSetsForSession(jsonData, processedSet, fileName) {
-  const processedPatternsPromises = jsonData.modes[0].single_pats.map(async (data, index) => {
-    // Process each pattern data asynchronously
-    const processedData = await processPatternData(data, processedSet, fileName);
-    return processedData ? { id: index, ...processedData } : null;
-  });
-
-  // Await all promises to resolve
-  const processedPatterns = await Promise.all(processedPatternsPromises);
-
-  // Filter out any null results after async processing
-  return processedPatterns.filter(result => result !== null);
-}
-
-// Assuming processedSet is a Set of dataHashes for quick in-memory duplicate checks
-async function processPatternData(data, processedSet, fileName) {
-    if (data.colorset.length === 0 || data.pattern_id === -1 || data.pattern_id === 255) {
-        return null; // Skip invalid pats
-    }
-
-    const sortedPatData = sortObjectKeys(data);
-    const serializedPatData = JSON.stringify(sortedPatData);
-    const dataHash = computeHash(serializedPatData);
-
-    // Check for in-memory duplicates within the same upload batch
-    if (processedSet.has(dataHash)) {
-        return null; // It's a duplicate within the upload, skip it
-    }
-
-    // Add the hash to the processed set to mark it as seen
-    processedSet.add(dataHash);
-
-    // Check for existing pat in the database with the same pattern data hash
-    const existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
-
-    // Return the pattern data with an additional isDuplicate flag
-    return {
-        data: sortedPatData,
-        dataHash: dataHash,
-        isDuplicate: !!existingPatternSet,
-        fileName: fileName,
+  try {
+    const mode = jsonData;
+    const getDeviceTypeName = (numLeds) => {
+      switch (numLeds) {
+        case 10: return 'Gloves';
+        case 28: return 'Orbit';
+        case 3: return 'Handle';
+        case 2: return 'Duo';
+        case 20: return 'Chromadeck';
+        default: return 'Unknown';
+      }
     };
-}
+
+    const deviceType = getDeviceTypeName(mode.num_leds);
+    const flags = mode.flags;
+
+    const { isDuplicates, duplicateNames } = await calculateDuplicates(mode);
+
+    // Generate mode name
+    const modeName = await generateRandomName();
+
+    // Generate pattern names
+    for (let pat of jsonData.single_pats) {
+      pat.name = await generateRandomName();
+    }
+
+    req.session.modeData = {
+      name: jsonData.name || modeName,
+      description: jsonData.description || '',
+      deviceType,
+      flags,
+      jsonData: { modes: [jsonData] },
+      isDuplicates,
+      duplicateNames
+    };
+
+    res.redirect('/upload/submit');
+  } catch (error) {
+    console.error(error);
+    req.flash('error', 'An error occurred during processing');
+    res.redirect('/upload');
+  }
+});
 
 router.get('/submit', ensureAuthenticated, (req, res) => {
-  // Retrieve the temporary pats stored in the session
-  let tempPats = [];
-  if (req.session.tempPats) {
-    tempPats = req.session.tempPats;
-  }
+  const modeData = req.session.modeData || {};
 
-  // Render the pat selection page, passing the temporary pats for display
-  res.render('uploadSubmit', { pats: tempPats });
+  res.render('upload-submit', { modeData });
 });
 
 router.post('/submit', ensureAuthenticated, async (req, res) => {
-  // Destructure the submitted data; ensuring arrays for single or no selection scenarios
-  let { selectedPatternSets, patIds, patNames, patDescriptions } = req.body;
-  patIds = Array.isArray(patIds) ? patIds : [patIds];
-  patNames = Array.isArray(patNames) ? patNames : [patNames];
-  patDescriptions = Array.isArray(patDescriptions) ? patDescriptions : [patDescriptions];
-
-  const tempPats = req.session.tempPats || [];
-  let patsToSave = [];
-
-  // Map patIds to their names and descriptions
-  let nameDescriptionMap = patIds.reduce((acc, patId, idx) => {
-    acc[patId] = { name: patNames[idx], description: patDescriptions[idx] };
-    return acc;
-  }, {});
-
-  // Iterate over selectedPatternSets, ensuring it's treated as an array
-  (Array.isArray(selectedPatternSets) ? selectedPatternSets : [selectedPatternSets]).forEach(selectedIdx => {
-    const index = parseInt(selectedIdx, 10);
-    // Ensure we have a corresponding entry in nameDescriptionMap
-    if (tempPats[index] && !tempPats[index].isDuplicate && nameDescriptionMap[selectedIdx]) {
-      const { name, description } = nameDescriptionMap[selectedIdx];
-
-      const data = tempPats[index].data;
-      const dataHash = computeHash(JSON.stringify(sortObjectKeys(data)));
-
-      patsToSave.push(new PatternSet({
-        _id: new mongoose.Types.ObjectId(),
-        name: name || 'Unnamed PatternSet',
-        description: description || 'No description provided.',
-        data: data,
-        dataHash: dataHash,
-        createdBy: req.user._id,
-      }));
-    }
-  });
-
-  // Save each pat to the database
   try {
-    await Promise.all(patsToSave.map(pat => pat.save()));
-    req.flash('success', 'PatternSets successfully submitted!');
-    delete req.session.tempPats; // Clean up the session
-    res.redirect('/pats');
+    const { name, description, patternNames, patternDescriptions } = req.body;
+    const { deviceType, flags, jsonData, isDuplicates } = req.session.modeData;
+
+    const patternSetIds = new Map();
+    const createdPatternSets = [];
+
+    // Insert or fetch pattern sets based on isDuplicates flags
+    for (let i = 0; i < jsonData.modes[0].single_pats.length; i++) {
+      const pat = jsonData.modes[0].single_pats[i];
+      const sortedPatData = sortObjectKeys(pat);
+      const dataHash = computeHash(JSON.stringify(sortedPatData));
+
+      let existingPatternSet = await PatternSet.findOne({ dataHash }).exec();
+      if (!existingPatternSet) {
+        existingPatternSet = new PatternSet({
+          _id: new mongoose.Types.ObjectId(),
+          name: patternNames[i] || pat.name || 'Unnamed PatternSet',
+          description: patternDescriptions[i] || pat.description || 'No description provided.',
+          data: sortedPatData,
+          dataHash: dataHash,
+          createdBy: req.user._id,
+        });
+        await existingPatternSet.save();
+        createdPatternSets.push(existingPatternSet._id);
+      }
+
+      if (existingPatternSet) {
+        patternSetIds.set(dataHash, existingPatternSet._id);
+      } else {
+        console.error(`Error! PatternSet not found or created for dataHash: ${dataHash}`);
+        throw new Error(`PatternSet not found or created for dataHash: ${dataHash}`);
+      }
+    }
+
+    // Populate patternSets array with IDs
+    const deduplicatedPatternSets = Array.from(new Set(jsonData.modes[0].single_pats.map(pat => {
+      const sortedPatData = sortObjectKeys(pat);
+      const dataHash = computeHash(JSON.stringify(sortedPatData));
+      return patternSetIds.get(dataHash);
+    })));
+
+    // Ensure all pattern sets are valid
+    if (deduplicatedPatternSets.includes(undefined)) {
+      throw new Error("Error! Undefined pattern set found in deduplicatedPatternSets.");
+    }
+
+    // Update ledPatternOrder to reference patternSets
+    const updatedLedPatternOrder = jsonData.modes[0].single_pats.map(pat => {
+      const sortedPatData = sortObjectKeys(pat);
+      const dataHash = computeHash(JSON.stringify(sortedPatData));
+      return deduplicatedPatternSets.indexOf(patternSetIds.get(dataHash));
+    });
+
+    const mode = new Mode({
+      name,
+      description,
+      deviceType,
+      patternSets: deduplicatedPatternSets,
+      ledPatternOrder: updatedLedPatternOrder,
+      createdBy: req.user._id,
+      flags: parseInt(flags, 10),
+      dataHash: computeHash(JSON.stringify(deduplicatedPatternSets) + ":" + JSON.stringify(updatedLedPatternOrder) + ":" + flags + ":" + deviceType)
+    });
+
+    await mode.save();
+
+    req.flash('success', 'Mode and PatternSets successfully submitted!');
+    delete req.session.modeData;
+    res.redirect('/modes');
   } catch (error) {
-    console.error('Error saving pats:', error);
-    req.flash('error', 'An error occurred while submitting your pats.');
+    console.error('Error saving modes and patterns:', error);
+
+    // Clean up: delete any created pattern sets and mode
+    if (createdPatternSets.length > 0) {
+      await PatternSet.deleteMany({ _id: { $in: createdPatternSets } }).exec();
+    }
+    if (mode && mode._id) {
+      await Mode.findByIdAndDelete(mode._id).exec();
+    }
+
+    req.flash('error', 'An error occurred while submitting your mode.');
     res.redirect('/upload/submit');
   }
 });
 
 module.exports = router;
+
+// Load words when the server starts
+loadWords();

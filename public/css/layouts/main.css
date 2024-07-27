@@ -1,0 +1,26 @@
+/* main.css */
+
+.main-container {
+    margin: 0 auto;
+    max-width: 1460px;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        padding: 10px;
+    }
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+

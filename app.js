@@ -31,6 +31,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Use the setPageStyles middleware to inject css
+app.use(require('./middleware/setPageStyles'));
+
 // Session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -70,11 +73,13 @@ app.use('/upload', uploadLimiter);
 // Routes
 var indexRouter = require('./routes/index');
 var userUploadRouter = require('./routes/upload');
-var firmwareUploadRouter = require('./routes/firmwareUpload');
+var firmwareUploadRouter = require('./routes/firmware-upload');
 var userRouter = require('./routes/user');
 var patsRouter = require('./routes/pats');
-var downloadsRouter = require('./routes/downloads');
 var patRouter = require('./routes/pat');
+var modesRouter = require('./routes/modes');
+var modeRouter = require('./routes/mode');
+var downloadsRouter = require('./routes/downloads');
 var registerRouter = require('./routes/register');
 var verifyRouter = require('./routes/verify');
 var loginRouter = require('./routes/login');
@@ -88,8 +93,10 @@ app.use('/upload', userUploadRouter);
 app.use('/firmware', firmwareUploadRouter);
 app.use('/user', userRouter);
 app.use('/pats', patsRouter);
-app.use('/downloads', downloadsRouter);
 app.use('/pat', patRouter);
+app.use('/modes', modesRouter);
+app.use('/mode', modeRouter);
+app.use('/downloads', downloadsRouter);
 app.use('/register', registerRouter);
 app.use('/verify', verifyRouter);
 app.use('/login', loginRouter);

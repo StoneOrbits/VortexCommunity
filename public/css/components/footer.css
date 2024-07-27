@@ -1,0 +1,9 @@
+/* footer.css */
+
+footer {
+    text-align: center;
+    background-color: #222;
+    color: white;
+    padding: 0px;
+    margin-top: auto;  /* This will push the footer to the bottom if the page content is short */
+}

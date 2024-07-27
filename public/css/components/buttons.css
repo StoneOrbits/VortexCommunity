@@ -1,0 +1,39 @@
+/* buttons.css */
+
+.button, .form-group button, .submit-button button, .lightshow-button, .pat-profile-download-button, .keep-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button {
+  background-color: #333;
+  color: #FFF;
+}
+
+.form-group button {
+  background-color: #FFF;
+  color: #121212;
+}
+
+.lightshow-button {
+  background-color: #1abc9c;
+  color: white;
+}
+
+.pat-profile-download-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.keep-button {
+  background-color: #333;
+  color: #FFF;
+}
+
+.button:hover, .form-group button:hover, .lightshow-button:hover, .pat-profile-download-button:hover, .keep-button:hover {
+  background-color: #555;
+}
+

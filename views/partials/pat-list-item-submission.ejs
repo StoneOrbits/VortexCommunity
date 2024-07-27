@@ -1,0 +1,14 @@
+<% if ((isDuplicate & 1) === 0) { %>
+    <div class="pat-item-submission <%= (isDuplicate & 2) ? 'duplicate' : '' %>" data-index="<%= tempId %>" >
+        <div class="pat-item-submission-content">
+            <input type="hidden" name="patIds[]" value="<%= tempId %>" <%= (isDuplicate & 2) ? 'disabled' : '' %> />
+            <p class="pat-name">
+              <%= (isDuplicate & 2) && duplicateName ? duplicateName : (pat.name || 'Unnamed Pattern') %>
+            </p>
+        </div>
+        <!-- Lightshow visualization -->
+        <%- include('submission-lightshow', { pat: pat, tempId: tempId }) %>
+    </div>
+<% } %>
+<input type="hidden" name="patternNames[]" id="patternName-<%= tempId %>" value="<%= pat.name || '' %>">
+<input type="hidden" name="patternDescriptions[]" id="patternDescription-<%= tempId %>" value="<%= pat.description || '' %>">

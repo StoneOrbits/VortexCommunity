@@ -1,0 +1,40 @@
+/* pat-tile.css */
+
+.pat-tile {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #888;
+    padding: 10px;
+    border-radius: 5px;
+    height: 120px;
+    position: relative;
+    background-color: #222;
+    color: #FFF;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    transition: transform 0.2s; /* Add a little animation for hover effect */
+}
+
+.pat-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.pat-tile h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+.pat-content {
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+
+.pat-blurb {
+    font-size: 14px;
+    font-style: italic;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

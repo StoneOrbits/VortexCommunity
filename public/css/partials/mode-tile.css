@@ -1,0 +1,87 @@
+/* mode-tile.css */
+
+.mode-tile {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #888;
+    padding: 10px;
+    border-radius: 5px;
+    height: 200px;
+    position: relative; /* Ensure the device icon stays within the tile */
+    background-color: #222;
+    color: #FFF;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    transition: transform 0.2s; /* Add a little animation for hover effect */
+}
+
+.mode-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.device-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 50px;
+    width: 50px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.mode-tile-content {
+    flex-direction: column;
+    margin-top: 50px; /* Add space for the device icon */
+    text-align: left;
+}
+
+.mode-tile-title {
+    font-size: 20px;
+    margin: 5px 0px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    max-width: calc(100% - 80px); /* Adjust max-width to prevent overflow */
+    max-height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mode-tile-description {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 10px;
+    margin-top: 0px;
+    max-width: 100%;
+    max-height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mode-details {
+    font-size: 12px;
+    color: #ccc;
+}
+
+.device-icon.gloves {
+  background-image: url('/images/gloves-logo-square-64.png'); /* Replace with the correct path */
+}
+
+.device-icon.orbit {
+  background-image: url('/images/orbit-logo-square-64.png'); /* Replace with the correct path */
+}
+
+.device-icon.handle {
+  background-image: url('/images/handle-logo-square-64.png'); /* Replace with the correct path */
+}
+
+.device-icon.duo {
+  background-image: url('/images/duo-logo-square-64.png'); /* Replace with the correct path */
+}
+
+.device-icon.chromadeck {
+  background-image: url('/images/chromadeck-logo-square-64.png'); /* Replace with the correct path */
+}
+

@@ -1,0 +1,236 @@
+/* mode.css */
+
+.mode-profile-page {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #222;
+    border: 2px solid #888;
+    border-radius: 10px;
+    position: relative; /* Added for absolute positioning of actions */
+}
+
+.mode-profile-header {
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.mode-title {
+    font-size: 20px;
+    margin: 5px 0px;
+    top: 15px;
+    left: 15px;
+    max-width: calc(100% - 80px); /* Adjust max-width to prevent overflow */
+    max-height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mode-icons {
+    margin: 0px;
+    position: relative;
+    height: 0;
+    width: 100%;
+}
+
+.mode-profile-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.mode-profile-details {
+    margin: 20px 0;
+    padding-bottom: 20px;
+}
+
+.mode-profile-description {
+    max-width: calc(100% - 20px); /* Adjust max-width to prevent overflow */
+    max-height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mode-profile-image-container {
+    position: relative;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.mode-device-image {
+    max-width: 100%;
+    border: 1px solid #888;
+    border-radius: 10px;
+}
+
+.pattern-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.pattern-tooltip {
+    visibility: hidden;
+    background-color: #333;
+    color: #FFF;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position above the dot */
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    width: 120px;
+}
+
+.pattern-dot:hover .pattern-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.votes-container {
+    position: absolute;
+    top: 0px;
+    right: 30px;
+}
+
+.upvote-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.votes-count {
+    display: block;
+    text-align: center;
+}
+
+.favorite-icon {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 20px;
+    height: 20px;
+}
+
+.icon-button {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    text-decoration: none !important;
+}
+
+.icon-button:hover,
+.icon-button:focus {
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+    text-decoration: none !important;
+}
+
+.votes-container,
+.favorite-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-block;
+}
+
+.edit-mode-link,
+.delete-mode-link {
+    color: #FFFFFF;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0px;
+}
+
+.mode-profile-button {
+    text-decoration: none;
+    color: #FFF;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.lightshow-button {
+    background-color: #1abc9c;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    margin-right: 10px;
+    margin-left: 20px;
+}
+
+.lightshow-button:hover {
+    background-color: #16a085;
+}
+
+.download-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    transition: background-color 0.3s;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
+
+.download-button-disabled {
+    background-color: #aaaaaa;
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    transition: background-color 0.3s;
+}
+
+.download-button-disabled:hover {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .mode-profile-details {
+        margin: 20px 0;
+        padding-bottom: 20px;
+    }
+}
+
+@media (max-width: 338px) {
+    .mode-profile-button {
+        text-decoration: none;
+        color: #FFF;
+        margin-top: 10px;
+        margin-left: 5px;
+        font-size: 12px;
+    }
+}
+
+/* Specific CSS for mode icons */
+.mode-profile-page .votes-container {
+    top: 15px; /* Adjust to align with the mode title */
+    right: 70px; /* Adjust to provide space for the favorite icon */
+}
+
+.mode-profile-page .favorite-container {
+    top: 15px; /* Adjust to align with the mode title */
+    right: 30px; /* Adjust to position next to the votes container */
+}
+

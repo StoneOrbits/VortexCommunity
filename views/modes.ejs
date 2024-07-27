@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <section class="search-bar">
+            <form id="search-form" action="/modes" method="get">
+                <div class="search-container">
+                    <input type="text" name="search" class="search-input" placeholder="Search..." value="<%= search %>">
+                    <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </section>
+        <section class="filter-bar">
+            <div class="device-filter">
+                <div class="filter-button">
+                    <input type="checkbox" id="gloves" name="device" value="gloves" checked>
+                    <label for="gloves">
+                        <img src="/images/gloves-logo-square-64.png" alt="Gloves Icon">
+                        Gloves
+                    </label>
+                </div>
+                <div class="filter-button">
+                    <input type="checkbox" id="orbit" name="device" value="orbit" checked>
+                    <label for="orbit">
+                        <img src="/images/orbit-logo-square-64.png" alt="Orbit Icon">
+                        Orbit
+                    </label>
+                </div>
+                <div class="filter-button">
+                    <input type="checkbox" id="handle" name="device" value="handle" checked>
+                    <label for="handle">
+                        <img src="/images/handle-logo-square-64.png" alt="Handle Icon">
+                        Handle
+                    </label>
+                </div>
+            </div>
+        </section>
+        <section class="showcase">
+            <div class="modes-list" id="modes-list">
+                <% modes.forEach((mode, index) => { %>
+                    <%- include('partials/mode-tile', { mode: mode, orderedPatternSets: orderedPatternSetsArray[index] }) %>
+                <% }) %>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+</body>
+</html>
+

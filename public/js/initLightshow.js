@@ -6,7 +6,9 @@ VortexLib().then(vortexLib => {
   tiles.forEach(canvas => {
     // the canvas ID is on the attribute and it contains the pat ID inside of it
     const canvasId = canvas.getAttribute('id');
-    const lightshow = new Lightshow(vortexLib, canvasId);
+    const type = canvas.getAttribute('data-type') || 'scrolling'; // Default to 'scrolling' if no type is provided
+    const options = { type: type };
+    const lightshow = new Lightshow(vortexLib, canvasId, options);
     lightshow.start();
   });
 });
