@@ -47,7 +47,7 @@ router.get('/:modeId', async (req, res) => {
 
     const vortexMode = await buildMode(mode);
     const base64Json = Buffer.from(JSON.stringify(vortexMode)).toString('base64');
-    const lightshowUrl = `http://127.0.0.1:8000/?data=${base64Json}`;
+    const lightshowUrl = `https://lightshow.lol/importMode?data=${base64Json}`;
 
     const patternSets = await PatternSet.find({ _id: { $in: mode.patternSets } }).exec();
     const patternSetMap = {};
