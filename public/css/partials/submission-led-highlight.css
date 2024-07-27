@@ -1,0 +1,30 @@
+/* submission-led-highlight.css */
+
+.submission-preview-highlight-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: block; /* Ensure the canvas is displayed as a block element */
+  border: none; /* Remove any border if it exists */
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+  border-radius: 50%;
+  z-index: 3;
+}
+
+.highlight {
+  display: none; /* Initially hidden */
+}
+
+.highlight.active-highlight {
+  border: 4px solid #0ad;
+  display: block; /* Show when active */
+}
+
+.highlight.selected {
+  border: 4px solid #ad0;
+  display: block; /* Initially hidden */
+}
+
+

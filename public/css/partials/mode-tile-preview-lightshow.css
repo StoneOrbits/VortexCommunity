@@ -1,0 +1,21 @@
+/* mode-tile-preview-lightshow.css */
+
+.mode-tile-preview-container {
+    flex:3;
+    overflow: hidden;
+    border: 1px solid #888;
+    border-radius: 5px;
+    background-color: #1f1f1f;
+    padding: 0;
+    margin: 0;
+    margin-left: 5px;
+}
+
+.mode-tile-preview-led-container {
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    background-color: #333;
+    padding: 0;
+    margin: 0;
+}
