@@ -12,8 +12,37 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 require('dotenv').config();
 
+let prefixes = [];
+let nouns = [];
+
+function loadWords() {
+  fs.readFile(path.join(__dirname, '../public/data/words-adjectives.json'), 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading words-adjectives.json:', err);
+      return;
+    }
+    prefixes = JSON.parse(data);
+  });
+
+  fs.readFile(path.join(__dirname, '../public/data/words-nouns.json'), 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading words-nouns.json:', err);
+      return;
+    }
+    nouns = JSON.parse(data);
+  });
+}
+
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 function generateRandomName() {
-  return 'Generated Name';
+  const useTwoAdjectives = Math.random() < 0.5;
+  const prefix1 = getRandomItem(prefixes);
+  const prefix2 = useTwoAdjectives ? getRandomItem(prefixes) : "";
+  const noun = getRandomItem(nouns);
+  return useTwoAdjectives ? `${prefix1} ${prefix2} ${noun}` : `${prefix1} ${noun}`;
 }
 
 function sortObjectKeys(obj) {
