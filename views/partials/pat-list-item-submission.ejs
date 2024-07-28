@@ -1,5 +1,5 @@
 <% if ((isDuplicate & 1) === 0) { %>
-    <div class="pat-item-submission <%= (isDuplicate & 2) ? 'duplicate' : '' %>" data-index="<%= tempId %>" >
+    <div class="pat-item-submission <%= (isDuplicate & 2) ? 'duplicate' : '' %>" data-index="<%= tempId %>" data-pattern-id="<%= pat._id %>">
         <div class="pat-item-submission-content">
             <input type="hidden" name="patIds[]" value="<%= tempId %>" <%= (isDuplicate & 2) ? 'disabled' : '' %> />
             <p class="pat-name">

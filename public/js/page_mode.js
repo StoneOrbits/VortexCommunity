@@ -13,6 +13,13 @@ patternItems.forEach(item => {
     const index = this.dataset.index;
     highlightPattern(index);
   });
+
+  item.addEventListener('dblclick', function() {
+    const patternId = item.getAttribute('data-pattern-id');
+    if (patternId) {
+      window.location.href = `/pat/${patternId}`;
+    }
+  });
 });
 
 const newItems = document.querySelectorAll('.pat-item-submission:not(.duplicate)');

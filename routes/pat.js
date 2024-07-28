@@ -3,6 +3,7 @@ const router = express.Router();
 const fs = require('fs').promises; // Using the promise-based version of fs
 const path = require('path');
 const User = require('../models/User');
+const Mode = require('../models/Mode');
 const PatternSet = require('../models/PatternSet');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 const tmp = require('tmp-promise'); // Using tmp-promise for handling temporary files with promises
@@ -47,7 +48,7 @@ router.get('/:patId/edit', ensureAuthenticated, async (req, res) => {
     if (pat.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).send('Unauthorized');
     }
-    res.render('patset-edit', { pat: pat, user: req.user });
+    res.render('pat-edit', { pat: pat, user: req.user });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -80,20 +81,27 @@ router.post('/:patId/edit', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Delete pat
-router.post('/:patId/delete', ensureAuthenticated, async (req, res) => {
+router.post('/:patternId/delete', ensureAuthenticated, async (req, res) => {
   try {
-    const pat = await PatternSet.findById(req.params.patId);
-    if (!pat) {
-      return res.status(404).send('PatternSet not found');
-    }
-    if (pat.createdBy.toString() !== req.user._id.toString()) {
-      return res.status(403).send('Unauthorized');
+    const patternId = req.params.patternId;
+
+    // Find the pattern
+    const pattern = await PatternSet.findById(patternId);
+    if (!pattern) {
+      return res.status(404).send('Pattern not found');
     }
 
-    // Directly delete the pat from the database
-    await PatternSet.deleteOne({ _id: req.params.patId });
-    res.redirect('/pats');
+    // Check if the pattern is referenced by any modes
+    const modesUsingPattern = await Mode.find({ patternSets: patternId });
+
+    if (modesUsingPattern.length > 0) {
+      // Prevent deletion and return an error message
+      return res.status(400).send('Pattern is referenced by one or more modes and cannot be deleted.');
+    }
+
+    // Delete the pattern if not referenced
+    await PatternSet.deleteOne({ _id: patternId });
+    res.redirect('/pats'); // Adjust the redirection path as needed
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');

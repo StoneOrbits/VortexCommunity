@@ -34,6 +34,22 @@
     width: 100%;
 }
 
+.mode-profile-button {
+    text-decoration: none;
+    color: #FFF;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.edit-mode-link,
+.delete-mode-link {
+    color: #FFFFFF;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0px;
+}
+
 .mode-profile-actions {
     display: flex;
     justify-content: flex-end;
@@ -41,8 +57,7 @@
 }
 
 .mode-profile-details {
-    margin: 20px 0;
-    padding-bottom: 20px;
+    margin: 5px 0;
 }
 
 .mode-profile-description {
@@ -50,6 +65,7 @@
     max-height: 80px;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-top: 0;
 }
 
 .mode-profile-image-container {

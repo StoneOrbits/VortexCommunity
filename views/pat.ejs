@@ -36,13 +36,14 @@
                 <button onclick="document.getElementById('deleteConfirmModal').style.display='none';">Cancel</button>
             </div>
             </div>
+            <%- include('partials/pat-profile-lightshow', { pat: pat }) %>
             <div class="pat-profile-actions">
-                <a href="<%= lightshowUrl %>" id="openOnLightshow" class="pat-profile-button lightshow-button">lightshow.lol →</a>
                 <% if (user) { %>
                     <a href="/pat/<%= pat._id %>/download" class="pat-profile-button download-button">Download</a>
                 <% } else { %>
                     <a href="/login" class="pat-profile-button download-button-disabled">Login to Download</a>
                 <% } %>
+                <a href="<%= lightshowUrl %>" id="openOnLightshow" class="pat-profile-button lightshow-button">lightshow.lol →</a>
             </div>
             <script>
               function confirmDelete() {
@@ -53,9 +54,6 @@
             <!-- Hidden form for deletion -->
             <form id="deleteForm" action="/pat/<%= pat._id %>/delete" method="post" style="display:none;">
             </form>
-            <div class="pat-profile-led-strip-container">
-                <%- include('partials/lightshow', { pat: pat }) %>
-            </div>
         </section>
     </main>
     <%- include('partials/footer') %>

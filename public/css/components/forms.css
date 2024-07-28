@@ -32,7 +32,7 @@ input[type="text"]:disabled, input[type="email"]:disabled, input[type="password"
     cursor: not-allowed;
 }
 
-.register-section, .login-section {
+.mode-edit-section, .pat-edit-section, .register-section, .login-section {
     display: flex;
     justify-content: center;
     align-items: center;
