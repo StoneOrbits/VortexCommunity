@@ -16,12 +16,12 @@
             <div class="mode-patterns">
               <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
                 <% if ((modeData.isDuplicates[index] & 2) === 0) { %>
-                  <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName, isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
+                  <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, patName: modeData.patNames[index], patDescription: modeData.patDescriptions[index], isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
                 <% } %>
               <% }); %>
               <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
                 <% if ((modeData.isDuplicates[index] & 2) !== 0) { %>
-                  <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.fileName, isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
+                  <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, patName: modeData.patNames[index], patDescription: modeData.patDescriptions[index], isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
                 <% } %>
               <% }); %>
             </div>

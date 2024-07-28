@@ -1,7 +1,7 @@
 <a href="/pat/<%= pat.id %>" class="pat-tile" data-pat-name="<%= pat.name %>">
-    <div class="pat-content">
-        <h2 class="pat-title"><%= pat.name %></h2>
-        <p class="pat-blurb"><%= pat.description %></p>
+    <div class="pat-tile-content">
+        <h2 class="pat-tile-title"><%= pat.name %></h2>
+        <p class="pat-tile-blurb"><%= pat.description %></p>
     </div>
     <%- include('lightshow', { pat: pat }) %>
 </a>

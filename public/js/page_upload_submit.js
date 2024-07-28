@@ -56,8 +56,9 @@ function updatePatternData() {
   const selectedPatternIndex = selectedPatternElement.dataset.index;
 
   if (selectedPatternIndex !== undefined) {
-    modeData.jsonData.modes[0].single_pats[selectedPatternIndex].name = patternNameField.value;
-    modeData.jsonData.modes[0].single_pats[selectedPatternIndex].description = patternDescriptionField.value;
+    // FIX HERE: TODO
+    modeData.patNames[selectedPatternIndex] = patternNameField.value;
+    modeData.patDescriptions[selectedPatternIndex] = patternDescriptionField.value;
 
     // Update the hidden input fields
     document.getElementById(`patternName-${selectedPatternIndex}`).value = patternNameField.value;
@@ -152,28 +153,30 @@ if (deviceType) {
   console.error('Device type not found.');
 }
 
+// highlights patterns based on the index in the uniques list
 function highlightPattern(index) {
   // Get the mode data from the data attribute
   const modeDataContainer = document.getElementById('mode-data-container');
   const mode = JSON.parse(modeDataContainer.getAttribute('data-mode'));
 
-  // Find the index in ledPatternOrder that matches the provided index
-  const ledPatternOrderIndex = mode.ledPatternOrder.indexOf(parseInt(index, 10));
-
   // Highlight the selected item
   document.querySelectorAll('.pat-item-submission').forEach(i => i.classList.remove('highlighted'));
-  document.querySelector(`.pat-item-submission[data-index="${index}"]`).classList.add('highlighted');
-
+  const patItem = document.querySelector(`.pat-item-submission[data-index="${index}"]`);
+  patItem.classList.add('highlighted');
+  
+  // get the index into the 'real pattern list' (ie the mode's list of patterns)
+  const patternIndex = patItem.getAttribute('data-index')
 
   // Highlight LEDs that use the selected pattern
-  highlightLEDs(ledPatternOrderIndex);
+  highlightLEDsForPattern(patternIndex);
 }
 
 function patternsEqual(pat1, pat2) {
   return JSON.stringify(pat1) === JSON.stringify(pat2);
 }
 
-function highlightLEDs(patternIndex) {
+// highlights all the leds for the given pattern by comparing (no ledPatternMap)
+function highlightLEDsForPattern(patternIndex) {
   const pat = modeData.jsonData.modes[0].single_pats[patternIndex];
   const highlights = document.querySelectorAll('.highlight');
 
@@ -198,8 +201,8 @@ function selectPattern(index) {
   const patternNameField = document.getElementById('pattern-name');
   const patternDescriptionField = document.getElementById('pattern-description');
 
-  const patternName = modeData.jsonData.modes[0].single_pats[index].name || 'Unnamed Pattern';
-  const patternDescription = modeData.jsonData.modes[0].single_pats[index].description || '';
+  const patternName = modeData.patNames[index] || 'Unnamed Pattern';
+  const patternDescription = '';
 
   // Update the pattern name and description fields
   patternNameField.value = patternName;

@@ -47,7 +47,7 @@
         <div class="mode-content">
           <div class="mode-patterns">
             <% patternSets.forEach((pat, index) => { %>
-              <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, fileName: pat.name, isDuplicate: false }) %>
+              <%- include('partials/pat-list-item-submission', { pat: pat, tempId: orderedPatternSets.indexOf(pat), patName: pat.name, patDescription: pat.description, isDuplicate: false }) %>
             <% }); %>
           </div>
           <div class="mode-preview">

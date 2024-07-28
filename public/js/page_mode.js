@@ -133,21 +133,22 @@ if (deviceType) {
   console.error('Device type not found.');
 }
 
+// NOTE: the index in mode.ejs is different from upload-submit, there they use the real index of the pattern
+//       in the mode, here is the unique pattern index so we have to index the ledPatternOrder
 function highlightPattern(index) {
   // Get the mode data from the data attribute
   const modeDataContainer = document.getElementById('mode-data-container');
   const mode = JSON.parse(modeDataContainer.getAttribute('data-mode'));
 
-  // Find the index in ledPatternOrder that matches the provided index
-  const ledPatternOrderIndex = mode.ledPatternOrder.indexOf(parseInt(index, 10));
-
   // Highlight the selected item
   document.querySelectorAll('.pat-item-submission').forEach(i => i.classList.remove('highlighted'));
-  document.querySelector(`.pat-item-submission[data-index="${index}"]`).classList.add('highlighted');
+  const patItem = document.querySelector(`.pat-item-submission[data-index="${index}"]`);
+  patItem.classList.add('highlighted');
 
+  const patternIndex = patItem.getAttribute('data-index')
 
   // Highlight LEDs that use the selected pattern
-  highlightLEDs(ledPatternOrderIndex);
+  highlightLEDs(patternIndex);
 }
 
 function patternsEqual(pat1, pat2) {

@@ -25,12 +25,15 @@
     margin-top: 0;
 }
 
-.pat-content {
+.pat-tile-content {
     flex-grow: 1;
     margin-bottom: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
-.pat-blurb {
+.pat-tile-blurb {
     font-size: 14px;
     font-style: italic;
     color: #aaa;
@@ -38,3 +41,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.pat-tile-title {
+    font-size: 20px;
+    margin: 0;
+    color: #FFF;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+

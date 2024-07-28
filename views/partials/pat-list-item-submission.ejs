@@ -3,12 +3,12 @@
         <div class="pat-item-submission-content">
             <input type="hidden" name="patIds[]" value="<%= tempId %>" <%= (isDuplicate & 2) ? 'disabled' : '' %> />
             <p class="pat-name">
-              <%= (isDuplicate & 2) && duplicateName ? duplicateName : (pat.name || 'Unnamed Pattern') %>
+              <%= (isDuplicate & 2) && duplicateName ? duplicateName : patName %>
             </p>
         </div>
         <!-- Lightshow visualization -->
         <%- include('submission-lightshow', { pat: pat, tempId: tempId }) %>
     </div>
 <% } %>
-<input type="hidden" name="patternNames[]" id="patternName-<%= tempId %>" value="<%= pat.name || '' %>">
-<input type="hidden" name="patternDescriptions[]" id="patternDescription-<%= tempId %>" value="<%= pat.description || '' %>">
+<input type="hidden" name="patternNames[]" id="patternName-<%= tempId %>" value="<%= patName || '' %>">
+<input type="hidden" name="patternDescriptions[]" id="patternDescription-<%= tempId %>" value="<%= patDescription || '' %>">

@@ -134,9 +134,12 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
       // Generate mode name
       const modeName = await generateRandomName();
 
+      let patNames = [];
+      let patDescriptions = [];
       // Generate pattern names
-      for (let pat of mode.single_pats) {
-        pat.name = await generateRandomName();
+      for (let pat of jsonData.single_pats) {
+        patNames.push(await generateRandomName());
+        patDescriptions.push('');
       }
 
       req.session.modeData = {
@@ -146,7 +149,9 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         flags,
         jsonData,
         isDuplicates,
-        duplicateNames
+        duplicateNames,
+        patNames,
+        patDescriptions
       };
     }
 
@@ -188,9 +193,12 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
     // Generate mode name
     const modeName = await generateRandomName();
 
+    let patNames = [];
+    let patDescriptions = [];
     // Generate pattern names
     for (let pat of jsonData.single_pats) {
-      pat.name = await generateRandomName();
+      patNames.push(await generateRandomName());
+      patDescriptions.push('');
     }
 
     req.session.modeData = {
@@ -200,7 +208,9 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
       flags,
       jsonData: { modes: [jsonData] },
       isDuplicates,
-      duplicateNames
+      duplicateNames,
+      patNames,
+      patDescriptions
     };
 
     res.redirect('/upload/submit');
