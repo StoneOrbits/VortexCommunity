@@ -11,6 +11,7 @@ const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
 const spawn = require('child_process').spawn;
+require('dotenv').config();
 
 router.get('/:patId', async (req, res) => {
   try {
@@ -21,7 +22,8 @@ router.get('/:patId', async (req, res) => {
 
     // Base64 encode the data for use in a URL or other purposes
     const base64EncodedData = Buffer.from(JSON.stringify(pat.data)).toString('base64');
-    const lightshowUrl = `https://lightshow.lol/importMode?data=${base64EncodedData}`;
+    const baseUrl = process.env.LIGHTSHOWLOL_URL ? process.env.LIGHTSHOWLOL_URL : 'https://lightshow.lol';
+    const lightshowUrl = baseUrl + `/importMode?data=${base64EncodedData}`;
 
     // Format the upload date
     const uploadDate = pat.uploadDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });

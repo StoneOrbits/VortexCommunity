@@ -11,6 +11,7 @@ const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
 const spawn = require('child_process').spawn;
+require('dotenv').config();
 
 async function buildMode(mode) {
   const patternSets = await PatternSet.find({ _id: { $in: mode.patternSets } }).exec();
@@ -47,7 +48,8 @@ router.get('/:modeId', async (req, res) => {
 
     const vortexMode = await buildMode(mode);
     const base64Json = Buffer.from(JSON.stringify(vortexMode)).toString('base64');
-    const lightshowUrl = `https://lightshow.lol/importMode?data=${base64Json}`;
+    const baseUrl = process.env.LIGHTSHOWLOL_URL ? process.env.LIGHTSHOWLOL_URL : 'https://lightshow.lol';
+    const lightshowUrl = baseUrl + `/importMode?data=${base64Json}`;
 
     const patternSets = await PatternSet.find({ _id: { $in: mode.patternSets } }).exec();
     const patternSetMap = {};

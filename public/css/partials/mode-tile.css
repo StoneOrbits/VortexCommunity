@@ -35,15 +35,16 @@
     flex-direction: column;
     margin-top: 50px; /* Add space for the device icon */
     text-align: left;
+    text-overflow: ellipsis;
 }
 
 .mode-tile-title {
     font-size: 20px;
     margin: 5px 0px;
     position: absolute;
+    width: 100%;
     top: 15px;
     left: 15px;
-    max-width: calc(100% - 80px); /* Adjust max-width to prevent overflow */
     max-height: 40px;
     overflow: hidden;
     text-overflow: ellipsis;

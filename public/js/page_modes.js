@@ -77,6 +77,7 @@ modeTiles.forEach(tile => {
                     item.style.top = `${y}px`;
                     item.style.width = `${ledSize}px`;
                     item.style.height = `${ledSize}px`;
+                    item.style.display = 'block';
 
                     if (deviceType == 'orbit') {
                         if (index === 3 || index === 10 || index === 17 || index === 24) {
