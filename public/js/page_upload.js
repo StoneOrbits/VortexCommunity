@@ -1,4 +1,5 @@
-import './initLightshow.js';
+import { initLightshow } from './initLightshow.js';
+initLightshow();
 
 const dropArea = document.getElementById('drop_area');
 const fileInput = document.getElementById('modeFile');

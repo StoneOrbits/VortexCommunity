@@ -1,4 +1,5 @@
-import './initLightshow.js';
+import { initLightshow } from './initLightshow.js';
+initLightshow();
 
 function filterPats() {
   const searchQuery = searchInput.value;

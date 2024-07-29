@@ -1,4 +1,5 @@
-import './initLightshow.js';
+import { initLightshow } from './initLightshow.js';
+initLightshow();
 
 const modeDataContainer = document.getElementById('mode-data-container');
 const modeData = JSON.parse(modeDataContainer.getAttribute('data-mode-data'));

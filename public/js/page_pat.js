@@ -1,1 +1,2 @@
-import './initLightshow.js';
+import { initLightshow } from './initLightshow.js';
+initLightshow();
