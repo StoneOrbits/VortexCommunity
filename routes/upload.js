@@ -127,6 +127,11 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         }
       };
       const deviceType = getDeviceTypeName(mode.num_leds);
+      if (deviceType === 'Unknown') {
+        req.flash('error', 'Must share a known device type');
+        return res.redirect('/upload');
+      }
+
       const flags = mode.flags;
 
       const { isDuplicates, duplicateNames } = await calculateDuplicates(mode);
@@ -186,6 +191,11 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
     };
 
     const deviceType = getDeviceTypeName(mode.num_leds);
+    if (deviceType === 'Unknown') {
+      req.flash('error', 'Must share a known device type');
+      return res.redirect('/upload');
+    }
+
     const flags = mode.flags;
 
     const { isDuplicates, duplicateNames } = await calculateDuplicates(mode);
