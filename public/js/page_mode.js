@@ -55,7 +55,7 @@ const deviceImage = document.querySelector('.upload-device-image');
 const src = deviceImage.getAttribute('src');
 const deviceTypeMatch = src.match(/\/images\/(.*?)-leds\.png/);
 const deviceType = deviceTypeMatch ? deviceTypeMatch[1] : null;
-const ledSize = deviceType == 'orbit' ? 28 : 26;
+const ledSize = deviceType == 'chromadeck' ? 21 : 'orbit' ? 28 : 26;
 const highlightSize = 34;
 
 if (deviceType) {
@@ -99,6 +99,9 @@ if (deviceType) {
           }
           item.style.borderRadius = '50%';
         }
+        if (deviceType == 'chromadeck') {
+            item.style.borderRadius = '50%';
+        }
         item.setAttribute('title', points[index].name);
         item.setAttribute('data-index', index);
       });
@@ -120,6 +123,9 @@ if (deviceType) {
         item.style.height = `${highlightSize}px`;
         if (deviceType == 'orbit') {
           item.style.borderRadius = '50%';
+        }
+        if (deviceType == 'chromadeck') {
+            item.style.borderRadius = '50%';
         }
         item.setAttribute('title', points[index].name);
         item.setAttribute('data-index', index);
