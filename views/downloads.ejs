@@ -12,25 +12,6 @@
                 <a href="https://stoneorbits.github.io/VortexEngine/upgrade_guide.html" target="_blank" class="wiki-button">Visit Vortex Wiki</a>
             </div>
         </section>
-        <section class="editor-section">
-            <h2>Vortex Desktop Editor</h2>
-            <p>The Desktop Editor is a Windows-only application designed to program Vortex devices directly from a computer. It facilitates seamless interaction with all Vortex devices, allowing savefiles to be pushed or pulled to/from vortex devices with ease.</p>
-            <div class="image-gallery">
-                <img src="/images/editor.png" alt="Editor Screenshot 1" class="editor-screenshot">
-                <img src="/images/editor-color-picker.png" alt="Editor Screenshot 2" class="editor-screenshot">
-            </div>
-            <% if (latestDownloads['desktop'] && latestDownloads['desktop']['editor']) { %>
-              <div class="button-container">
-                  <p class="device-description">Released on <%= latestDownloads['desktop']['editor'].releaseDate %></p>
-                  <p class="device-description">Latest editor version: <%= latestDownloads['desktop']['editor'].version %></p>
-                  <% if (user || 1) { %>
-                    <a href="<%= latestDownloads['desktop']['editor'].fileUrl %>" class="download-button">Download Editor</a>
-                  <% } else { %>
-                    <a href="/login" class="download-button-disabled">Login to Download</a>
-                  <% } %>
-              </div>
-            <% } %>
-        </section>
         <% ['gloves', 'orbit', 'handle'].forEach(device => { %>
             <% if (latestDownloads[device] && latestDownloads[device]['firmware']) { %>
                 <section class="device-section" id="vortex-<%= device %>">
@@ -50,6 +31,25 @@
                 </section>
             <% } %>
         <% }); %>
+        <section class="editor-section">
+            <h2>Vortex Desktop Editor</h2>
+            <p>The Desktop Editor is a Windows-only application designed to program Vortex devices directly from a computer. It facilitates seamless interaction with all Vortex devices, allowing savefiles to be pushed or pulled to/from vortex devices with ease.</p>
+            <div class="image-gallery">
+                <img src="/images/editor.png" alt="Editor Screenshot 1" class="editor-screenshot">
+                <img src="/images/editor-color-picker.png" alt="Editor Screenshot 2" class="editor-screenshot">
+            </div>
+            <% if (latestDownloads['desktop'] && latestDownloads['desktop']['editor']) { %>
+              <div class="button-container">
+                  <p class="device-description">Released on <%= latestDownloads['desktop']['editor'].releaseDate %></p>
+                  <p class="device-description">Latest editor version: <%= latestDownloads['desktop']['editor'].version %></p>
+                  <% if (user || 1) { %>
+                    <a href="<%= latestDownloads['desktop']['editor'].fileUrl %>" class="download-button">Download Editor</a>
+                  <% } else { %>
+                    <a href="/login" class="download-button-disabled">Login to Download</a>
+                  <% } %>
+              </div>
+            <% } %>
+        </section>
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
