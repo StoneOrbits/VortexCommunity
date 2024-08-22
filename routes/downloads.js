@@ -85,4 +85,14 @@ router.post('/new', async function(req, res, next) {
   }
 });
 
+router.get('/json', async function(req, res, next) {
+  try {
+    const downloads = await Download.find().exec();
+    res.json(downloads);
+  } catch (err) {
+    console.error(err);
+    next(err); // Proper error handling
+  }
+});
+
 module.exports = router;
