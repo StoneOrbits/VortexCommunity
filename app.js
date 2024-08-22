@@ -10,6 +10,7 @@ var passport = require('passport');
 var rateLimit = require('express-rate-limit');
 var favicon = require('serve-favicon');
 const flash = require('connect-flash');
+const cors = require('cors');
 require('dotenv').config();
 
 // NOTE! You must create a .env file with:
@@ -30,6 +31,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// allow lightshow.lol to make requests to us
+app.use(cors({origin: 'https://lightshow.lol' }));
 
 // Use the setPageStyles middleware to inject css
 app.use(require('./middleware/setPageStyles'));
