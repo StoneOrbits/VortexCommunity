@@ -87,11 +87,32 @@ router.post('/new', async function(req, res, next) {
 
 router.get('/json', async function(req, res, next) {
   try {
-    const downloads = await Download.find().exec();
-    res.json(downloads);
+    const devices = ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop'];
+    const categories = ['firmware', 'editor', 'emulator'];
+    let latestDownloads = {};
+
+    for (const device of devices) {
+      latestDownloads[device] = {};
+      for (const category of categories) {
+        const latestDownload = await Download.findOne({ device, category })
+          .sort({ releaseDate: -1 })
+          .exec();
+
+        if (latestDownload) {
+          latestDownloads[device][category] = latestDownload;
+        }
+      }
+    }
+
+    // Render the downloads view, passing the latest downloads info
+    res.render('downloads', {
+      title: 'Vortex Downloads',
+      latestDownloads: latestDownloads,
+      req: req
+    });
   } catch (err) {
     console.error(err);
-    next(err); // Proper error handling
+    next(err); // Error handling
   }
 });
 
