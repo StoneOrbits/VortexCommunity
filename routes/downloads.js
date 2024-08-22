@@ -105,11 +105,7 @@ router.get('/json', async function(req, res, next) {
     }
 
     // Render the downloads view, passing the latest downloads info
-    res.render('downloads', {
-      title: 'Vortex Downloads',
-      latestDownloads: latestDownloads,
-      req: req
-    });
+    res.json(latestDownloads);
   } catch (err) {
     console.error(err);
     next(err); // Error handling
