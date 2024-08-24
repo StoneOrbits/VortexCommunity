@@ -13,6 +13,15 @@ const execAsync = util.promisify(exec);
 const spawn = require('child_process').spawn;
 require('dotenv').config();
 
+const ledCounts = {
+    'Gloves': 10,
+    'Orbit': 28,
+    'Handle': 3,
+    'Duo': 2,
+    'Chromadeck': 20,
+  'Spark': 6
+};
+
 async function buildMode(mode) {
   const patternSets = await PatternSet.find({ _id: { $in: mode.patternSets } }).exec();
   const ledPatternOrder = mode.ledPatternOrder;
@@ -22,11 +31,7 @@ async function buildMode(mode) {
     patternSetMap[ps._id] = ps.data;
   });
 
-  const num_leds = mode.deviceType === 'Gloves' ? 10 :
-    mode.deviceType === 'Orbit' ? 28 :
-    mode.deviceType === 'Handle' ? 3 :
-    mode.deviceType === 'Duo' ? 2 :
-    mode.deviceType === 'Chromadeck' ? 20 : 0;
+  const num_leds = ledCounts[mode.deviceType] || 0;
 
   const single_pats = ledPatternOrder.map(orderIndex => patternSetMap[mode.patternSets[orderIndex]]);
 
@@ -276,9 +281,9 @@ router.get('/:modeId/download', ensureAuthenticated, async (req, res) => {
       modes: [ await buildMode(mode) ],
     };
 
+    const numLeds = ledCounts[mode.deviceType] || 0;
     const modeDataJson = JSON.stringify(wrappedModeData);
-    console.log(modeDataJson);
-    const command = `/usr/local/bin/vortex --silent --quick --led-count ${mode.num_leds} --write-mode ${tempVtxmodeFile.path} --json-in`;
+    const command = `/usr/local/bin/vortex --silent --quick --led-count ${numLeds} --write-mode ${tempVtxmodeFile.path} --json-in`;
     const vortex = spawn(command, [], { shell: true, stdio: ['pipe', 'ignore', 'pipe'] });
 
     vortex.stderr.on('data', (data) => {
