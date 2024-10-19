@@ -15,27 +15,23 @@
         </section>
         <section class="filter-bar">
             <div class="device-filter">
-                <div class="filter-button">
-                    <input type="checkbox" id="gloves" name="device" value="gloves" checked>
-                    <label for="gloves">
-                        <img src="/images/gloves-logo-square-64.png" alt="Gloves Icon">
-                        Gloves
-                    </label>
-                </div>
-                <div class="filter-button">
-                    <input type="checkbox" id="orbit" name="device" value="orbit" checked>
-                    <label for="orbit">
-                        <img src="/images/orbit-logo-square-64.png" alt="Orbit Icon">
-                        Orbit
-                    </label>
-                </div>
-                <div class="filter-button">
-                    <input type="checkbox" id="handle" name="device" value="handle" checked>
-                    <label for="handle">
-                        <img src="/images/handle-logo-square-64.png" alt="Handle Icon">
-                        Handle
-                    </label>
-                </div>
+                <% let devices = [
+                    { id: 'gloves', name: 'Gloves', img: '/images/gloves-logo-square-64.png', checked: true },
+                    { id: 'orbit', name: 'Orbit', img: '/images/orbit-logo-square-64.png', checked: true },
+                    { id: 'handle', name: 'Handle', img: '/images/handle-logo-square-64.png', checked: true },
+                    { id: 'spark', name: 'Spark', img: '/images/spark-logo-square-64.png', checked: true },
+                    { id: 'chromadeck', name: 'Chromadeck', img: '/images/chromadeck-logo-square-64.png', checked: true },
+                    { id: 'duo', name: 'Duo', img: '/images/duo-logo-square-64.png', checked: true }
+                ]; %>
+                <% devices.forEach(function(device) { %>
+                    <div class="filter-button">
+                        <input type="checkbox" id="<%= device.id %>" name="device" value="<%= device.id %>" <%= device.checked ? 'checked' : '' %>>
+                        <label for="<%= device.id %>">
+                            <img src="<%= device.img %>" alt="<%= device.name %> Icon">
+                            <%= device.name %>
+                        </label>
+                    </div>
+                <% }); %>
             </div>
         </section>
         <section class="showcase">
