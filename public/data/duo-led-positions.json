@@ -4,6 +4,6 @@
     "original_height": 250,
     "points": [
         {"x": 250, "y": 22, "name": "Tip Led" },
-        {"x": 318, "y": 138, "name": "Top Led" }
+        {"x": 250, "y": 138, "name": "Top Led" }
     ]
 }
