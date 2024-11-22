@@ -112,4 +112,37 @@ router.get('/json', async function(req, res, next) {
   }
 });
 
+router.get('/json/:device', async function (req, res, next) {
+  try {
+    const device = req.params.device;
+
+    if (!devices.includes(device)) {
+      return res.status(404).json({ error: 'Device not found' });
+    }
+
+    const latestDownloads = {};
+
+    for (const category of categories) {
+      const latestDownload = await Download.findOne({ device, category })
+        .sort({ releaseDate: -1 })
+        .exec();
+
+      if (latestDownload) {
+        latestDownloads[category] = {
+          version: latestDownload.version,
+          fileUrl: latestDownload.fileUrl,
+          fileSize: latestDownload.fileSize,
+          releaseDate: latestDownload.releaseDate,
+          downloadCount: latestDownload.downloadCount,
+        };
+      }
+    }
+
+    res.json(latestDownloads);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 module.exports = router;
