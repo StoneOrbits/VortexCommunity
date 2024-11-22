@@ -51,6 +51,8 @@ router.get('/', async function(req, res, next) {
     res.render('downloads', {
       title: 'Vortex Downloads',
       latestDownloads: latestDownloads,
+      categories: categories,
+      devices: devices,
       req: req
     });
   } catch (err) {
