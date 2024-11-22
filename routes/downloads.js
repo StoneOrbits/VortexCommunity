@@ -111,49 +111,64 @@ router.get('/json', async function(req, res, next) {
   }
 });
 
-router.get('/json/:device', async function (req, res, next) {
+router.get('/json/:device/:category?', async function (req, res, next) {
   try {
     const device = req.params.device;
+    const category = req.params.category;
 
     if (!devices.includes(device)) {
       return res.status(404).json({ error: 'Device not found' });
     }
 
+    // If a specific category is provided, validate it
+    if (category && !categories.includes(category)) {
+      return res.status(400).json({ error: 'Invalid category' });
+    }
+
     const latestDownloads = {};
-    for (const category of categories) {
-      const latestDownload = await Download.findOne({ device, category })
+    
+    // either try all categories or use the one provided in the url
+    const categoriesToProcess = category ? [category] : categories;
+    // then iterate all those categories and try to get the latest download
+    for (const cat of categoriesToProcess) {
+      // find the latest download for this device and category
+      const latestDownload = await Download.findOne({ device, category: cat })
         .sort({ releaseDate: -1 })
         .exec();
-
-      if (latestDownload) {
-        latestDownloads[category] = {
-          version: latestDownload.version,
-          fileUrl: latestDownload.fileUrl,
-          fileSize: latestDownload.fileSize,
-          releaseDate: latestDownload.releaseDate,
-          downloadCount: latestDownload.downloadCount,
-        };
+      // if not found then move on
+      if (!latestDownload) {
+        continue;
       }
+      // otherwise fill out the latestDownloads object with the relevant information
+      latestDownloads[cat] = {
+        version: latestDownload.version,
+        fileUrl: latestDownload.fileUrl,
+        fileSize: latestDownload.fileSize,
+        releaseDate: latestDownload.releaseDate,
+        downloadCount: latestDownload.downloadCount,
+      };
     }
 
     // If badge=true, return Shields.io-compatible JSON
     if (req.query.badge === 'true') {
-      // lookup the version of the device
-      const firmwareVersion = categories
-        .map(category => latestDownloads[category]?.version)
-        .find(version => version) || 'unknown';
-      // capitalize first letter of device
+      // get the latest version for this device and category
+      const latestVersion = category
+        ? latestDownloads[category]?.version || 'unknown'
+        : categories
+            .map(cat => latestDownloads[cat]?.version)
+            .find(version => version) || 'unknown';
+      // Capitalize the first letter of the device for the label
       const deviceLabel = device.charAt(0).toUpperCase() + device.slice(1);
-      // build a github badge.io badge compatible json object to return
+      // Build the badge.io json for the github version badge
       return res.json({
         schemaVersion: 1,
         label: `Latest ${deviceLabel} Version`,
-        message: firmwareVersion,
+        message: latestVersion,
         color: 'blue',
       });
     }
 
-    // Otherwise, return the full device JSON
+    // Otherwise, return the full device or category JSON
     res.json(latestDownloads);
   } catch (err) {
     console.error(err);
