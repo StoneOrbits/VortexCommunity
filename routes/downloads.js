@@ -115,15 +115,14 @@ router.get('/json', async function(req, res, next) {
 router.get('/json/:device', async function (req, res, next) {
   try {
     const device = req.params.device;
-
-    const devices = ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop']; // Example devices
+    const devices = ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop'];
     const categories = ['firmware', 'editor', 'emulator'];
+
     if (!devices.includes(device)) {
       return res.status(404).json({ error: 'Device not found' });
     }
 
     const latestDownloads = {};
-
     for (const category of categories) {
       const latestDownload = await Download.findOne({ device, category })
         .sort({ releaseDate: -1 })
@@ -140,6 +139,19 @@ router.get('/json/:device', async function (req, res, next) {
       }
     }
 
+    // If badge=true, return Shields.io-compatible JSON
+    if (req.query.badge === 'true') {
+      const firmwareVersion = latestDownloads.firmware?.version || 'unknown';
+
+      return res.json({
+        schemaVersion: 1,
+        label: device,
+        message: firmwareVersion,
+        color: 'blue',
+      });
+    }
+
+    // Otherwise, return the full device JSON
     res.json(latestDownloads);
   } catch (err) {
     console.error(err);
