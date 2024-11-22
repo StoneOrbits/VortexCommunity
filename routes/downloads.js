@@ -4,6 +4,9 @@ var router = express.Router();
 const Download = require('../models/Download'); // Assuming a similar model for downloads
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 
+const devices = ['gloves', 'orbit', 'handle', 'duo', 'chromadeck', 'spark', 'desktop'];
+const categories = ['firmware', 'editor', 'emulator'];
+
 async function getCategorizedDownloads() {
   const allDownloads = await Download.find().sort({ category: 1, name: 1 }).exec();
   let categorizedDownloads = allDownloads.reduce((acc, download) => {
@@ -29,8 +32,6 @@ async function getCategorizedDownloads() {
 
 router.get('/', async function(req, res, next) {
   try {
-    const devices = ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop']; // Example devices
-    const categories = ['firmware', 'editor', 'emulator']; // Example categories
     let latestDownloads = {};
 
     for (const device of devices) {
@@ -87,8 +88,6 @@ router.post('/new', async function(req, res, next) {
 
 router.get('/json', async function(req, res, next) {
   try {
-    const devices = ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop'];
-    const categories = ['firmware', 'editor', 'emulator'];
     let latestDownloads = {};
 
     for (const device of devices) {
@@ -115,8 +114,6 @@ router.get('/json', async function(req, res, next) {
 router.get('/json/:device', async function (req, res, next) {
   try {
     const device = req.params.device;
-    const devices = ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop'];
-    const categories = ['firmware', 'editor', 'emulator'];
 
     if (!devices.includes(device)) {
       return res.status(404).json({ error: 'Device not found' });
