@@ -5,7 +5,7 @@ const Download = require('../models/Download'); // Assuming a similar model for 
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 
 const devices = ['gloves', 'orbit', 'handle', 'duo', 'chromadeck', 'spark', 'desktop'];
-const categories = ['firmware', 'editor', 'emulator'];
+const categories = ['firmware', 'editor', 'emulator', 'library'];
 
 async function getCategorizedDownloads() {
   const allDownloads = await Download.find().sort({ category: 1, name: 1 }).exec();
@@ -138,11 +138,16 @@ router.get('/json/:device', async function (req, res, next) {
 
     // If badge=true, return Shields.io-compatible JSON
     if (req.query.badge === 'true') {
-      const firmwareVersion = latestDownloads.firmware?.version || 'unknown';
-
+      // lookup the version of the device
+      const firmwareVersion = categories
+        .map(category => latestDownloads[category]?.version)
+        .find(version => version) || 'unknown';
+      // capitalize first letter of device
+      const deviceLabel = string.charAt(0).toUpperCase() + string.slice(1);
+      // build a github badge.io badge compatible json object to return
       return res.json({
         schemaVersion: 1,
-        label: device,
+        label: `Latest ${deviceLabel} Version`,
         message: firmwareVersion,
         color: 'blue',
       });
