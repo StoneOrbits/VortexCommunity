@@ -116,6 +116,7 @@ router.get('/json/:device', async function (req, res, next) {
   try {
     const device = req.params.device;
 
+    const devices = ['gloves', 'orbit', 'handle', 'chromadeck', 'duo', 'desktop']; // Example devices
     if (!devices.includes(device)) {
       return res.status(404).json({ error: 'Device not found' });
     }
