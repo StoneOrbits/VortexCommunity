@@ -143,7 +143,7 @@ router.get('/json/:device', async function (req, res, next) {
         .map(category => latestDownloads[category]?.version)
         .find(version => version) || 'unknown';
       // capitalize first letter of device
-      const deviceLabel = string.charAt(0).toUpperCase() + string.slice(1);
+      const deviceLabel = device.charAt(0).toUpperCase() + device.slice(1);
       // build a github badge.io badge compatible json object to return
       return res.json({
         schemaVersion: 1,
