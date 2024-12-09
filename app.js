@@ -22,6 +22,23 @@ var app = express();
 
 require('./config/passport')(passport);
 
+// Dynamic CORS origin handler
+const allowedOrigins = ['https://lightshow.lol'];
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // Allow credentials like cookies and sessions
+}));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -31,9 +48,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// allow lightshow.lol to make requests to us
-app.use(cors({origin: 'https://lightshow.lol' }));
 
 // Use the setPageStyles middleware to inject css
 app.use(require('./middleware/setPageStyles'));
