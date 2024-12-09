@@ -22,6 +22,19 @@ var app = express();
 
 require('./config/passport')(passport);
 
+const allowedOrigins = ['https://lightshow.lol'];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true, // Allow credentials if needed
+}));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -114,7 +127,11 @@ app.use('/pats', patsRouter);
 app.use('/pat', patRouter);
 app.use('/modes', modesRouter);
 app.use('/mode', modeRouter);
-app.use('/downloads', downloadsRouter);
+app.use('/downloads', cors({
+  origin: 'https://lightshow.lol',
+  methods: ['GET'],
+  credentials: true
+}), downloadsRouter);
 app.use('/register', registerRouter);
 app.use('/verify', verifyRouter);
 app.use('/login', loginRouter);
