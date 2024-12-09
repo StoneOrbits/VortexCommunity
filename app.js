@@ -22,23 +22,6 @@ var app = express();
 
 require('./config/passport')(passport);
 
-// Dynamic CORS origin handler
-const allowedOrigins = ['https://lightshow.lol'];
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or Postman)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true, // Allow credentials like cookies and sessions
-}));
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -47,7 +30,20 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// servce static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Add CORS headers specifically for the 'firmwares' folder
+app.use('/firmwares', (req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin === 'https://lightshow.lol') {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+  next();
+});
 
 // Use the setPageStyles middleware to inject css
 app.use(require('./middleware/setPageStyles'));
