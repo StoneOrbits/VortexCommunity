@@ -31,19 +31,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// servce static files from public directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from the public directory with CORS for /firmwares
+app.use(
+  '/firmwares',
+  (req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin === 'https://lightshow.lol') {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Methods', 'GET');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    }
+    next();
+  },
+  express.static(path.join(__dirname, 'public/firmwares'))
+);
 
-// Add CORS headers specifically for the 'firmwares' folder
-app.use('/firmwares', (req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin === 'https://lightshow.lol') {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  }
-  next();
-});
+// Serve other static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Use the setPageStyles middleware to inject css
 app.use(require('./middleware/setPageStyles'));
