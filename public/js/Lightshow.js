@@ -12,6 +12,7 @@ export default class Lightshow {
     this.clearCanvas();
     this.boundScrollingDraw = this.scrollingDraw.bind(this); // Bind the scrolling draw function
     this.boundFlashDraw = this.flashDraw.bind(this); // Bind the flash draw function
+    this.vortex.setTickrate(50);
   }
 
   setupCanvas(canvasId) {

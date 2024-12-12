@@ -22,7 +22,7 @@ var app = express();
 
 require('./config/passport')(passport);
 
-const allowedOrigins = ['https://lightshow.lol'];
+const allowedOrigins = ['https://lightshow.lol', 'https://vortex.community', 'http://localhost:3000'];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
