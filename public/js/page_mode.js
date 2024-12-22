@@ -203,3 +203,32 @@ function selectPattern(index) {
   });
 }
 
+document.getElementById('openOnLightshow').addEventListener('click', (event) => {
+  event.preventDefault(); // Prevent default anchor click behavior
+
+  const modeDataContainer = document.getElementById('mode-data-container');
+  const vortexMode = JSON.parse(modeDataContainer.getAttribute('data-vortex-mode'));
+
+  // Encode mode data to base64
+  const modeDataEncoded = btoa(JSON.stringify(vortexMode));
+
+  // Use a named target to focus an existing tab if it exists
+  const lightshowUrl = 'https://lightshow.lol';
+  const lightshowWindow = window.open(lightshowUrl, 'lightshowTab'); // Use 'lightshowTab' as the unique name
+
+  // Retry sending the message until it succeeds (up to 5 seconds)
+  const sendMessageInterval = setInterval(() => {
+    try {
+      lightshowWindow.postMessage(
+        { type: 'mode', data: modeDataEncoded },
+        'https://lightshow.lol'
+      );
+      clearInterval(sendMessageInterval); // Stop retrying once successful
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  }, 500); // Retry every 500ms
+
+  // Stop trying after 5 seconds
+  setTimeout(() => clearInterval(sendMessageInterval), 5000);
+});
