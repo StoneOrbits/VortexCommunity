@@ -65,7 +65,7 @@ router.get('/json', async (req, res) => {
     const pageSize = parseInt(req.query.pageSize || 10, 10);
     const searchQuery = req.query.search;
 
-    let query = { createdBy: req.user._id };
+    let query = {};
     if (searchQuery) {
       query.name = { $regex: new RegExp(searchQuery, 'i') };
     }
