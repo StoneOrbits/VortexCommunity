@@ -209,20 +209,21 @@ document.getElementById('openOnLightshow').addEventListener('click', (event) => 
   const modeDataContainer = document.getElementById('mode-data-container');
   const modeDataEncoded = btoa(modeDataContainer.getAttribute('data-vortex-mode'));
 
-  const lightshowWindow = window.open('https://lightshow.lol', 'lightshowTab');
+  // Always open a new tab
+  const lightshowWindow = window.open('https://lightshow.lol', '_blank');
+  if (!lightshowWindow) {
+    console.error('Popup blocked! Allow popups for this site.');
+    return;
+  }
   lightshowWindow.focus();
 
-  const sendMessageInterval = setInterval(() => {
-    try {
-      lightshowWindow.postMessage(
-        { type: 'mode', data: modeDataEncoded },
-        'https://lightshow.lol'
-      );
-      console.log('Sent data to lightshowTab');
-      clearInterval(sendMessageInterval); // Stop retrying
-    } catch (error) {
-      console.error('Error sending postMessage:', error);
-    }
-  }, 500);
-
-  setTimeout(() => clearInterval(sendMessageInterval), 5000);                                                                                                                                                    });
+  try {
+    lightshowWindow.postMessage(
+      { type: 'mode', data: modeDataEncoded },
+      'https://lightshow.lol'
+    );
+    console.log('Sent data to lightshow.lol');
+  } catch (error) {
+    console.error('Error sending postMessage:', error);
+  }
+});
