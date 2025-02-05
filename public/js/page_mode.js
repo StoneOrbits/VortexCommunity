@@ -217,13 +217,17 @@ document.getElementById('openOnLightshow').addEventListener('click', (event) => 
   }
   lightshowWindow.focus();
 
-  try {
-    lightshowWindow.postMessage(
-      { type: 'mode', data: modeDataEncoded },
-      'https://lightshow.lol'
-    );
-    console.log('Sent data to lightshow.lol');
-  } catch (error) {
-    console.error('Error sending postMessage:', error);
-  }
-});
+  const sendMessageInterval = setInterval(() => {
+    try {
+      lightshowWindow.postMessage(
+        { type: 'mode', data: modeDataEncoded },
+        'https://lightshow.lol'
+      );
+      console.log('Sent data to lightshowTab');
+      clearInterval(sendMessageInterval); // Stop retrying
+    } catch (error) {
+      console.error('Error sending postMessage:', error);
+    }
+  }, 500);
+
+  setTimeout(() => clearInterval(sendMessageInterval), 5000);                                                                                                                                                    });
