@@ -75,6 +75,7 @@ router.get('/json', async (req, res) => {
       .sort({ votes: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
+      .populate('patternSets')
       .exec();
 
     const pageCount = Math.ceil(totalCount / pageSize);
