@@ -40,6 +40,29 @@
                     <%- include('partials/mode-tile', { mode: mode, orderedPatternSets: orderedPatternSetsArray[index] }) %>
                 <% }) %>
             </div>
+            <% if (pageCount > 1) { %>
+              <div class="pagination-wrapper">
+                <ul class="pagination">
+                  <% if (currentPage > 1) { %>
+                    <li><a href="?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>">&laquo;</a></li>
+                  <% } else { %>
+                    <li class="disabled"><span>&laquo;</span></li>
+                  <% } %>
+
+                  <% for (let i = 1; i <= pageCount; i++) { %>
+                    <li class="<%= i === currentPage ? 'active' : '' %>">
+                      <a href="?page=<%= i %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>"><%= i %></a>
+                    </li>
+                  <% } %>
+
+                  <% if (currentPage < pageCount) { %>
+                    <li><a href="?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>">&raquo;</a></li>
+                  <% } else { %>
+                    <li class="disabled"><span>&raquo;</span></li>
+                  <% } %>
+                </ul>
+              </div>
+            <% } %>
         </section>
     </main>
     <%- include('partials/footer') %>
