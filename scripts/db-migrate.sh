@@ -42,16 +42,24 @@ bootstrap_pg() {
   echo "$cmd" | "$@" 2>&1 || true
 }
 
-if command -v sudo &>/dev/null && sudo -n true 2>/dev/null; then
-  # Running on a server with sudo access — use Unix socket as postgres superuser
-  run_pg() { sudo -u postgres psql -t -A; }
-  bootstrap_pg "CREATE USER \"$PG_USER\" WITH PASSWORD '$PG_PASSWORD';" run_pg
-  bootstrap_pg "CREATE DATABASE \"$PG_DATABASE\" OWNER \"$PG_USER\";" run_pg
-  bootstrap_pg "GRANT ALL PRIVILEGES ON DATABASE \"$PG_DATABASE\" TO \"$PG_USER\";" run_pg
-else
-  # No sudo — try via Docker (local dev)
-  if command -v docker &>/dev/null && docker ps --format '{{.Names}}' | grep -q vortex-postgres; then
+# Try sudo-based bootstrap (server with postgres system user)
+if command -v sudo &>/dev/null; then
+  if sudo -u postgres psql -c "SELECT 1" &>/dev/null; then
+    run_pg() { sudo -u postgres psql -t -A; }
+    bootstrap_pg "ALTER USER \"$PG_USER\" WITH PASSWORD '$PG_PASSWORD';" run_pg
+    bootstrap_pg "CREATE USER \"$PG_USER\" WITH PASSWORD '$PG_PASSWORD';" run_pg
+    bootstrap_pg "CREATE DATABASE \"$PG_DATABASE\" OWNER \"$PG_USER\";" run_pg
+    bootstrap_pg "GRANT ALL PRIVILEGES ON DATABASE \"$PG_DATABASE\" TO \"$PG_USER\";" run_pg
+  else
+    echo "  [BOOTSTRAP] sudo available but cannot connect to postgres — skipping"
+  fi
+fi
+
+# Fall back to Docker (local dev)
+if ! command -v sudo &>/dev/null || ! sudo -u postgres psql -c "SELECT 1" &>/dev/null; then
+  if command -v docker &>/dev/null && docker ps --format '{{.Names}}' 2>/dev/null | grep -q vortex-postgres; then
     run_pg() { docker exec -i vortex-postgres psql -U postgres -t -A; }
+    bootstrap_pg "ALTER USER \"$PG_USER\" WITH PASSWORD '$PG_PASSWORD';" run_pg
     bootstrap_pg "CREATE USER \"$PG_USER\" WITH PASSWORD '$PG_PASSWORD';" run_pg
     bootstrap_pg "CREATE DATABASE \"$PG_DATABASE\" OWNER \"$PG_USER\";" run_pg
     bootstrap_pg "GRANT ALL PRIVILEGES ON DATABASE \"$PG_DATABASE\" TO \"$PG_USER\";" run_pg
@@ -77,10 +85,10 @@ else
 fi
 
 # Ensure schema_migrations tracking table exists
-echo 'CREATE TABLE IF NOT EXISTS schema_migrations (version VARCHAR(255) PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW());' | run_psql 2>/dev/null
+echo 'CREATE TABLE IF NOT EXISTS schema_migrations (version VARCHAR(255) PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW());' | run_psql
 
 # Get list of already-applied migrations
-APPLIED=$(echo 'SELECT version FROM schema_migrations ORDER BY version;' | run_psql 2>/dev/null || echo "")
+APPLIED=$(echo 'SELECT version FROM schema_migrations ORDER BY version;' | run_psql || echo "")
 
 if [ ! -d "$MIGRATIONS_DIR" ]; then
   echo "No migrations directory found at $MIGRATIONS_DIR"
