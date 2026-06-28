@@ -71,8 +71,7 @@ router.get('/json', async (req, res) => {
       include: [
         {
           model: PatternSet,
-          as: 'patternSets',
-          through: { attributes: ['sortOrder'] }
+          as: 'patternSets'
         },
         {
           model: User,
@@ -82,64 +81,78 @@ router.get('/json', async (req, res) => {
       ]
     });
 
-    const cleaned = [];
+    const result = [];
 
     for (const mode of modes) {
-      const modeJson = mode.toJSON();
-
-      const patternSets = (modeJson.patternSets || []).sort((a, b) => {
-        return (a.ModePatternSet?.sortOrder ?? 0) - (b.ModePatternSet?.sortOrder ?? 0);
-      });
-
-      // IMPORTANT: remove join metadata completely
-      const cleanPatternSets = patternSets.map(ps => {
-        const { ModePatternSet, ...rest } = ps;
-        return rest;
-      });
-
-      const idToIndex = new Map();
-      cleanPatternSets.forEach((ps, idx) => {
-        idToIndex.set(ps.id, idx);
-      });
+      const m = mode.toJSON();
 
       const mpsEntries = await ModePatternSet.findAll({
         where: { modeId: mode.id },
         order: [['sortOrder', 'ASC']]
       });
 
+      const patternSetsRaw = m.patternSets || [];
+
+      const psMap = new Map();
+      for (const ps of patternSetsRaw) {
+        psMap.set(ps.id, ps);
+      }
+
+      const orderedPatternSets = [];
+      const idToIndex = new Map();
+
+      for (const mps of mpsEntries) {
+        const ps = psMap.get(mps.patternSetId);
+        if (!ps) continue;
+
+        const index = orderedPatternSets.length;
+        orderedPatternSets.push(ps);
+        idToIndex.set(ps.id, index);
+      }
+
       const ledPatternOrder = mpsEntries
         .map(mps => idToIndex.get(mps.patternSetId))
         .filter(v => v !== undefined);
 
-      cleaned.push({
-        id: modeJson.id,
-        name: modeJson.name,
-        description: modeJson.description,
-        deviceType: modeJson.deviceType,
-        flags: modeJson.flags,
-        dataHash: modeJson.dataHash,
-        votes: modeJson.votes,
-        uploadDate: modeJson.uploadDate,
-        createdAt: modeJson.createdAt,
-        updatedAt: modeJson.updatedAt,
-        createdBy: modeJson.createdBy,
-        patternSets: cleanPatternSets,
-        creator: modeJson.creator,
-        ledPatternOrder
+      result.push({
+        _id: m.id,
+        name: m.name,
+        description: m.description || "",
+        deviceType: m.deviceType,
+        patternSets: orderedPatternSets.map(ps => ({
+          _id: ps.id,
+          name: ps.name,
+          description: ps.description,
+          data: ps.data,
+          dataHash: ps.dataHash,
+          votes: ps.votes,
+          upvotedBy: ps.upvotedBy || [],
+          createdBy: ps.createdBy,
+          uploadDate: ps.uploadDate,
+          __v: ps.__v || 0
+        })),
+        ledPatternOrder,
+        flags: m.flags,
+        dataHash: m.dataHash,
+        votes: m.votes,
+        upvotedBy: m.upvotedBy || [],
+        createdBy: m.createdBy,
+        uploadDate: m.uploadDate,
+        __v: m.__v || 0
       });
     }
 
     res.json({
-      data: cleaned,
+      data: result,
       page,
       pageSize,
       pages: Math.ceil(totalCount / pageSize),
       totalCount
     });
 
-  } catch (error) {
-    console.error("Error fetching modes:", error);
-    res.status(500).send("An error occurred while fetching the modes.");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("error");
   }
 });
 
