@@ -64,5 +64,4 @@ jobs:
         ssh vortex@198.74.48.18 'sudo systemctl stop vortex-community'
         ssh vortex@198.74.48.18 'source /home/vortex/.nvm/nvm.sh && cd /home/vortex/VortexCommunity && git pull && mv node_modules /tmp/old-node-modules-$(date +%s) 2>/dev/null; npm install --no-audit --no-fund && chmod +x start.sh scripts/db-migrate.sh'
         ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && bash scripts/db-migrate.sh'
-        ssh vortex@198.74.48.18 'source /home/vortex/.nvm/nvm.sh && cd /home/vortex/VortexCommunity && node scripts/migrate-mongo-to-pg.js 2>&1 || echo "[WARN] MongoDB→PG migration failed — data may be incomplete"'
         ssh vortex@198.74.48.18 'sudo systemctl start vortex-community'
