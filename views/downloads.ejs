@@ -16,7 +16,7 @@
             <% if (latestDownloads[device] && latestDownloads[device]['firmware']) { %>
                 <section class="device-section" id="vortex-<%= device %>">
                     <div class="device-content">
-                        <img src="/images/<%= device %>-logo.png" alt="Vortex <%= device.charAt(0).toUpperCase() + device.slice(1) %>" class="download-device-image">
+                        <img src="<%= basePath %>/images/<%= device %>-logo.png" alt="Vortex <%= device.charAt(0).toUpperCase() + device.slice(1) %>" class="download-device-image">
                         <div class="device-details">
                             <h3>Vortex <%= device.charAt(0).toUpperCase() + device.slice(1) %></h3>
                             <p class="device-description">Released on <%= latestDownloads[device]['firmware'].releaseDate %></p>
@@ -24,7 +24,7 @@
                             <% if (user || 1) { %>
                               <a href="<%= latestDownloads[device]['firmware'].fileUrl %>" class="download-button">Download Firmware</a>
                             <% } else { %>
-                              <a href="/login" class="download-button-disabled">Login to Download</a>
+                              <a href="<%= basePath %>/login" class="download-button-disabled">Login to Download</a>
                             <% } %>
                         </div>
                     </div>
@@ -35,8 +35,8 @@
             <h2>Vortex Desktop Editor</h2>
             <p>The Desktop Editor is a Windows-only application designed to program Vortex devices directly from a computer. It facilitates seamless interaction with all Vortex devices, allowing savefiles to be pushed or pulled to/from vortex devices with ease.</p>
             <div class="image-gallery">
-                <img src="/images/editor.png" alt="Editor Screenshot 1" class="editor-screenshot">
-                <img src="/images/editor-color-picker.png" alt="Editor Screenshot 2" class="editor-screenshot">
+                <img src="<%= basePath %>/images/editor.png" alt="Editor Screenshot 1" class="editor-screenshot">
+                <img src="<%= basePath %>/images/editor-color-picker.png" alt="Editor Screenshot 2" class="editor-screenshot">
             </div>
             <% if (latestDownloads['desktop'] && latestDownloads['desktop']['editor']) { %>
               <div class="button-container">
@@ -45,7 +45,7 @@
                   <% if (user || 1) { %>
                     <a href="<%= latestDownloads['desktop']['editor'].fileUrl %>" class="download-button">Download Editor</a>
                   <% } else { %>
-                    <a href="/login" class="download-button-disabled">Login to Download</a>
+                    <a href="<%= basePath %>/login" class="download-button-disabled">Login to Download</a>
                   <% } %>
               </div>
             <% } %>
@@ -55,4 +55,3 @@
     <%- include('partials/script') %>
 </body>
 </html>
-

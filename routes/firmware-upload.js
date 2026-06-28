@@ -11,7 +11,9 @@ router.post('/upload', uploadFirmware.single('file'), async (req, res) => {
     return res.status(401).json({ message: 'Unauthorized: Invalid API Key' });
   }
 
-  const fileUrl = `https://vortex.community/firmwares/${req.file.filename}`;
+  const basePath = req.app.locals.basePath || '';
+  const origin = `${req.protocol}://${req.get('host')}`;
+  const fileUrl = origin + basePath + `/firmwares/${req.file.filename}`;
 
   try {
     const newDownload = await Download.create({

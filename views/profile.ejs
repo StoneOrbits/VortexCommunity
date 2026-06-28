@@ -6,7 +6,7 @@
     <%- include('partials/nav') %>
     <main>
         <section class="profile-header">
-            <img class="profile-avatar" src="<%= profileUser.profilePic || '/images/default-profile.png' %>" alt="">
+            <img class="profile-avatar" src="<%= profileUser.profilePic || basePath + '/images/default-profile.png' %>" alt="">
             <div class="profile-meta">
                 <h1 class="profile-username"><%= profileUser.username %></h1>
                 <% if (profileUser.bio) { %>
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <% if (user && user.id == profileUser.id) { %>
-                <a href="/upload" class="profile-new-btn">New Mode</a>
+                <a href="<%= basePath %>/upload" class="profile-new-btn">New Mode</a>
             <% } %>
         </section>
 
@@ -62,7 +62,7 @@
             <p>
                 <% if (user && user.id == profileUser.id) { %>
                     You haven't created any modes or patterns yet.
-                    <a href="/upload" class="profile-empty-link">Create one</a>
+                    <a href="<%= basePath %>/upload" class="profile-empty-link">Create one</a>
                 <% } else { %>
                     This user hasn't created anything yet.
                 <% } %>

@@ -8,27 +8,27 @@
       <div class="container" id="mode-data-container" data-mode='<%= JSON.stringify(mode) %>' data-vortex-mode='<%= JSON.stringify(vortexMode) %>'>
         <section class="mode-submission-section">
           <div class="mode-icons">
-            <form action="/mode/<%= mode.id %>/<%= user && isUpvoted ? 'unvote' : 'upvote' %>" method="post" class="votes-container">
+            <form action="<%= basePath %>/mode/<%= mode.id %>/<%= user && isUpvoted ? 'unvote' : 'upvote' %>" method="post" class="votes-container">
               <button type="submit" class="icon-button">
-                <img src="<%= user && isUpvoted ? '/images/color-upvote-icon.png' : '/images/bw-upvote-icon.png' %>" alt="Upvote" class="upvote-icon">
+                <img src="<%= user && isUpvoted ? basePath + '/images/color-upvote-icon.png' : basePath + '/images/bw-upvote-icon.png' %>" alt="Upvote" class="upvote-icon">
               </button>
               <span class="votes-count"><%= mode.votes %></span>
             </form>
-            <form action="/mode/<%= mode.id %>/<%= user && isFavorited ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
+            <form action="<%= basePath %>/mode/<%= mode.id %>/<%= user && isFavorited ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
               <button type="submit" class="icon-button">
-                <img src="<%= user && isFavorited ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
+                <img src="<%= user && isFavorited ? basePath + '/images/color-star-icon.png' : basePath + '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
               </button>
             </form>
           </div>
           <div class="mode-header">
             <h2 class="mode-title"><%= mode.name %></h2>
             <div class="mode-profile-header">
-              <p>Uploaded by <a href="/user/<%= mode.creator.id %>"><%= mode.creator.username %></a> on <%= mode.uploadDate %></p>
+              <p>Uploaded by <a href="<%= basePath %>/user/<%= mode.creator.id %>"><%= mode.creator.username %></a> on <%= mode.uploadDate %></p>
             </div>
             <div class="mode-profile-details">
               <p class="mode-profile-description"><%= mode.description %></p>
               <% if (user && user.id === mode.createdBy) { %>
-              <a href="/mode/<%= mode.id %>/edit" class="edit-mode-link">Edit</a>
+              <a href="<%= basePath %>/mode/<%= mode.id %>/edit" class="edit-mode-link">Edit</a>
               <a href="#" class="delete-mode-link" onclick="confirmDelete()">Delete</a>
               <!-- Confirmation Modal HTML (hidden by default) -->
               <div id="deleteConfirmModal" style="display:none;">
@@ -37,7 +37,7 @@
                 <button onclick="document.getElementById('deleteConfirmModal').style.display='none';">Cancel</button>
               </div>
               <!-- Hidden form for deletion -->
-              <form id="deleteForm" action="/mode/<%= mode.id %>/delete" method="post" style="display:none;"></form>
+              <form id="deleteForm" action="<%= basePath %>/mode/<%= mode.id %>/delete" method="post" style="display:none;"></form>
               <% } %>
             </div>
           </div>
@@ -55,7 +55,7 @@
                   <%- include('partials/submission-preview-led-lightshow', { pat: pat, tempId: index }) %>
                   <% }); %>
                 </div>
-                <img class="upload-device-image" src="<%= mode.deviceType === 'Gloves' ? '/images/gloves-leds.png' : mode.deviceType === 'Orbit' ? '/images/orbit-leds.png' : mode.deviceType === 'Handle' ? '/images/handle-leds.png' : mode.deviceType === 'Duo' ? '/images/duo-leds.png' : '/images/chromadeck-leds.png' %>" alt="Device Image">
+                <img class="upload-device-image" src="<%= mode.deviceType === 'Gloves' ? basePath + '/images/gloves-leds.png' : mode.deviceType === 'Orbit' ? basePath + '/images/orbit-leds.png' : mode.deviceType === 'Handle' ? basePath + '/images/handle-leds.png' : mode.deviceType === 'Duo' ? basePath + '/images/duo-leds.png' : basePath + '/images/chromadeck-leds.png' %>" alt="Device Image">
                 <div class="highlight-container">
                   <% orderedPatternSets.forEach((pat, index) => { %>
                   <!-- Highlight visualization -->
@@ -67,9 +67,9 @@
           </div>
           <div class="mode-profile-actions">
             <% if (user) { %>
-            <a href="/mode/<%= mode.id %>/download" class="mode-profile-button download-button">Download</a>
+            <a href="<%= basePath %>/mode/<%= mode.id %>/download" class="mode-profile-button download-button">Download</a>
             <% } else { %>
-            <a href="/login" class="mode-profile-button download-button-disabled">Login to Download</a>
+            <a href="<%= basePath %>/login" class="mode-profile-button download-button-disabled">Login to Download</a>
             <% } %>
             <a href="#" id="openOnLightshow" class="mode-profile-button lightshow-button">lightshow.lol →</a>
           </div>
@@ -86,4 +86,3 @@
     </script>
   </body>
 </html>
-

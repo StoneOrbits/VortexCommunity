@@ -13,6 +13,7 @@ const fetch = require('node-fetch');
 
 router.post('/', async (req, res) => {
   const { username, email, password, 'g-recaptcha-response': recaptchaToken } = req.body;
+  const basePath = req.app.locals.basePath || '';
 
   try {
     if (process.env.RECAPTCHA_SECRET_KEY) {
@@ -21,20 +22,20 @@ router.post('/', async (req, res) => {
       const recaptchaData = await recaptchaResponse.json();
       if (!recaptchaData.success) {
         req.flash('error', 'Invalid CAPTCHA. Please try again.');
-        return res.redirect('/register');
+        return res.redirect(basePath + '/register');
       }
     }
 
     if (await User.findOne({ where: { username } })) {
       req.flash('error', 'Username is taken');
-      return res.redirect('/register');
+      return res.redirect(basePath + '/register');
     }
 
     let emailAddress = null;
     if (email.length > 0) {
       if (await User.findOne({ where: { email } })) {
         req.flash('error', 'Email is already registered');
-        return res.redirect('/register');
+        return res.redirect(basePath + '/register');
       }
       emailAddress = email;
     }
@@ -47,11 +48,11 @@ router.post('/', async (req, res) => {
     await User.create({ username, email: emailAddress, password: hashedPassword, verificationToken });
 
     req.flash('success', 'User registered successfully, you can now login');
-    res.redirect('/login');
+    res.redirect(basePath + '/login');
   } catch (err) {
     req.flash('error', 'An error occurred during registration');
     console.error("Registration error:", err);
-    res.status(500).redirect('/register');
+    res.status(500).redirect(basePath + '/register');
   }
 });
 

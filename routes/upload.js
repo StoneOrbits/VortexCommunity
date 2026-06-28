@@ -95,6 +95,7 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
   const { 'g-recaptcha-response': recaptchaToken } = req.body;
   const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY;
   const recaptchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecretKey}&response=${recaptchaToken}`;
+  const basePath = req.app.locals.basePath || '';
 
   try {
     const recaptchaResponse = await fetch(recaptchaVerifyUrl, { method: 'POST' });
@@ -128,7 +129,7 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
       const deviceType = getDeviceTypeName(mode.num_leds);
       if (deviceType === 'Unknown') {
         req.flash('error', 'Must share a known device type');
-        return res.redirect('/upload');
+        return res.redirect(basePath + '/upload');
       }
 
       const flags = mode.flags;
@@ -157,19 +158,20 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
       };
     }
 
-    res.redirect('/upload/submit');
+    res.redirect(basePath + '/upload/submit');
   } catch (error) {
     console.error(error);
     req.flash('error', 'An error occurred during processing');
-    res.redirect('/upload');
+    res.redirect(basePath + '/upload');
   }
 });
 
 router.get('/json', ensureAuthenticated, async (req, res) => {
   const base64Data = req.query.data;
+  const basePath = req.app.locals.basePath || '';
   if (!base64Data) {
     req.flash('error', 'No data provided');
-    return res.redirect('/upload');
+    return res.redirect(basePath + '/upload');
   }
 
   const jsonData = JSON.parse(Buffer.from(base64Data, 'base64').toString());
@@ -190,7 +192,7 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
     const deviceType = getDeviceTypeName(mode.num_leds);
     if (deviceType === 'Unknown') {
       req.flash('error', 'Must share a known device type');
-      return res.redirect('/upload');
+      return res.redirect(basePath + '/upload');
     }
 
     const flags = mode.flags;
@@ -218,11 +220,11 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
       patDescriptions
     };
 
-    res.redirect('/upload/submit');
+    res.redirect(basePath + '/upload/submit');
   } catch (error) {
     console.error(error);
     req.flash('error', 'An error occurred during processing');
-    res.redirect('/upload');
+    res.redirect(basePath + '/upload');
   }
 });
 
@@ -235,6 +237,7 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
   try {
     const { name, description, patternNames, patternDescriptions } = req.body;
     const { deviceType, flags, jsonData, isDuplicates } = req.session.modeData;
+    const basePath = req.app.locals.basePath || '';
 
     const patternSetIds = new Map();
     const createdPatternSets = [];
@@ -300,7 +303,7 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
 
     req.flash('success', 'Mode and PatternSets successfully submitted!');
     delete req.session.modeData;
-    res.redirect('/modes');
+    res.redirect(basePath + '/modes');
   } catch (error) {
     console.error('Error saving modes and patterns:', error);
 
@@ -310,7 +313,7 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
     }
 
     req.flash('error', 'An error occurred while submitting your mode.');
-    res.redirect('/upload/submit');
+    res.redirect(basePath + '/upload/submit');
   }
 });
 

@@ -65,22 +65,22 @@
 }
 
 .device-icon.gloves {
-  background-image: url('/images/gloves-logo-square-64.png'); /* Replace with the correct path */
+  background-image: url('../images/gloves-logo-square-64.png');
 }
 
 .device-icon.orbit {
-  background-image: url('/images/orbit-logo-square-64.png'); /* Replace with the correct path */
+  background-image: url('../images/orbit-logo-square-64.png');
 }
 
 .device-icon.handle {
-  background-image: url('/images/handle-logo-square-64.png'); /* Replace with the correct path */
+  background-image: url('../images/handle-logo-square-64.png');
 }
 
 .device-icon.duo {
-  background-image: url('/images/duo-logo-square-64.png'); /* Replace with the correct path */
+  background-image: url('../images/duo-logo-square-64.png');
 }
 
 .device-icon.chromadeck {
-  background-image: url('/images/chromadeck-logo-square-64.png'); /* Replace with the correct path */
+  background-image: url('../images/chromadeck-logo-square-64.png');
 }
 

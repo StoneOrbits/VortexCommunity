@@ -1,4 +1,4 @@
-<a href="/mode/<%= mode.id %>" class="mode-tile" data-device-type="<%= mode.deviceType.toLowerCase() %>" data-mode='<%= JSON.stringify(mode) %>'>
+<a href="<%= basePath %>/mode/<%= mode.id %>" class="mode-tile" data-device-type="<%= mode.deviceType.toLowerCase() %>" data-mode='<%= JSON.stringify(mode) %>'>
   <div class="mode-tile-content">
       <h2 class="mode-tile-title"><%= mode.name %></h2>
   </div>
@@ -6,7 +6,6 @@
       <% orderedPatternSets.forEach((pat, index) => { %>
         <%- include('mode-tile-preview-lightshow', { mode: mode, pat: pat, tempId: index }) %>
       <% }); %>
-    <img class="upload-device-image" src="<%= mode.deviceType === 'Gloves' ? '/images/gloves-leds.png' : mode.deviceType === 'Orbit' ? '/images/orbit-leds.png' : mode.deviceType === 'Handle' ? '/images/handle-leds.png' : mode.deviceType === 'Duo' ? '/images/duo-leds.png' : '/images/chromadeck-leds.png' %>" alt="Device Image">
+    <img class="upload-device-image" src="<%= mode.deviceType === 'Gloves' ? basePath + '/images/gloves-leds.png' : mode.deviceType === 'Orbit' ? basePath + '/images/orbit-leds.png' : mode.deviceType === 'Handle' ? basePath + '/images/handle-leds.png' : mode.deviceType === 'Duo' ? basePath + '/images/duo-leds.png' : basePath + '/images/chromadeck-leds.png' %>" alt="Device Image">
   </div>
 </a>
-

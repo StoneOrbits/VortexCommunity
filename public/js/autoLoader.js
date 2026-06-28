@@ -14,20 +14,27 @@ var dynamicRoutePatterns = [
 
 // Helper function to determine the script based on the route segments
 function getScriptName(path) {
+    // Strip basePath prefix if present
+    var bp = window.basePath || '';
+    var stripped = path;
+    if (bp && path.startsWith(bp)) {
+        stripped = path.substring(bp.length) || '/';
+    }
+
     // Check if path matches any dynamic route pattern
     for (var i = 0; i < dynamicRoutePatterns.length; i++) {
-        if (dynamicRoutePatterns[i].pattern.test(path)) {
+        if (dynamicRoutePatterns[i].pattern.test(stripped)) {
             return dynamicRoutePatterns[i].script;
         }
     }
 
     // Split path and filter out empty segments
-    var segments = path.split("/").filter(Boolean);
+    var segments = stripped.split("/").filter(Boolean);
 
     if (segments.length > 1) {
-        if (subRoutes.has(path)) {
+        if (subRoutes.has(stripped)) {
             // Handle sub-routes manually in Set above
-            return 'page' + path.replace(/\//g, '_') + '.js';
+            return 'page' + stripped.replace(/\//g, '_') + '.js';
         }
     } else if (segments.length === 1) {
         // Handle direct routes automatically
@@ -53,5 +60,6 @@ function autoLoad(scriptPath) {
 }
 
 // Determine the script name based on the route and autoload it
-autoLoad('/js/' + getScriptName(window.location.pathname));
+var bp = window.basePath || '';
+autoLoad(bp + '/js/' + getScriptName(window.location.pathname));
 

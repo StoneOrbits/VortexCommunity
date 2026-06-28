@@ -57,8 +57,8 @@ jobs:
 
     - name: Deploy to Linode
       run: |
-        scp VortexEngine/VortexEngine/VortexLib/VortexLib.js vortex@198.74.48.18:~/VortexCommunity/public/js/VortexLib.js
-        scp VortexEngine/VortexEngine/VortexLib/VortexLib.wasm vortex@198.74.48.18:~/VortexCommunity/public/js/VortexLib.wasm
+        scp VortexEngine/VortexEngine/VortexLib/VortexLib.js vortex@198.74.48.18:~/VortexCommunityEmbedded/public/js/VortexLib.js
+        scp VortexEngine/VortexEngine/VortexLib/VortexLib.wasm vortex@198.74.48.18:~/VortexCommunityEmbedded/public/js/VortexLib.wasm
         scp VortexEngine/VortexEngine/VortexCLI/vortex vortex@198.74.48.18:~/vortex
         ssh vortex@198.74.48.18 'sudo /usr/bin/mv /home/vortex/vortex /usr/local/bin/vortex'
-        ssh vortex@198.74.48.18 'sudo systemctl stop vortex-community && cd /home/vortex/VortexCommunity && git checkout -- . && git pull && bash scripts/deploy.sh && sudo systemctl start vortex-community'
+        ssh vortex@198.74.48.18 'sudo systemctl stop vortex-community-embedded && cd /home/vortex/VortexCommunityEmbedded && git checkout -- . && git pull && bash scripts/deploy.sh && sudo systemctl start vortex-community-embedded'

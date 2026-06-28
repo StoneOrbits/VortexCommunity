@@ -73,7 +73,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(e) {
                     fileError.style.display = 'block';
                 }
             };
-            xhr.open('POST', '/upload', true);
+            xhr.open('POST', (window.basePath || '') + '/upload', true);
             const formData = new FormData(document.getElementById('uploadForm'));
             xhr.send(formData);
             e.preventDefault();

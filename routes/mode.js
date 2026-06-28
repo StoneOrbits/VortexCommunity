@@ -137,6 +137,7 @@ router.post('/:modeId/edit', ensureAuthenticated, async (req, res) => {
   try {
     const modeId = req.params.modeId;
     const mode = await Mode.findByPk(modeId);
+    const basePath = req.app.locals.basePath || '';
 
     if (!mode) {
       return res.status(404).render('not-found');
@@ -149,7 +150,7 @@ router.post('/:modeId/edit', ensureAuthenticated, async (req, res) => {
     mode.name = req.body.modeName;
     mode.description = req.body.modeDescription;
     await mode.save();
-    res.redirect(`/mode/${modeId}`);
+    res.redirect(basePath + `/mode/${modeId}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -159,6 +160,7 @@ router.post('/:modeId/edit', ensureAuthenticated, async (req, res) => {
 router.post('/:modeId/delete', ensureAuthenticated, async (req, res) => {
   try {
     const mode = await Mode.findByPk(req.params.modeId);
+    const basePath = req.app.locals.basePath || '';
     if (!mode) {
       return res.status(404).send('Mode not found');
     }
@@ -167,7 +169,7 @@ router.post('/:modeId/delete', ensureAuthenticated, async (req, res) => {
     }
 
     await Mode.destroy({ where: { id: req.params.modeId } });
-    res.redirect('/modes');
+    res.redirect(basePath + '/modes');
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -177,6 +179,7 @@ router.post('/:modeId/delete', ensureAuthenticated, async (req, res) => {
 router.post('/:modeId/upvote', ensureAuthenticated, async (req, res) => {
   try {
     const mode = await Mode.findByPk(req.params.modeId);
+    const basePath = req.app.locals.basePath || '';
     if (!mode) {
       return res.status(404).render('not-found');
     }
@@ -190,7 +193,7 @@ router.post('/:modeId/upvote', ensureAuthenticated, async (req, res) => {
       await Mode.increment('votes', { by: 1, where: { id: mode.id } });
     }
 
-    res.redirect('/mode/' + mode.id);
+    res.redirect(basePath + '/mode/' + mode.id);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -200,6 +203,7 @@ router.post('/:modeId/upvote', ensureAuthenticated, async (req, res) => {
 router.post('/:modeId/unvote', ensureAuthenticated, async (req, res) => {
   try {
     const mode = await Mode.findByPk(req.params.modeId);
+    const basePath = req.app.locals.basePath || '';
     if (!mode) {
       return res.status(404).render('not-found');
     }
@@ -215,7 +219,7 @@ router.post('/:modeId/unvote', ensureAuthenticated, async (req, res) => {
       await Mode.decrement('votes', { by: 1, where: { id: mode.id } });
     }
 
-    res.redirect('/mode/' + mode.id);
+    res.redirect(basePath + '/mode/' + mode.id);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -225,6 +229,7 @@ router.post('/:modeId/unvote', ensureAuthenticated, async (req, res) => {
 router.post('/:modeId/favorite', ensureAuthenticated, async (req, res) => {
   try {
     const mode = await Mode.findByPk(req.params.modeId);
+    const basePath = req.app.locals.basePath || '';
     if (!mode) {
       return res.status(404).send('Mode not found');
     }
@@ -233,7 +238,7 @@ router.post('/:modeId/favorite', ensureAuthenticated, async (req, res) => {
       where: { userId: req.user.id, modeId: mode.id }
     });
 
-    res.redirect(`/mode/${req.params.modeId}`);
+    res.redirect(basePath + `/mode/${req.params.modeId}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -242,11 +247,12 @@ router.post('/:modeId/favorite', ensureAuthenticated, async (req, res) => {
 
 router.post('/:modeId/unfavorite', ensureAuthenticated, async (req, res) => {
   try {
+    const basePath = req.app.locals.basePath || '';
     await UserFavoriteMode.destroy({
       where: { userId: req.user.id, modeId: req.params.modeId }
     });
 
-    res.redirect(`/mode/${req.params.modeId}`);
+    res.redirect(basePath + `/mode/${req.params.modeId}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -260,7 +266,8 @@ router.post('/create', async (req, res) => {
       description: req.body.description,
       createdBy: req.user.id
     });
-    res.redirect('/modes');
+    const basePath = req.app.locals.basePath || '';
+    res.redirect(basePath + '/modes');
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');

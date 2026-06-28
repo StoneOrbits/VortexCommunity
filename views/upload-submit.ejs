@@ -7,7 +7,7 @@
   <main>
     <div class="container" id="mode-data-container" data-mode-data='<%= JSON.stringify(modeData) %>'>
       <section class="mode-submission-section">
-        <form action="/upload/submit" method="post">
+        <form action="<%= basePath %>/upload/submit" method="post">
           <div class="mode-header">
             <input type="text" id="name" name="name" value="<%= modeData.name %>" placeholder="Mode Title" required>
             <textarea id="description" name="description" placeholder="Enter description..." rows="1"></textarea>
@@ -33,7 +33,7 @@
                     <%- include('partials/submission-preview-led-lightshow', { pat: pat, tempId: index }) %>
                   <% }); %>
                 </div>
-                <img class="upload-device-image" src="<%= modeData.deviceType === 'Gloves' ? '/images/gloves-leds.png' : modeData.deviceType === 'Orbit' ? '/images/orbit-leds.png' : modeData.deviceType === 'Handle' ? '/images/handle-leds.png' : modeData.deviceType === 'Duo' ? '/images/duo-leds.png' : '/images/chromadeck-leds.png' %>" alt="Device Image">
+                <img class="upload-device-image" src="<%= modeData.deviceType === 'Gloves' ? basePath + '/images/gloves-leds.png' : modeData.deviceType === 'Orbit' ? basePath + '/images/orbit-leds.png' : modeData.deviceType === 'Handle' ? basePath + '/images/handle-leds.png' : modeData.deviceType === 'Duo' ? basePath + '/images/duo-leds.png' : basePath + '/images/chromadeck-leds.png' %>" alt="Device Image">
                 <div class="highlight-container">
                   <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
                     <!-- Highlight visualization -->
@@ -58,4 +58,3 @@
   <%- include('partials/script') %>
 </body>
 </html>
-

@@ -71,6 +71,7 @@ router.post('/:patId/edit', ensureAuthenticated, async (req, res) => {
   try {
     const patId = req.params.patId;
     const pat = await PatternSet.findByPk(patId);
+    const basePath = req.app.locals.basePath || '';
 
     if (!pat) {
       return res.status(404).render('not-found');
@@ -83,7 +84,7 @@ router.post('/:patId/edit', ensureAuthenticated, async (req, res) => {
     pat.name = req.body.patName;
     pat.description = req.body.patDescription;
     await pat.save();
-    res.redirect(`/pat/${patId}`);
+    res.redirect(basePath + `/pat/${patId}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -93,6 +94,7 @@ router.post('/:patId/edit', ensureAuthenticated, async (req, res) => {
 router.post('/:patternId/delete', ensureAuthenticated, async (req, res) => {
   try {
     const patternId = req.params.patternId;
+    const basePath = req.app.locals.basePath || '';
 
     const pattern = await PatternSet.findByPk(patternId);
     if (!pattern) {
@@ -113,7 +115,7 @@ router.post('/:patternId/delete', ensureAuthenticated, async (req, res) => {
     }
 
     await PatternSet.destroy({ where: { id: patternId } });
-    res.redirect('/pats');
+    res.redirect(basePath + '/pats');
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -123,6 +125,7 @@ router.post('/:patternId/delete', ensureAuthenticated, async (req, res) => {
 router.post('/:patId/upvote', ensureAuthenticated, async (req, res) => {
   try {
     const pat = await PatternSet.findByPk(req.params.patId);
+    const basePath = req.app.locals.basePath || '';
     if (!pat) {
       return res.status(404).render('not-found');
     }
@@ -136,7 +139,7 @@ router.post('/:patId/upvote', ensureAuthenticated, async (req, res) => {
       await PatternSet.increment('votes', { by: 1, where: { id: pat.id } });
     }
 
-    res.redirect('/pat/' + pat.id);
+    res.redirect(basePath + '/pat/' + pat.id);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -146,6 +149,7 @@ router.post('/:patId/upvote', ensureAuthenticated, async (req, res) => {
 router.post('/:patId/unvote', ensureAuthenticated, async (req, res) => {
   try {
     const pat = await PatternSet.findByPk(req.params.patId);
+    const basePath = req.app.locals.basePath || '';
     if (!pat) {
       return res.status(404).render('not-found');
     }
@@ -161,7 +165,7 @@ router.post('/:patId/unvote', ensureAuthenticated, async (req, res) => {
       await PatternSet.decrement('votes', { by: 1, where: { id: pat.id } });
     }
 
-    res.redirect('/pat/' + pat.id);
+    res.redirect(basePath + '/pat/' + pat.id);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -171,6 +175,7 @@ router.post('/:patId/unvote', ensureAuthenticated, async (req, res) => {
 router.post('/:patId/favorite', ensureAuthenticated, async (req, res) => {
   try {
     const pat = await PatternSet.findByPk(req.params.patId);
+    const basePath = req.app.locals.basePath || '';
     if (!pat) {
       return res.status(404).send('PatternSet not found');
     }
@@ -179,7 +184,7 @@ router.post('/:patId/favorite', ensureAuthenticated, async (req, res) => {
       where: { userId: req.user.id, patternSetId: pat.id }
     });
 
-    res.redirect(`/pat/${req.params.patId}`);
+    res.redirect(basePath + `/pat/${req.params.patId}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -188,11 +193,12 @@ router.post('/:patId/favorite', ensureAuthenticated, async (req, res) => {
 
 router.post('/:patId/unfavorite', ensureAuthenticated, async (req, res) => {
   try {
+    const basePath = req.app.locals.basePath || '';
     await UserFavoritePattern.destroy({
       where: { userId: req.user.id, patternSetId: req.params.patId }
     });
 
-    res.redirect(`/pat/${req.params.patId}`);
+    res.redirect(basePath + `/pat/${req.params.patId}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -206,7 +212,8 @@ router.post('/create', async (req, res) => {
       description: req.body.description,
       createdBy: req.user.id
     });
-    res.redirect('/pats');
+    const basePath = req.app.locals.basePath || '';
+    res.redirect(basePath + '/pats');
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');

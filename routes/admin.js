@@ -8,7 +8,7 @@ function isAdmin(req, res, next) {
     return next();
   }
   req.flash('error', 'Admin access required.');
-  res.redirect('/login');
+  res.redirect((req.app.locals.basePath || '') + '/login');
 }
 
 router.get('/', isAdmin, async (req, res) => {
@@ -30,24 +30,26 @@ router.get('/users', isAdmin, async (req, res) => {
 
 router.post('/users/update-username', isAdmin, async (req, res) => {
   const { userId, newUsername } = req.body;
+  const basePath = req.app.locals.basePath || '';
   try {
     await User.update({ username: newUsername }, { where: { id: userId } });
     req.flash('success', 'Username updated.');
   } catch (err) {
     req.flash('error', 'Failed to update username.');
   }
-  res.redirect('/control/users');
+  res.redirect(basePath + '/control/users');
 });
 
 router.post('/users/delete', isAdmin, async (req, res) => {
   const { userId } = req.body;
+  const basePath = req.app.locals.basePath || '';
   try {
     await User.destroy({ where: { id: userId } });
     req.flash('success', 'User deleted.');
   } catch (err) {
     req.flash('error', 'Failed to delete user.');
   }
-  res.redirect('/control/users');
+  res.redirect(basePath + '/control/users');
 });
 
 router.get('/patterns', isAdmin, async (req, res) => {
@@ -62,13 +64,14 @@ router.get('/patterns', isAdmin, async (req, res) => {
 
 router.post('/patterns/delete', isAdmin, async (req, res) => {
   const { patternId } = req.body;
+  const basePath = req.app.locals.basePath || '';
   try {
     await PatternSet.destroy({ where: { id: patternId } });
     req.flash('success', 'Pattern deleted.');
   } catch (err) {
     req.flash('error', 'Failed to delete pattern.');
   }
-  res.redirect('/control/patterns');
+  res.redirect(basePath + '/control/patterns');
 });
 
 router.get('/modes', isAdmin, async (req, res) => {
@@ -83,13 +86,14 @@ router.get('/modes', isAdmin, async (req, res) => {
 
 router.post('/modes/delete', isAdmin, async (req, res) => {
   const { modeId } = req.body;
+  const basePath = req.app.locals.basePath || '';
   try {
     await Mode.destroy({ where: { id: modeId } });
     req.flash('success', 'Mode deleted.');
   } catch (err) {
     req.flash('error', 'Failed to delete mode.');
   }
-  res.redirect('/control/modes');
+  res.redirect(basePath + '/control/modes');
 });
 
 router.get('/downloads', isAdmin, async (req, res) => {
@@ -98,6 +102,7 @@ router.get('/downloads', isAdmin, async (req, res) => {
 });
 
 router.post('/downloads/new', isAdmin, async (req, res) => {
+  const basePath = req.app.locals.basePath || '';
   try {
     await Download.create({
       device: req.body.device,
@@ -111,18 +116,19 @@ router.post('/downloads/new', isAdmin, async (req, res) => {
   } catch (err) {
     req.flash('error', 'Failed to create download.');
   }
-  res.redirect('/control/downloads');
+  res.redirect(basePath + '/control/downloads');
 });
 
 router.post('/downloads/delete', isAdmin, async (req, res) => {
   const { downloadId } = req.body;
+  const basePath = req.app.locals.basePath || '';
   try {
     await Download.destroy({ where: { id: downloadId } });
     req.flash('success', 'Download deleted.');
   } catch (err) {
     req.flash('error', 'Failed to delete download.');
   }
-  res.redirect('/control/downloads');
+  res.redirect(basePath + '/control/downloads');
 });
 
 module.exports = router;

@@ -14,7 +14,7 @@
                 <div class="form-group">
                     <a href="<%= lightshowUrl || 'https://lightshow.lol' %>" target="_blank" class="lightshow-button">Create on Lightshow.lol →</a>
                     <h3> - or -</h3>
-                    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                    <form id="uploadForm" action="<%= basePath %>/upload" method="post" enctype="multipart/form-data">
                         <div id="drop_area" class="form-group">
                             <label for="modeFile">Upload .vtxmode File(s):</label>
                             <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
@@ -43,4 +43,3 @@
     </script>
 </body>
 </html>
-

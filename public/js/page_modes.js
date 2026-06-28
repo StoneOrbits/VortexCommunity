@@ -51,7 +51,7 @@ function processModeTiles() {
         const ledSize = deviceType === 'orbit' ? 15 : 12;
 
         if (deviceType) {
-            const promise = fetch(`/data/${deviceType}-led-positions.json`)
+            const promise = fetch((window.basePath || '') + `/data/${deviceType}-led-positions.json`)
                 .then(response => response.json())
                 .then(data => {
                     const points = data.points;
