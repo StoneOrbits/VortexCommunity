@@ -24,7 +24,7 @@ router.get('/:patId', async (req, res) => {
 
     const base64EncodedData = Buffer.from(JSON.stringify(pat.data)).toString('base64');
     const baseUrl = process.env.LIGHTSHOWLOL_URL ? process.env.LIGHTSHOWLOL_URL : 'https://lightshow.lol';
-    const lightshowUrl = baseUrl + `/importMode?data=${base64EncodedData}`;
+    const lightshowUrl = baseUrl + `/?import=${base64EncodedData}`;
 
     const uploadDate = pat.uploadDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
