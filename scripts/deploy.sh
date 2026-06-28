@@ -42,6 +42,4 @@ fi
 chmod +x start.sh
 
 # Only start service once (final run)
-if [ "$IS_RERUN" -eq 0 ]; then
-  sudo systemctl start "$SERVICE"
-fi
+sudo systemctl start "$SERVICE"
