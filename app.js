@@ -13,6 +13,8 @@ const cors = require('cors');
 const { Pool } = require('pg');
 require('dotenv').config();
 
+const BASE_PATH = process.env.BASE_PATH || '';
+
 const pgPool = new Pool({
   host: process.env.PG_HOST || '127.0.0.1',
   port: process.env.PG_PORT || 5432,
@@ -24,6 +26,9 @@ const pgPool = new Pool({
 require('./config/passport')(passport);
 
 var app = express();
+
+app.set('trust proxy', 1);
+app.locals.basePath = BASE_PATH;
 
 const allowedOrigins = ['https://lightshow.lol', 'https://vortex.community', 'http://localhost:3000', 'http://127.0.0.1:8000'];
 app.use(cors({
@@ -48,7 +53,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(
-  '/firmwares',
+  BASE_PATH + '/firmwares',
   (req, res, next) => {
     const origin = req.headers.origin;
     if (origin === 'https://lightshow.lol') {
@@ -61,7 +66,7 @@ app.use(
   express.static(path.join(__dirname, 'public/firmwares'))
 );
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(BASE_PATH, express.static(path.join(__dirname, 'public')));
 
 app.use(require('./middleware/setPageStyles'));
 
@@ -73,7 +78,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
+    cookie: { path: BASE_PATH + '/', maxAge: 30 * 24 * 60 * 60 * 1000 }
 }));
 
 app.use(passport.initialize());
@@ -82,6 +87,7 @@ app.use(passport.session());
 app.use(flash());
 
 app.use((req, res, next) => {
+    res.locals.basePath = BASE_PATH;
     res.locals.success_msg = req.flash('success');
     res.locals.error_msg = req.flash('error');
     res.locals.user = req.user || null;
@@ -91,14 +97,16 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(favicon(path.join(__dirname, 'public', 'images', 'vortex-transparent.png')));
+app.use(BASE_PATH + '/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'images', 'vortex-transparent.png'));
+});
 
 const uploadLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 25,
     message: 'Too many uploads created from this IP, please try again after 15 minutes'
 });
-app.use('/upload', uploadLimiter);
+app.use(BASE_PATH + '/upload', uploadLimiter);
 
 var indexRouter = require('./routes/index');
 var userUploadRouter = require('./routes/upload');
@@ -117,26 +125,26 @@ var adminRouter = require('./routes/admin');
 var privacyRouter = require('./routes/privacy');
 var termsRouter = require('./routes/terms');
 
-app.use('/', indexRouter);
-app.use('/upload', userUploadRouter);
-app.use('/firmware', firmwareUploadRouter);
-app.use('/user', userRouter);
-app.use('/pats', patsRouter);
-app.use('/pat', patRouter);
-app.use('/modes', modesRouter);
-app.use('/mode', modeRouter);
-app.use('/downloads', cors({
+app.use(BASE_PATH + '/', indexRouter);
+app.use(BASE_PATH + '/upload', userUploadRouter);
+app.use(BASE_PATH + '/firmware', firmwareUploadRouter);
+app.use(BASE_PATH + '/user', userRouter);
+app.use(BASE_PATH + '/pats', patsRouter);
+app.use(BASE_PATH + '/pat', patRouter);
+app.use(BASE_PATH + '/modes', modesRouter);
+app.use(BASE_PATH + '/mode', modeRouter);
+app.use(BASE_PATH + '/downloads', cors({
   origin: 'https://lightshow.lol',
   methods: ['GET'],
   credentials: true
 }), downloadsRouter);
-app.use('/register', registerRouter);
-app.use('/verify', verifyRouter);
-app.use('/login', loginRouter);
-app.use('/logout', logoutRouter);
-app.use('/privacy', privacyRouter);
-app.use('/terms', termsRouter);
-app.use('/control', adminRouter);
+app.use(BASE_PATH + '/register', registerRouter);
+app.use(BASE_PATH + '/verify', verifyRouter);
+app.use(BASE_PATH + '/login', loginRouter);
+app.use(BASE_PATH + '/logout', logoutRouter);
+app.use(BASE_PATH + '/privacy', privacyRouter);
+app.use(BASE_PATH + '/terms', termsRouter);
+app.use(BASE_PATH + '/control', adminRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));

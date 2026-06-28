@@ -12,7 +12,7 @@
                 </div>
             <% } %>
             <section class="register-section">
-                <form id="registerForm" action="/register" method="post">
+                <form id="registerForm" action="<%= basePath %>/register" method="post">
                     <div class="form-group">
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" autocomplete="username" required>

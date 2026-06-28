@@ -21,12 +21,11 @@ function getCssFiles(dir, files = []) {
 module.exports = (req, res, next) => {
     const cssDir = path.join(__dirname, '../public/css');
     const cssFiles = getCssFiles(cssDir);
+    const basePath = req.app.locals.basePath || '';
     
     res.locals.pageStyles = cssFiles.map(file => {
-        // Create a URL path for the file
-        return '/css' + file.replace(cssDir, '').replace(/\\/g, '/');
+        return basePath + '/css' + file.replace(cssDir, '').replace(/\\/g, '/');
     });
 
     next();
 };
-

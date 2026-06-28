@@ -42,7 +42,7 @@ const checkUsernameAvailability = debounce(function() {
     return;
   }
 
-  fetch(`/register/check-username/${usernameInput.value}`)
+  fetch((window.basePath || '') + `/register/check-username/${usernameInput.value}`)
     .then(response => response.json())
     .then(data => {
       updateInputFeedback(usernameInput, data.message, data.valid);
@@ -56,7 +56,7 @@ const checkEmailAvailability = debounce(function() {
     // allow empty
     return;
   }
-  fetch(`/register/check-email/${emailInput.value}`)
+  fetch((window.basePath || '') + `/register/check-email/${emailInput.value}`)
     .then(response => response.json())
     .then(data => {
       updateInputFeedback(emailInput, data.message, data.valid);

@@ -18,7 +18,7 @@ patternItems.forEach(item => {
   item.addEventListener('dblclick', function() {
     const patternId = item.getAttribute('data-pattern-id');
     if (patternId) {
-      window.location.href = `/pat/${patternId}`;
+      window.location.href = (window.basePath || '') + `/pat/${patternId}`;
     }
   });
 });
@@ -60,7 +60,7 @@ const ledSize = deviceType == 'chromadeck' ? 21 : 'orbit' ? 28 : 26;
 const highlightSize = 34;
 
 if (deviceType) {
-  fetch(`/data/${deviceType}-led-positions.json`)
+  fetch((window.basePath || '') + `/data/${deviceType}-led-positions.json`)
     .then(response => response.json())
     .then(data => {
       const points = data.points;

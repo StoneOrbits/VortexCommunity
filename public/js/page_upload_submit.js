@@ -79,7 +79,7 @@ const ledSize = deviceType == 'chromadeck' ? 21 : 'orbit' ? 28 : 26;
 const highlightSize = 34;
 
 if (deviceType) {
-  fetch(`/data/${deviceType}-led-positions.json`)
+  fetch((window.basePath || '') + `/data/${deviceType}-led-positions.json`)
     .then(response => response.json())
     .then(data => {
       const points = data.points;

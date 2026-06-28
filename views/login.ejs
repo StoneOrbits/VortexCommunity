@@ -14,7 +14,7 @@
             <% } %>
         </div>
         <section class="login-section">
-            <form id="loginForm" action="/login" method="post">
+            <form id="loginForm" action="<%= basePath %>/login" method="post">
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" autocomplete="username" required>

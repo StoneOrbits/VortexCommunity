@@ -6,7 +6,7 @@
     <%- include('partials/nav') %>
     <main>
         <section class="search-bar">
-            <form id="search-form" action="/modes" method="get">
+            <form id="search-form" action="<%= basePath %>/modes" method="get">
                 <div class="search-container">
                     <input type="text" name="search" class="search-input" placeholder="Search..." value="<%= search %>">
                     <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
@@ -15,13 +15,14 @@
         </section>
         <section class="filter-bar">
             <div class="device-filter">
+                <% var b = basePath; %>
                 <% let devices = [
-                    { id: 'gloves', name: 'Gloves', img: '/images/gloves-logo-square-64.png', checked: true },
-                    { id: 'orbit', name: 'Orbit', img: '/images/orbit-logo-square-64.png', checked: true },
-                    { id: 'handle', name: 'Handle', img: '/images/handle-logo-square-64.png', checked: true },
-                    { id: 'spark', name: 'Spark', img: '/images/spark-logo-square-64.png', checked: true },
-                    { id: 'chromadeck', name: 'Chromadeck', img: '/images/chromadeck-logo-square-64.png', checked: true },
-                    { id: 'duo', name: 'Duo', img: '/images/duo-logo-square-64.png', checked: true }
+                    { id: 'gloves', name: 'Gloves', img: b + '/images/gloves-logo-square-64.png', checked: true },
+                    { id: 'orbit', name: 'Orbit', img: b + '/images/orbit-logo-square-64.png', checked: true },
+                    { id: 'handle', name: 'Handle', img: b + '/images/handle-logo-square-64.png', checked: true },
+                    { id: 'spark', name: 'Spark', img: b + '/images/spark-logo-square-64.png', checked: true },
+                    { id: 'chromadeck', name: 'Chromadeck', img: b + '/images/chromadeck-logo-square-64.png', checked: true },
+                    { id: 'duo', name: 'Duo', img: b + '/images/duo-logo-square-64.png', checked: true }
                 ]; %>
                 <% devices.forEach(function(device) { %>
                     <div class="filter-button">
@@ -44,19 +45,19 @@
               <div class="pagination-wrapper">
                 <ul class="pagination">
                   <% if (currentPage > 1) { %>
-                    <li><a href="?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>">&laquo;</a></li>
+                    <li><a href="<%= basePath %>/modes?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>">&laquo;</a></li>
                   <% } else { %>
                     <li class="disabled"><span>&laquo;</span></li>
                   <% } %>
 
                   <% for (let i = 1; i <= pageCount; i++) { %>
                     <li class="<%= i === currentPage ? 'active' : '' %>">
-                      <a href="?page=<%= i %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>"><%= i %></a>
+                      <a href="<%= basePath %>/modes?page=<%= i %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>"><%= i %></a>
                     </li>
                   <% } %>
 
                   <% if (currentPage < pageCount) { %>
-                    <li><a href="?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>">&raquo;</a></li>
+                    <li><a href="<%= basePath %>/modes?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>">&raquo;</a></li>
                   <% } else { %>
                     <li class="disabled"><span>&raquo;</span></li>
                   <% } %>

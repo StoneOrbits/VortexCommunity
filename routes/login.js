@@ -26,19 +26,27 @@ const verifyRecaptcha = async (req, res, next) => {
       return next();
     } else {
       req.flash('error', 'Captcha verification failed. Please try again.');
-      return res.redirect('/login');
+      return res.redirect((req.app.locals.basePath || '') + '/login');
     }
   } catch (error) {
     console.error('reCAPTCHA verification error:', error);
     req.flash('error', 'Error during captcha verification. Please try again.');
-    return res.redirect('/login');
+    return res.redirect((req.app.locals.basePath || '') + '/login');
   }
 };
 
-router.post('/', verifyRecaptcha, passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true
-}));
+router.post('/', verifyRecaptcha, (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
+      req.flash('error', info ? info.message : 'Login failed');
+      return res.redirect((req.app.locals.basePath || '') + '/login');
+    }
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+      return res.redirect((req.app.locals.basePath || '') + '/');
+    });
+  })(req, res, next);
+});
 
 module.exports = router;

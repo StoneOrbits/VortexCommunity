@@ -10,25 +10,25 @@
                 <li>
                     <a href="#">Showcase</a>
                     <ul class="dropdown">
-                        <li><a href="/pats">Patterns</a></li>
-                        <li><a href="/modes">Modes</a></li>
+                        <li><a href="<%= basePath %>/pats">Patterns</a></li>
+                        <li><a href="<%= basePath %>/modes">Modes</a></li>
                     </ul>
                 </li>
                 <% if (user) { %>
                     <% if (user.username === 'admin') { %>
-                        <li><a href="/control">Admin</a></li>
+                        <li><a href="<%= basePath %>/control">Admin</a></li>
                     <% } %>
-                    <li><a href="/upload">Upload</a></li>
-                    <li><a href="/downloads">Downloads</a></li>
-                    <li><a href="/user/<%= user.id %>">Profile</a></li>
-                    <li><a href="/logout">Logout</a></li>
+                    <li><a href="<%= basePath %>/upload">Upload</a></li>
+                    <li><a href="<%= basePath %>/downloads">Downloads</a></li>
+                    <li><a href="<%= basePath %>/user/<%= user.id %>">Profile</a></li>
+                    <li><a href="<%= basePath %>/logout">Logout</a></li>
                 <% } else { %>
-                    <li><a href="/downloads">Downloads</a></li>
-                    <li><a href="/register">Register</a></li>
-                    <li><a href="/login">Login</a></li>
+                    <li><a href="<%= basePath %>/downloads">Downloads</a></li>
+                    <li><a href="<%= basePath %>/register">Register</a></li>
+                    <li><a href="<%= basePath %>/login">Login</a></li>
                 <% } %>
             </ul>
         </div>
     </div>
 </nav>
-<script src="/js/initNav.js" defer></script>
+<script src="<%= basePath %>/js/initNav.js" defer></script>
