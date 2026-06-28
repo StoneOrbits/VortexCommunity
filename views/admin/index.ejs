@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head') %>
+<body class="dark-theme">
+  <%- include('../partials/header') %>
+  <%- include('../partials/nav') %>
+  <main class="admin-page"><div class="admin-layout">
+    <aside class="admin-sidebar">
+      <h3>Admin Panel</h3>
+      <nav>
+        <a href="/control" class="<%= section === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+        <a href="/control/users" class="<%= section === 'users' ? 'active' : '' %>">Users</a>
+        <a href="/control/patterns" class="<%= section === 'patterns' ? 'active' : '' %>">Patterns</a>
+        <a href="/control/modes" class="<%= section === 'modes' ? 'active' : '' %>">Modes</a>
+        <a href="/control/downloads" class="<%= section === 'downloads' ? 'active' : '' %>">Downloads</a>
+      </nav>
+    </aside>
+    <div class="admin-content">
+      <% if (section === 'dashboard') { %>
+        <h2>Dashboard</h2>
+        <div class="stat-cards">
+          <div class="stat-card">
+            <span class="stat-number"><%= userCount %></span>
+            <span class="stat-label">Users</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number"><%= patternCount %></span>
+            <span class="stat-label">Patterns</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number"><%= modeCount %></span>
+            <span class="stat-label">Modes</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number"><%= downloadCount %></span>
+            <span class="stat-label">Downloads</span>
+          </div>
+        </div>
+      <% } else if (section === 'users') { %>
+        <h2>Users</h2>
+        <form class="admin-search" method="GET">
+          <input type="text" name="q" placeholder="Search by username or email..." value="<%= typeof q !== 'undefined' ? q : '' %>">
+          <button type="submit">Search</button>
+        </form>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach(u => { %>
+            <tr>
+              <td><%= u.id %></td>
+              <td><%= u.username %></td>
+              <td><%= u.email || '-' %></td>
+              <td><%= u.createdAt ? u.createdAt.toISOString().split('T')[0] : '-' %></td>
+              <td class="actions-cell">
+                <form action="/control/users/update-username" method="POST" class="inline-form">
+                  <input type="hidden" name="userId" value="<%= u.id %>">
+                  <input type="text" name="newUsername" placeholder="New username" required>
+                  <button type="submit" class="btn-small">Rename</button>
+                </form>
+                <form action="/control/users/delete" method="POST" class="inline-form" onsubmit="return confirm('Delete user <%= u.username %>?');">
+                  <input type="hidden" name="userId" value="<%= u.id %>">
+                  <button type="submit" class="btn-small btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else if (section === 'patterns') { %>
+        <h2>Patterns</h2>
+        <form class="admin-search" method="GET">
+          <input type="text" name="q" placeholder="Search by name..." value="<%= typeof q !== 'undefined' ? q : '' %>">
+          <button type="submit">Search</button>
+        </form>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Author</th>
+              <th>Votes</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% patterns.forEach(p => { %>
+            <tr>
+              <td><%= p.id %></td>
+              <td><a href="/pat/<%= p.id %>"><%= p.name %></a></td>
+              <td><%= p.creator ? p.creator.username : 'deleted' %></td>
+              <td><%= p.votes %></td>
+              <td><%= p.createdAt ? p.createdAt.toISOString().split('T')[0] : '-' %></td>
+              <td class="actions-cell">
+                <form action="/control/patterns/delete" method="POST" onsubmit="return confirm('Delete pattern &quot;<%= p.name %>&quot;?');">
+                  <input type="hidden" name="patternId" value="<%= p.id %>">
+                  <button type="submit" class="btn-small btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else if (section === 'modes') { %>
+        <h2>Modes</h2>
+        <form class="admin-search" method="GET">
+          <input type="text" name="q" placeholder="Search by name..." value="<%= typeof q !== 'undefined' ? q : '' %>">
+          <button type="submit">Search</button>
+        </form>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Device</th>
+              <th>Author</th>
+              <th>Votes</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% modes.forEach(m => { %>
+            <tr>
+              <td><%= m.id %></td>
+              <td><a href="/mode/<%= m.id %>"><%= m.name %></a></td>
+              <td><%= m.deviceType %></td>
+              <td><%= m.creator ? m.creator.username : 'deleted' %></td>
+              <td><%= m.votes %></td>
+              <td><%= m.createdAt ? m.createdAt.toISOString().split('T')[0] : '-' %></td>
+              <td class="actions-cell">
+                <form action="/control/modes/delete" method="POST" onsubmit="return confirm('Delete mode &quot;<%= m.name %>&quot;?');">
+                  <input type="hidden" name="modeId" value="<%= m.id %>">
+                  <button type="submit" class="btn-small btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else if (section === 'downloads') { %>
+        <h2>Downloads</h2>
+        <details class="admin-create-form">
+          <summary>Add New Download</summary>
+          <form action="/control/downloads/new" method="POST">
+            <div class="form-row">
+              <label>Device <input type="text" name="device" required></label>
+              <label>Version <input type="text" name="version" required></label>
+            </div>
+            <div class="form-row">
+              <label>Category <input type="text" name="category" required></label>
+              <label>File URL <input type="url" name="fileUrl" required></label>
+            </div>
+            <div class="form-row">
+              <label>File Size (bytes) <input type="number" name="fileSize"></label>
+              <label>Release Date <input type="date" name="releaseDate"></label>
+            </div>
+            <button type="submit">Create Download</button>
+          </form>
+        </details>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Device</th>
+              <th>Version</th>
+              <th>Category</th>
+              <th>File URL</th>
+              <th>Downloads</th>
+              <th>Released</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% downloads.forEach(d => { %>
+            <tr>
+              <td><%= d.id %></td>
+              <td><%= d.device %></td>
+              <td><%= d.version %></td>
+              <td><%= d.category %></td>
+              <td><a href="<%= d.fileUrl %>" target="_blank">link</a></td>
+              <td><%= d.downloadCount %></td>
+              <td><%= d.releaseDate ? d.releaseDate.toISOString().split('T')[0] : '-' %></td>
+              <td class="actions-cell">
+                <form action="/control/downloads/delete" method="POST" onsubmit="return confirm('Delete this download?');">
+                  <input type="hidden" name="downloadId" value="<%= d.id %>">
+                  <button type="submit" class="btn-small btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+  </main>
+  <%- include('../partials/footer') %>
+  <%- include('../partials/script') %>
+</body>
+</html>

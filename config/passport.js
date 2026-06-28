@@ -1,48 +1,39 @@
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
-const User = require('../models/User');
+const { User } = require('../models/pg/index');
 
 module.exports = function(passport) {
-  passport.use(new LocalStrategy({ usernameField: 'username' }, (username, password, done) => {
-    // Match user
-    User.findOne({ username: username })
-      .then(user => {
-        if (!user) {
-          return done(null, false, { message: 'That username is not registered' });
-        }
+  passport.use(new LocalStrategy({ usernameField: 'username' }, async (username, password, done) => {
+    try {
+      const user = await User.findOne({ where: { username } });
+      if (!user) {
+        return done(null, false, { message: 'That username is not registered' });
+      }
 
-        // Check if the email has been verified
-        if (!user.emailVerified) {
-          // do not block login for non verified users right now,
-          // we have google to prevent bots
-          //return done(null, false, { message: 'Email has not been verified' });
+      bcrypt.compare(password, user.password, (err, isMatch) => {
+        if (err) throw err;
+        if (isMatch) {
+          return done(null, user);
+        } else {
+          return done(null, false, { message: 'Password incorrect' });
         }
-
-        // Match password
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-          if (err) throw err;
-          if (isMatch) {
-            return done(null, user);
-          } else {
-            return done(null, false, { message: 'Password incorrect' });
-          }
-        });
-      })
-      .catch(err => console.log(err));
+      });
+    } catch (err) {
+      console.log(err);
+      return done(err);
+    }
   }));
 
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
 
-  passport.deserializeUser((id, done) => {
-    User.findById(id)
-      .then(user => {
-        done(null, user);
-      })
-      .catch(err => {
-        done(err, null);
-      });
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await User.findByPk(id);
+      done(null, user);
+    } catch (err) {
+      done(err, null);
+    }
   });
 };
-

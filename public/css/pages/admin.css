@@ -1,66 +1,308 @@
-/* admin.css */
-
-.admin-panel {
-    max-width: 800px;
-    margin: 0 auto;
-    margin-top: 20px;
-    padding: 50px;
-    border-radius: 8px;
-    box-shadow: 0 6px 9px rgba(0,0,0,0.8);
+main.admin-page {
+  flex: none;
+  display: block;
 }
 
-.admin-panel h2 {
-    text-align: center;
+.admin-layout {
+  display: flex;
+  gap: 0;
+  max-width: 1200px;
+  margin: 20px auto;
+  min-height: 60vh;
 }
 
-.admin-panel table {
+.admin-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  padding: 20px;
+}
+
+.admin-sidebar h3 {
+  margin: 0 0 16px;
+  font-size: 1.1em;
+  color: #fff;
+}
+
+.admin-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-sidebar nav a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #aaa;
+  text-decoration: none;
+  font-size: 0.95em;
+  transition: background 0.15s, color 0.15s;
+}
+
+.admin-sidebar nav a:hover {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.admin-sidebar nav a.active {
+  background: #007bff;
+  color: #fff;
+  font-weight: 600;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 20px;
+  min-width: 0;
+}
+
+.admin-content h2 {
+  margin: 0 0 20px;
+  font-size: 1.4em;
+  color: #fff;
+}
+
+/* Dashboard stat cards */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  padding: 24px 16px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.4em;
+  font-weight: 700;
+  color: #007bff;
+}
+
+.stat-label {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.9em;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Admin search */
+.admin-search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.admin-search input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: #ddd;
+  font-size: 0.95em;
+}
+
+.admin-search input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.admin-search button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.95em;
+}
+
+.admin-search button:hover {
+  background: #0056b3;
+}
+
+/* Admin table */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #2a2a2a;
+  font-size: 0.92em;
+}
+
+.admin-table th {
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  color: #ccc;
+}
+
+.admin-table td a {
+  color: #4a9eff;
+  text-decoration: none;
+}
+
+.admin-table td a:hover {
+  text-decoration: underline;
+}
+
+.admin-table tr:hover td {
+  background: #1a1a1a;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.inline-form {
+  display: inline;
+}
+
+.inline-form input[type="text"] {
+  width: 100px;
+  padding: 4px 8px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #ddd;
+  font-size: 0.85em;
+}
+
+.inline-form input[type="text"]:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.btn-small {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+
+.btn-small:hover {
+  background: #0056b3;
+}
+
+.btn-danger {
+  background: #c0392b;
+}
+
+.btn-danger:hover {
+  background: #96281b;
+}
+
+.actions-cell form {
+  display: inline;
+}
+
+.actions-cell form button {
+  margin-left: 4px;
+}
+
+/* Create download form (collapsible) */
+.admin-create-form {
+  margin-bottom: 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.admin-create-form summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #ddd;
+  padding: 4px 0;
+}
+
+.admin-create-form form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85em;
+  color: #888;
+}
+
+.form-row input,
+.form-row select {
+  padding: 8px 10px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background: #1a1a1a;
+  color: #ddd;
+  font-size: 0.95em;
+}
+
+.form-row input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.admin-create-form form > button {
+  align-self: flex-start;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #27ae60;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.95em;
+}
+
+.admin-create-form form > button:hover {
+  background: #1e8449;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+  .admin-sidebar {
     width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
+    padding: 12px 16px;
+  }
+  .admin-sidebar nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
-
-.admin-panel th, .admin-panel td {
-    text-align: left;
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-}
-
-.admin-panel th {
-    color: white;
-}
-
-.admin-panel button {
-    background-color: #007bff;
-    color: white;
-    margin: 5px 5px;
-    margin-left: 10px;
-    margin-right: 0px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.admin-panel button:hover {
-    background-color: #0056b3;
-}
-
-.admin-downloads {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #222;
-    border: 2px solid #888;
-    border-radius: 10px;
-}
-
-.admin-downloads h2 {
-    color: #FFF;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.admin-download-form {
-    display: grid;
-    grid-gap: 15px;
-}
-

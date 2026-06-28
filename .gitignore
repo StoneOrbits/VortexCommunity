@@ -1,2 +1,8 @@
 node_modules/
 .env
+*.tar.gz
+migration-*.log
+*.dump.gz
+VortexLib.js
+VortexLib.wasm
+emsdk/

@@ -1,18 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const PatternSet = require('../models/PatternSet');
-const Mode = require('../models/Mode');
-const { ensureAuthenticated } = require('../middleware/checkAuth');
+const { PatternSet, PatternSetUpvote } = require('../models/pg/index');
+const { Op } = require('sequelize');
 
-// show the main pats showcase
 router.get('/', async (req, res) => {
   const page = req.query.page || 1;
   const searchQuery = req.query.search;
 
-  let patsForCurrentPage = await PatternSet.find().sort({ votes: -1 }).exec();
+  let patsForCurrentPage = await PatternSet.findAll({
+    order: [['votes', 'DESC']]
+  });
 
   if (searchQuery) {
-    patsForCurrentPage = patsForCurrentPage.filter(pat => pat.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    patsForCurrentPage = patsForCurrentPage.filter(pat =>
+      pat.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }
 
   res.render('pats', {
@@ -29,17 +30,17 @@ router.get('/json', async (req, res) => {
     const pageSize = parseInt(req.query.pageSize || 10, 10);
     const searchQuery = req.query.search;
 
-    let query = {};
+    let where = {};
     if (searchQuery) {
-      query.name = { $regex: new RegExp(searchQuery, 'i') };
+      where.name = { [Op.iLike]: `%${searchQuery}%` };
     }
 
-    const totalCount = await PatternSet.countDocuments(query);
-    const patsForCurrentPage = await PatternSet.find(query)
-      .sort({ votes: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .exec();
+    const { count: totalCount, rows: patsForCurrentPage } = await PatternSet.findAndCountAll({
+      where,
+      order: [['votes', 'DESC']],
+      offset: (page - 1) * pageSize,
+      limit: pageSize
+    });
 
     const pageCount = Math.ceil(totalCount / pageSize);
 

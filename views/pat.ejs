@@ -8,26 +8,26 @@
       <div class="container" id="pat-data-container" data-pat='<%= JSON.stringify(pat) %>'>
         <section class="pat-profile-page">
           <div class="pat-icons">
-            <form action="/pat/<%= pat._id %>/<%= user && pat.upvotedBy.includes(user._id) ? 'unvote' : 'upvote' %>" method="post" class="votes-container">
+            <form action="/pat/<%= pat.id %>/<%= user && isUpvoted ? 'unvote' : 'upvote' %>" method="post" class="votes-container">
               <button type="submit" class="icon-button">
-                <img src="<%= user && pat.upvotedBy.includes(user._id) ? '/images/color-upvote-icon.png' : '/images/bw-upvote-icon.png' %>" alt="Upvote" class="upvote-icon">
+                <img src="<%= user && isUpvoted ? '/images/color-upvote-icon.png' : '/images/bw-upvote-icon.png' %>" alt="Upvote" class="upvote-icon">
               </button>
               <span class="votes-count"><%= pat.votes %></span>
             </form>
-            <form action="/pat/<%= pat._id %>/<%= user && user.favPats.includes(pat._id.toString()) ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
+            <form action="/pat/<%= pat.id %>/<%= user && isFavorited ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
               <button type="submit" class="icon-button">
-                <img src="<%= user && user.favPats.includes(pat._id.toString()) ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
+                <img src="<%= user && isFavorited ? '/images/color-star-icon.png' : '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
               </button>
             </form>
           </div>
           <h2 class="pat-title"><%= pat.name %></h2>
           <div class="pat-profile-header">
-            <p>Uploaded by <a href="/user/<%= pat.createdBy._id %>"><%= pat.createdBy.username %></a> on <%= uploadDate %></p>
+            <p>Uploaded by <a href="/user/<%= pat.creator.id %>"><%= pat.creator.username %></a> on <%= uploadDate %></p>
           </div>
           <div class="pat-profile-details">
             <p><%= pat.description %></p>
-            <% if (user && user._id.toString() === pat.createdBy._id.toString()) { %>
-            <a href="/pat/<%= pat._id %>/edit" class="edit-pat-link">Edit</a>
+            <% if (user && user.id === pat.createdBy) { %>
+            <a href="/pat/<%= pat.id %>/edit" class="edit-pat-link">Edit</a>
             <a href="#" class="delete-pat-link" onclick="confirmDelete()">Delete</a>
             <% } %>
             <!-- Confirmation Modal HTML (hidden by default) -->
@@ -40,7 +40,7 @@
           <%- include('partials/pat-profile-lightshow', { pat: pat }) %>
           <div class="pat-profile-actions">
             <% if (user) { %>
-            <a href="/pat/<%= pat._id %>/download" class="pat-profile-button download-button">Download</a>
+            <a href="/pat/<%= pat.id %>/download" class="pat-profile-button download-button">Download</a>
             <% } else { %>
             <a href="/login" class="pat-profile-button download-button-disabled">Login to Download</a>
             <% } %>
@@ -53,7 +53,7 @@
             }
           </script>
           <!-- Hidden form for deletion -->
-          <form id="deleteForm" action="/pat/<%= pat._id %>/delete" method="post" style="display:none;">
+          <form id="deleteForm" action="/pat/<%= pat.id %>/delete" method="post" style="display:none;">
           </form>
         </section>
       </div>

@@ -1,43 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const PatternSet = require('../models/PatternSet');
-const Mode = require('../models/Mode');
-const { ensureAuthenticated } = require('../middleware/checkAuth');
+const { PatternSet, Mode, ModePatternSet } = require('../models/pg/index');
+const { Op } = require('sequelize');
 
 router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page || 1, 10);
     const pageSize = parseInt(req.query.pageSize || 40, 10);
     const searchQuery = req.query.search || '';
-    const sortQuery = req.query.sort || 'votes'; // Default sorting by votes
-    const sortOrder = req.query.order === 'asc' ? 1 : -1; // Default descending order
+    const sortQuery = req.query.sort || 'votes';
+    const sortOrder = req.query.order === 'asc' ? 'ASC' : 'DESC';
 
-    const query = searchQuery ? { name: { $regex: new RegExp(searchQuery, 'i') } } : {};
+    const where = searchQuery ? { name: { [Op.iLike]: `%${searchQuery}%` } } : {};
 
-    const totalCount = await Mode.countDocuments(query);
-    const modes = await Mode.find(query)
-      .sort({ [sortQuery]: sortOrder })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .populate('patternSets') // Assuming 'patternSets' is a reference field in the Mode schema
-      .exec();
+    const { count: totalCount, rows: modes } = await Mode.findAndCountAll({
+      where,
+      order: [[sortQuery, sortOrder]],
+      offset: (page - 1) * pageSize,
+      limit: pageSize
+    });
 
     const orderedPatternSetsArray = await Promise.all(modes.map(async (mode) => {
-      const patternSets = await PatternSet.find({ _id: { $in: mode.patternSets } }).exec();
+      const mpsEntries = await ModePatternSet.findAll({
+        where: { modeId: mode.id },
+        order: [['sortOrder', 'ASC']]
+      });
+      const psIds = mpsEntries.map(mps => mps.patternSetId);
+      const patternSets = await PatternSet.findAll({ where: { id: psIds } });
       const patternSetMap = {};
       patternSets.forEach(ps => {
-        patternSetMap[ps._id] = ps;
+        patternSetMap[ps.id] = ps;
       });
-      const orderedPatternSets = mode.ledPatternOrder.map(orderIndex => {
-        if (orderIndex >= 0 && orderIndex < mode.patternSets.length) {
-          return patternSetMap[mode.patternSets[orderIndex]._id];
-        } else {
-          // return the first one if for some reason the map has a bad index
-          return patternSetMap[mode.patternSets[0]._id];
-        }
-      });
-
-      return orderedPatternSets;
+      return mpsEntries.map(mps => patternSetMap[mps.patternSetId]).filter(Boolean);
     }));
 
     res.render('modes', {
@@ -65,18 +59,17 @@ router.get('/json', async (req, res) => {
     const pageSize = parseInt(req.query.pageSize || 10, 10);
     const searchQuery = req.query.search;
 
-    let query = {};
+    let where = {};
     if (searchQuery) {
-      query.name = { $regex: new RegExp(searchQuery, 'i') };
+      where.name = { [Op.iLike]: `%${searchQuery}%` };
     }
 
-    const totalCount = await Mode.countDocuments(query);
-    const modesForCurrentPage = await Mode.find(query)
-      .sort({ votes: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .populate('patternSets')
-      .exec();
+    const { count: totalCount, rows: modesForCurrentPage } = await Mode.findAndCountAll({
+      where,
+      order: [['votes', 'DESC']],
+      offset: (page - 1) * pageSize,
+      limit: pageSize
+    });
 
     const pageCount = Math.ceil(totalCount / pageSize);
 

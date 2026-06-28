@@ -6,7 +6,7 @@ router.get('/', async function(req, res, next) {
     res.render('terms');
   } catch (err) {
     console.error(err);
-    next(err); // Pass the error to the next middleware to handle it
+    next(err);
   }
 });
 

@@ -6,7 +6,7 @@
     <%- include('partials/nav') %>
     <main>
         <section class="profile-section">
-           <img src="<%= profileUser.profilePicture || '/images/default-profile.png' %>" alt="Profile Picture">
+           <img src="<%= profileUser.profilePic || '/images/default-profile.png' %>" alt="Profile Picture">
            <div class="profile-details">
                 <% if (user && user.id == profileUser.id) { %>
                   <h2>Your Profile</h2>

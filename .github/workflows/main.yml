@@ -13,7 +13,7 @@ jobs:
     - name: Checkout repository with Emscripten tool
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0 # need this to get versioning correct
+        fetch-depth: 0
         repository: 'StoneOrbits/VortexEngine'
         path: 'VortexEngine'
         ref: 'desktop'
@@ -22,7 +22,6 @@ jobs:
     - name: Build Vortex CLI Tool
       run: |
         cd VortexEngine/VortexEngine/VortexCLI
-        # fetch tags first to ensure versioning is correct
         make -j
 
     # Install Emscripten dependencies
@@ -63,6 +62,7 @@ jobs:
         scp VortexEngine/VortexEngine/VortexCLI/vortex vortex@198.74.48.18:~/vortex
         ssh vortex@198.74.48.18 'sudo /usr/bin/mv /home/vortex/vortex /usr/local/bin/vortex'
         ssh vortex@198.74.48.18 'sudo systemctl stop vortex-community'
-        ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && git pull && chmod +x start.sh'
+        ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && git pull && npm install --no-audit --no-fund && chmod +x start.sh scripts/db-migrate.sh'
+        ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && bash scripts/db-migrate.sh'
+        ssh vortex@198.74.48.18 'cd /home/vortex/VortexCommunity && node scripts/migrate-mongo-to-pg.js 2>&1 || echo "[WARN] MongoDB→PG migration failed — data may be incomplete"'
         ssh vortex@198.74.48.18 'sudo systemctl start vortex-community'
-    

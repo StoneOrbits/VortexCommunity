@@ -15,6 +15,9 @@
                     </ul>
                 </li>
                 <% if (user) { %>
+                    <% if (user.username === 'admin') { %>
+                        <li><a href="/control">Admin</a></li>
+                    <% } %>
                     <li><a href="/upload">Upload</a></li>
                     <li><a href="/downloads">Downloads</a></li>
                     <li><a href="/user/<%= user.id %>">Profile</a></li>

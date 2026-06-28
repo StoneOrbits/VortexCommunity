@@ -4,23 +4,26 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const mongoose = require('./config/database');
-var passport = require('passport');
+const pgSession = require('connect-pg-simple')(session);
+const passport = require('passport');
 var rateLimit = require('express-rate-limit');
 var favicon = require('serve-favicon');
 const flash = require('connect-flash');
 const cors = require('cors');
+const { Pool } = require('pg');
 require('dotenv').config();
 
-// NOTE! You must create a .env file with:
-//  VORTEX_COMMUNITY_API_KEY=...
-//  SESSION_SECRET=...
-//  MONGO_URI=mongodb://0.0.0.0:27017/vortexcommunity
-
-var app = express();
+const pgPool = new Pool({
+  host: process.env.PG_HOST || '127.0.0.1',
+  port: process.env.PG_PORT || 5432,
+  database: process.env.PG_DATABASE || 'vortexcommunity',
+  user: process.env.PG_USER || 'postgres',
+  password: process.env.PG_PASSWORD || 'vortex'
+});
 
 require('./config/passport')(passport);
+
+var app = express();
 
 const allowedOrigins = ['https://lightshow.lol', 'https://vortex.community', 'http://localhost:3000'];
 app.use(cors({
@@ -32,7 +35,7 @@ app.use(cors({
     }
   },
   methods: ['GET', 'POST', 'OPTIONS'],
-  credentials: true, // Allow credentials if needed
+  credentials: true,
 }));
 
 // view engine setup
@@ -44,7 +47,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Serve static files from the public directory with CORS for /firmwares
 app.use(
   '/firmwares',
   (req, res, next) => {
@@ -59,30 +61,26 @@ app.use(
   express.static(path.join(__dirname, 'public/firmwares'))
 );
 
-// Serve other static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Use the setPageStyles middleware to inject css
 app.use(require('./middleware/setPageStyles'));
 
-// Session configuration
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    store: new pgSession({
+      pool: pgPool,
+      tableName: 'user_sessions'
+    }),
+    secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: 'mongodb://0.0.0.0:27017/vortexcommunity',
-      mongooseConnection: mongoose.connection
-    })
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
 }));
 
-// Passport initialization
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(flash());
 
-// Middleware to handle flash messages and assign user
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success');
     res.locals.error_msg = req.flash('error');
@@ -90,10 +88,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// icon
 app.use(favicon(path.join(__dirname, 'public', 'images', 'vortex-transparent.png')));
 
-// Rate limiter for uploads
 const uploadLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 25,
@@ -101,7 +97,6 @@ const uploadLimiter = rateLimit({
 });
 app.use('/upload', uploadLimiter);
 
-// Routes
 var indexRouter = require('./routes/index');
 var userUploadRouter = require('./routes/upload');
 var firmwareUploadRouter = require('./routes/firmware-upload');
@@ -140,12 +135,10 @@ app.use('/privacy', privacyRouter);
 app.use('/terms', termsRouter);
 app.use('/control', adminRouter);
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.locals.message = err.message;
@@ -155,4 +148,3 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
-

@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
-const fetch = require('node-fetch'); // Ensure node-fetch is installed
+const fetch = require('node-fetch');
 require('dotenv').config();
 
 router.get('/', (req, res) => {
@@ -14,19 +14,17 @@ router.get('/', (req, res) => {
   });
 });
 
-// Middleware to perform reCAPTCHA verification
 const verifyRecaptcha = async (req, res, next) => {
+  if (!process.env.RECAPTCHA_SECRET_KEY) return next();
   const token = req.body['g-recaptcha-response'];
-  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-  const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
+  const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`;
 
   try {
     const response = await fetch(verifyUrl, { method: 'POST' });
     const data = await response.json();
     if (data.success) {
-      return next(); // reCAPTCHA verification successful, proceed to Passport authentication
+      return next();
     } else {
-      // reCAPTCHA verification failed
       req.flash('error', 'Captcha verification failed. Please try again.');
       return res.redirect('/login');
     }
@@ -37,7 +35,6 @@ const verifyRecaptcha = async (req, res, next) => {
   }
 };
 
-// Update POST route to use reCAPTCHA verification middleware before passport authentication
 router.post('/', verifyRecaptcha, passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/login',
