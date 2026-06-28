@@ -209,8 +209,10 @@ document.getElementById('openOnLightshow').addEventListener('click', (event) => 
   const modeDataContainer = document.getElementById('mode-data-container');
   const modeDataEncoded = btoa(modeDataContainer.getAttribute('data-vortex-mode'));
 
-  // Always open a new tab
-  const lightshowWindow = window.open('https://lightshow.lol', '_blank');
+  const lightshowUrl = window.LIGHTSHOWLOL_URL || 'https://lightshow.lol';
+  const lightshowOrigin = window.LIGHTSHOWLOL_ORIGIN || 'https://lightshow.lol';
+
+  const lightshowWindow = window.open(lightshowUrl, '_blank');
   if (!lightshowWindow) {
     console.error('Popup blocked! Allow popups for this site.');
     return;
@@ -221,13 +223,14 @@ document.getElementById('openOnLightshow').addEventListener('click', (event) => 
     try {
       lightshowWindow.postMessage(
         { type: 'mode', data: modeDataEncoded },
-        'https://lightshow.lol'
+        lightshowOrigin
       );
       console.log('Sent data to lightshowTab');
-      clearInterval(sendMessageInterval); // Stop retrying
+      clearInterval(sendMessageInterval);
     } catch (error) {
       console.error('Error sending postMessage:', error);
     }
   }, 500);
 
-  setTimeout(() => clearInterval(sendMessageInterval), 5000);                                                                                                                                                    });
+  setTimeout(() => clearInterval(sendMessageInterval), 5000);
+});

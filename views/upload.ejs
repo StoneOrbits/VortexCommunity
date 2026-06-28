@@ -7,10 +7,12 @@
     <%- include('partials/nav') %>
     <main>
         <div class="container">
+            <% if (error_msg.length) { %><div class="alert alert-error"><%= error_msg %></div><% } %>
+            <% if (success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
             <section class="upload-section">
                 <h2>Share Your Modes</h2>
                 <div class="form-group">
-                    <a href="https://lightshow.lol" target="_blank" class="lightshow-button">Create on Lightshow.lol →</a>
+                    <a href="<%= lightshowUrl || 'https://lightshow.lol' %>" target="_blank" class="lightshow-button">Create on Lightshow.lol →</a>
                     <h3> - or -</h3>
                     <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
                         <div id="drop_area" class="form-group">

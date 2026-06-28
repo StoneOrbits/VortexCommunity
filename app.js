@@ -25,7 +25,7 @@ require('./config/passport')(passport);
 
 var app = express();
 
-const allowedOrigins = ['https://lightshow.lol', 'https://vortex.community', 'http://localhost:3000'];
+const allowedOrigins = ['https://lightshow.lol', 'https://vortex.community', 'http://localhost:3000', 'http://127.0.0.1:8000'];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -85,6 +85,9 @@ app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success');
     res.locals.error_msg = req.flash('error');
     res.locals.user = req.user || null;
+    const lightshowUrl = process.env.LIGHTSHOWLOL_URL || 'https://lightshow.lol';
+    res.locals.lightshowUrl = lightshowUrl;
+    res.locals.lightshowOrigin = new URL(lightshowUrl).origin;
     next();
 });
 
