@@ -30,15 +30,15 @@ function processModeTiles() {
 
                 let renderW, renderH, offsetX, offsetY;
                 if (imgAspect > elemAspect) {
-                    renderH = elemH;
-                    renderW = elemH * imgAspect;
-                    offsetX = (elemW - renderW) / 2;
-                    offsetY = 0;
-                } else {
                     renderW = elemW;
                     renderH = elemW / imgAspect;
                     offsetX = 0;
                     offsetY = (elemH - renderH) / 2;
+                } else {
+                    renderH = elemH;
+                    renderW = elemH * imgAspect;
+                    offsetX = (elemW - renderW) / 2;
+                    offsetY = 0;
                 }
 
                 const scaleX = renderW / originalWidth;
