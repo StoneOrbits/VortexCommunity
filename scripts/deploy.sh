@@ -29,7 +29,7 @@ if [ "$BEFORE_HASH" != "$AFTER_HASH" ]; then
   echo "Git updated ($BEFORE_HASH -> $AFTER_HASH), rerunning deploy..."
 
   # rerun with flag so we don't stop/start again
-  exec "$0" --rerun
+  exec /bin/bash "$0" --rerun
 fi
 
 if git diff --quiet HEAD@{1} HEAD -- package.json package-lock.json 2>/dev/null && [ -d node_modules ]; then
