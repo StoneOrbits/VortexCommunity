@@ -5,7 +5,4 @@ set -e
 # sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000
 source /home/vortex/.nvm/nvm.sh
 
-# Apply any pending database migrations
-bash "$(dirname "$0")/scripts/db-migrate.sh"
-
 npm start
