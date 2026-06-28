@@ -75,6 +75,28 @@ router.get('/json', async (req, res) => {
       ]
     });
 
+    // Compute ledPatternOrder for each mode from ModePatternSet associations
+    for (const mode of modesForCurrentPage) {
+      if (mode.patternSets && mode.patternSets.length > 0) {
+        // Build a map of patternSetId -> index in patternSets array
+        const patternSetIdToIndex = {};
+        mode.patternSets.forEach((ps, idx) => {
+          patternSetIdToIndex[ps.id] = idx;
+        });
+
+        // Get ModePatternSet entries ordered by sortOrder to build ledPatternOrder
+        const mpsEntries = await ModePatternSet.findAll({
+          where: { modeId: mode.id },
+          order: [['sortOrder', 'ASC']]
+        });
+
+        // Build ledPatternOrder: array of patternSet indices for each LED position
+        mode.ledPatternOrder = mpsEntries.map(mps => patternSetIdToIndex[mps.patternSetId]);
+      } else {
+        mode.ledPatternOrder = [];
+      }
+    }
+
     const pageCount = Math.ceil(totalCount / pageSize);
 
     res.json({

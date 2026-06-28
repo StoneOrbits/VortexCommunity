@@ -34,7 +34,14 @@ const PatternSet = sequelize.define('PatternSet', {
   }
 }, {
   tableName: 'pattern_sets',
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    virtuals: true
+  }
+});
+
+PatternSet.virtual('_id').get(function() {
+  return this.id;
 });
 
 module.exports = PatternSet;
