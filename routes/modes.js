@@ -59,12 +59,11 @@ router.get('/json', async (req, res) => {
     const pageSize = parseInt(req.query.pageSize || 10, 10);
     const searchQuery = req.query.search;
 
-    let where = {};
-    if (searchQuery) {
-      where.name = { [Op.iLike]: `%${searchQuery}%` };
-    }
+    const where = searchQuery
+      ? { name: { [Op.iLike]: `%${searchQuery}%` } }
+      : {};
 
-    const { count: totalCount, rows: modesForCurrentPage } = await Mode.findAndCountAll({
+    const { count: totalCount, rows: modes } = await Mode.findAndCountAll({
       where,
       order: [['votes', 'DESC']],
       offset: (page - 1) * pageSize,
@@ -83,50 +82,58 @@ router.get('/json', async (req, res) => {
       ]
     });
 
-    for (const mode of modesForCurrentPage) {
-      const patternSetsRaw = mode.patternSets || [];
+    const cleaned = [];
 
-      if (patternSetsRaw.length === 0) {
-        mode.patternSets = [];
-        mode.ledPatternOrder = [];
-        continue;
-      }
+    for (const mode of modes) {
+      const modeJson = mode.toJSON();
 
-      // 1. FORCE deterministic ordering using join table
-      const orderedPatternSets = [...patternSetsRaw].sort((a, b) => {
-        const aOrder = a.ModePatternSet?.sortOrder ?? 0;
-        const bOrder = b.ModePatternSet?.sortOrder ?? 0;
-        return aOrder - bOrder;
+      const patternSets = (modeJson.patternSets || []).sort((a, b) => {
+        return (a.ModePatternSet?.sortOrder ?? 0) - (b.ModePatternSet?.sortOrder ?? 0);
       });
 
-      // 2. Rebuild patternSets in correct order
-      mode.patternSets = orderedPatternSets;
-
-      // 3. Build index map based on THIS ORDER (critical fix)
-      const patternSetIdToIndex = {};
-      orderedPatternSets.forEach((ps, idx) => {
-        patternSetIdToIndex[ps.id] = idx;
+      // IMPORTANT: remove join metadata completely
+      const cleanPatternSets = patternSets.map(ps => {
+        const { ModePatternSet, ...rest } = ps;
+        return rest;
       });
 
-      // 4. Pull ModePatternSet rows (authoritative LED sequence)
+      const idToIndex = new Map();
+      cleanPatternSets.forEach((ps, idx) => {
+        idToIndex.set(ps.id, idx);
+      });
+
       const mpsEntries = await ModePatternSet.findAll({
         where: { modeId: mode.id },
         order: [['sortOrder', 'ASC']]
       });
 
-      // 5. Build ledPatternOrder as INDEXES into orderedPatternSets
-      mode.ledPatternOrder = mpsEntries
-        .map(mps => patternSetIdToIndex[mps.patternSetId])
-        .filter(idx => idx !== undefined && idx !== null);
+      const ledPatternOrder = mpsEntries
+        .map(mps => idToIndex.get(mps.patternSetId))
+        .filter(v => v !== undefined);
+
+      cleaned.push({
+        id: modeJson.id,
+        name: modeJson.name,
+        description: modeJson.description,
+        deviceType: modeJson.deviceType,
+        flags: modeJson.flags,
+        dataHash: modeJson.dataHash,
+        votes: modeJson.votes,
+        uploadDate: modeJson.uploadDate,
+        createdAt: modeJson.createdAt,
+        updatedAt: modeJson.updatedAt,
+        createdBy: modeJson.createdBy,
+        patternSets: cleanPatternSets,
+        creator: modeJson.creator,
+        ledPatternOrder
+      });
     }
 
-    const pageCount = Math.ceil(totalCount / pageSize);
-
     res.json({
-      data: modesForCurrentPage,
+      data: cleaned,
       page,
       pageSize,
-      pages: pageCount,
+      pages: Math.ceil(totalCount / pageSize),
       totalCount
     });
 
