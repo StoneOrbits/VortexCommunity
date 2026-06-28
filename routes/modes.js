@@ -70,42 +70,66 @@ router.get('/json', async (req, res) => {
       offset: (page - 1) * pageSize,
       limit: pageSize,
       include: [
-        { model: PatternSet, as: 'patternSets', through: { attributes: ['sortOrder'] } },
-        { model: User, as: 'creator', attributes: ['id', 'username'] }
+        {
+          model: PatternSet,
+          as: 'patternSets',
+          through: { attributes: ['sortOrder'] }
+        },
+        {
+          model: User,
+          as: 'creator',
+          attributes: ['id', 'username']
+        }
       ]
     });
 
-    // Compute ledPatternOrder for each mode from ModePatternSet associations
     for (const mode of modesForCurrentPage) {
-      if (mode.patternSets && mode.patternSets.length > 0) {
-        // Build a map of patternSetId -> index in patternSets array
-        const patternSetIdToIndex = {};
-        mode.patternSets.forEach((ps, idx) => {
-          patternSetIdToIndex[ps.id] = idx;
-        });
+      const patternSetsRaw = mode.patternSets || [];
 
-        // Get ModePatternSet entries ordered by sortOrder to build ledPatternOrder
-        const mpsEntries = await ModePatternSet.findAll({
-          where: { modeId: mode.id },
-          order: [['sortOrder', 'ASC']]
-        });
-
-        // Build ledPatternOrder: array of patternSet indices for each LED position
-        mode.ledPatternOrder = mpsEntries.map(mps => patternSetIdToIndex[mps.patternSetId]);
-      } else {
+      if (patternSetsRaw.length === 0) {
+        mode.patternSets = [];
         mode.ledPatternOrder = [];
+        continue;
       }
+
+      // 1. FORCE deterministic ordering using join table
+      const orderedPatternSets = [...patternSetsRaw].sort((a, b) => {
+        const aOrder = a.ModePatternSet?.sortOrder ?? 0;
+        const bOrder = b.ModePatternSet?.sortOrder ?? 0;
+        return aOrder - bOrder;
+      });
+
+      // 2. Rebuild patternSets in correct order
+      mode.patternSets = orderedPatternSets;
+
+      // 3. Build index map based on THIS ORDER (critical fix)
+      const patternSetIdToIndex = {};
+      orderedPatternSets.forEach((ps, idx) => {
+        patternSetIdToIndex[ps.id] = idx;
+      });
+
+      // 4. Pull ModePatternSet rows (authoritative LED sequence)
+      const mpsEntries = await ModePatternSet.findAll({
+        where: { modeId: mode.id },
+        order: [['sortOrder', 'ASC']]
+      });
+
+      // 5. Build ledPatternOrder as INDEXES into orderedPatternSets
+      mode.ledPatternOrder = mpsEntries
+        .map(mps => patternSetIdToIndex[mps.patternSetId])
+        .filter(idx => idx !== undefined && idx !== null);
     }
 
     const pageCount = Math.ceil(totalCount / pageSize);
 
     res.json({
       data: modesForCurrentPage,
-      page: page,
-      pageSize: pageSize,
+      page,
+      pageSize,
       pages: pageCount,
-      totalCount: totalCount
+      totalCount
     });
+
   } catch (error) {
     console.error("Error fetching modes:", error);
     res.status(500).send("An error occurred while fetching the modes.");
