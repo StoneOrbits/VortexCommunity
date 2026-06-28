@@ -13,24 +13,10 @@ router.get('/:userId', async (req, res) => {
     }
 
     const userPats = await PatternSet.findAll({ where: { createdBy: userId } });
+    const userModes = await Mode.findAll({ where: { createdBy: userId } });
 
-    const page = 1;
-    const pageSize = 8;
-
-    const searchQuery = req.query.search || '';
-    const sortQuery = req.query.sort || 'votes';
-    const sortOrder = req.query.order === 'asc' ? 'ASC' : 'DESC';
-
-    const where = searchQuery
-      ? { createdBy: userId, name: { [Op.iLike]: `%${searchQuery}%` } }
-      : { createdBy: userId };
-
-    const userModes = await Mode.findAll({
-      where,
-      order: [[sortQuery, sortOrder]],
-      offset: (page - 1) * pageSize,
-      limit: pageSize
-    });
+    const modeCount = userModes.length;
+    const patCount = userPats.length;
 
     const orderedPatternSetsArray = await Promise.all(userModes.map(async (mode) => {
       const mpsEntries = await ModePatternSet.findAll({
@@ -46,7 +32,7 @@ router.get('/:userId', async (req, res) => {
       return mpsEntries.map(mps => patternSetMap[mps.patternSetId]).filter(Boolean);
     }));
 
-    res.render('profile', { profileUser, userPats, userModes, orderedPatternSetsArray });
+    res.render('profile', { profileUser, userPats, userModes, modeCount, patCount, orderedPatternSetsArray });
   } catch (err) {
     console.error(err);
     res.status(500).render('error', { message: 'An error occurred while retrieving the user profile' });

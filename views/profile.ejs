@@ -5,53 +5,72 @@
     <%- include('partials/header') %>
     <%- include('partials/nav') %>
     <main>
-        <section class="profile-section">
-           <img src="<%= profileUser.profilePic || '/images/default-profile.png' %>" alt="Profile Picture">
-           <div class="profile-details">
-                <% if (user && user.id == profileUser.id) { %>
-                  <h2>Your Profile</h2>
-                <% } else { %>
-                  <h2><%= profileUser.username %></h2>
+        <section class="profile-header">
+            <img class="profile-avatar" src="<%= profileUser.profilePic || '/images/default-profile.png' %>" alt="">
+            <div class="profile-meta">
+                <h1 class="profile-username"><%= profileUser.username %></h1>
+                <% if (profileUser.bio) { %>
+                    <p class="profile-bio"><%= profileUser.bio %></p>
                 <% } %>
-                <p class="profile-blurb"><%= profileUser.blurb %></p>
+                <div class="profile-stats">
+                    <span class="stat"><strong><%= modeCount %></strong> mode<%= modeCount !== 1 ? 's' : '' %></span>
+                    <span class="stat-divider"></span>
+                    <span class="stat"><strong><%= patCount %></strong> pattern<%= patCount !== 1 ? 's' : '' %></span>
+                </div>
+            </div>
+            <% if (user && user.id == profileUser.id) { %>
+                <a href="/upload" class="profile-new-btn">New Mode</a>
+            <% } %>
+        </section>
+
+        <% if (userModes.length) { %>
+        <section class="profile-section">
+            <h2 class="profile-section-title">
+                <%
+                    let modesLabel = (user && user.id == profileUser.id) ? 'Your Modes' : (profileUser.username + '\'s Modes');
+                %>
+                <%= modesLabel %>
+                <span class="profile-count"><%= modeCount %></span>
+            </h2>
+            <div class="profile-grid">
+                <% userModes.forEach((mode, index) => { %>
+                    <%- include('partials/mode-tile', { mode: mode, orderedPatternSets: orderedPatternSetsArray[index] }) %>
+                <% }); %>
             </div>
         </section>
-        <section class="showcase">
-            <% if (user && user.id == profileUser.id) { %>
-              <h3>Your Modes</h3>
-            <% } else { %>
-              <h3><%= profileUser.username %>'s Modes</h3>
-            <% } %>
+        <% } %>
 
-            <% if (!userModes.length) { %>
-                <p>No modes available.</p>
-            <% } else { %>
-                <div class="pat-showcase">
-                    <% userModes.forEach((mode, index) => { %>
-                        <%- include('partials/mode-tile', { mode: mode, orderedPatternSets: orderedPatternSetsArray[index] }) %>
-                    <% }); %>
-                </div>
-            <% } %>
-
-            <% if (user && user.id == profileUser.id) { %>
-              <h3>Your Patterns</h3>
-            <% } else { %>
-              <h3><%= profileUser.username %>'s Patterns</h3>
-            <% } %>
-
-            <% if (!userPats.length) { %>
-                <p>No pats available.</p>
-            <% } else { %>
-                <div class="pat-showcase">
-                    <% userPats.forEach(pat => { %>
-                        <%- include('partials/pat-tile', { pat: pat }) %>
-                    <% }); %>
-                </div>
-            <% } %>
+        <% if (userPats.length) { %>
+        <section class="profile-section">
+            <h2 class="profile-section-title">
+                <%
+                    let patsLabel = (user && user.id == profileUser.id) ? 'Your Patterns' : (profileUser.username + '\'s Patterns');
+                %>
+                <%= patsLabel %>
+                <span class="profile-count"><%= patCount %></span>
+            </h2>
+            <div class="profile-grid profile-grid--pats">
+                <% userPats.forEach(pat => { %>
+                    <%- include('partials/pat-tile', { pat: pat }) %>
+                <% }); %>
+            </div>
         </section>
+        <% } %>
+
+        <% if (!userModes.length && !userPats.length) { %>
+        <section class="profile-section profile-empty">
+            <p>
+                <% if (user && user.id == profileUser.id) { %>
+                    You haven't created any modes or patterns yet.
+                    <a href="/upload" class="profile-empty-link">Create one</a>
+                <% } else { %>
+                    This user hasn't created anything yet.
+                <% } %>
+            </p>
+        </section>
+        <% } %>
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
 </body>
 </html>
-
