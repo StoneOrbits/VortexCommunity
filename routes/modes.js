@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { PatternSet, Mode, ModePatternSet } = require('../models/pg/index');
+const { PatternSet, Mode, ModePatternSet, User } = require('../models/pg/index');
 const { Op } = require('sequelize');
 
 router.get('/', async (req, res) => {
@@ -68,7 +68,11 @@ router.get('/json', async (req, res) => {
       where,
       order: [['votes', 'DESC']],
       offset: (page - 1) * pageSize,
-      limit: pageSize
+      limit: pageSize,
+      include: [
+        { model: PatternSet, as: 'patternSets', through: { attributes: ['sortOrder'] } },
+        { model: User, as: 'creator', attributes: ['id', 'username'] }
+      ]
     });
 
     const pageCount = Math.ceil(totalCount / pageSize);
