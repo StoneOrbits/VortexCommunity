@@ -269,16 +269,16 @@ def convert_device(png_path, positions_json, svg_path, name):
              '  <defs>',
              '    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">',
               '      <stop offset="0%" stop-color="#3d3d3d"/>',
-             '      <stop offset="100%" stop-color="#1a1a1a"/>',
+             '      <stop offset="100%" stop-color="#222"/>',
              '    </linearGradient>',
              '  </defs>']
 
     # Group into one <g> for the device body
     for s in simplified:
-        lines.append(f'  <path d="{path_str(s)}" fill="url(#g)" stroke="#555" stroke-width="2"/>')
+        lines.append(f'  <path d="{path_str(s)}" fill="url(#g)" stroke="#666" stroke-width="2.5" stroke-linejoin="round"/>')
 
     for rp in ring_paths:
-        lines.append(f'  <path d="{path_str(rp)}" fill="#111" stroke="#333" stroke-width="2"/>')
+        lines.append(f'  <path d="{path_str(rp)}" fill="#222" stroke="#444" stroke-width="2" stroke-linejoin="round"/>')
 
     # Draw overlapping holes as a single merged path
     if holes:
@@ -295,7 +295,7 @@ def convert_device(png_path, positions_json, svg_path, name):
                 f'C {cx - rk},{cy + r} {cx - r},{cy + rk} {cx - r},{cy}',
                 f'C {cx - r},{cy - rk} {cx - rk},{cy - r} {cx},{cy - r} Z'
             ])
-        lines.append(f'  <path d="{" ".join(parts)}" fill="#333" stroke="#111" stroke-width="2" fill-rule="evenodd"/>')
+        lines.append(f'  <path d="{" ".join(parts)}" fill="#555" stroke="#666" stroke-width="2" fill-rule="evenodd"/>')
 
     lines.append('</svg>')
     with open(svg_path, 'w') as f:
