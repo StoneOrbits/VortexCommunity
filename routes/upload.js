@@ -120,6 +120,7 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         switch (numLeds) {
           case 10: return 'Gloves';
           case 28: return 'Orbit';
+          case 6: return 'Spark';
           case 3: return 'Handle';
           case 2: return 'Duo';
           case 20: return 'Chromadeck';
@@ -182,6 +183,7 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
       switch (numLeds) {
         case 10: return 'Gloves';
         case 28: return 'Orbit';
+        case 6: return 'Spark';
         case 3: return 'Handle';
         case 2: return 'Duo';
         case 20: return 'Chromadeck';

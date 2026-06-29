@@ -22,7 +22,7 @@
           </div>
           <h2 class="pat-title"><%= pat.name %></h2>
           <div class="pat-profile-header">
-            <p>Uploaded by <a href="<%= basePath %>/user/<%= pat.creator.id %>"><%= pat.creator.username %></a> on <%= uploadDate %></p>
+            <p>Uploaded by <%= pat.creator ? `<a href="${basePath}/user/${pat.creator.id}">${pat.creator.username}</a>` : 'Unknown' %> on <%= uploadDate %></p>
           </div>
           <div class="pat-profile-details">
             <p><%= pat.description %></p>

@@ -116,10 +116,9 @@
     min-height: 0;
 }
 
-.profile-grid .upload-device-image {
+.profile-grid .device-svg {
     width: 100%;
     height: 100%;
-    object-fit: contain;
 }
 
 .profile-empty {

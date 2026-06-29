@@ -1,6 +1,5 @@
 import { initLightshow } from './initLightshow.js';
 
-// Function to filter modes based on selected devices and search query
 function filterModes() {
     const selectedDevices = Array.from(document.querySelectorAll('input[name="device"]:checked')).map(cb => cb.value);
     const searchQuery = document.querySelector('.search-input').value.toLowerCase();
@@ -20,7 +19,6 @@ function filterModes() {
     });
 }
 
-// Set up event listeners for filtering
 const checkboxes = document.querySelectorAll('input[name="device"]');
 const searchForm = document.getElementById('search-form');
 const searchInput = document.querySelector('.search-input');
@@ -34,88 +32,49 @@ searchForm.addEventListener('submit', function(e) {
     filterModes();
 });
 
-filterModes(); // Initial filter based on default state
+filterModes();
 
-// Process each mode tile and return a promise that resolves when all tiles are processed
 function processModeTiles() {
     const modeTiles = document.querySelectorAll('.mode-tile');
     const promises = [];
 
     modeTiles.forEach(tile => {
-        const modeData = JSON.parse(tile.getAttribute('data-mode'));
-        const deviceImage = tile.querySelector('.upload-device-image');
+        const svg = tile.querySelector('.device-svg');
+        if (!svg) return;
 
-        const src = deviceImage.getAttribute('src');
-        const deviceTypeMatch = src.match(/\/images\/(.*?)-leds\.png/);
+        const imageHref = svg.querySelector('image').getAttribute('href');
+        const deviceTypeMatch = imageHref.match(/\/images\/(.*?)\.svg/);
         const deviceType = deviceTypeMatch ? deviceTypeMatch[1] : null;
-        const ledSize = deviceType === 'orbit' ? 15 : 12;
 
-        if (deviceType) {
-            const promise = fetch((window.basePath || '') + `/data/${deviceType}-led-positions.json`)
-                .then(response => response.json())
-                .then(data => {
-                    const points = data.points;
-                    const originalWidth = data.original_width;
-                    const originalHeight = data.original_height;
+        if (!deviceType) return;
 
-                    const actualWidth = deviceImage.offsetWidth;
-                    const actualHeight = deviceImage.offsetHeight;
-
-                    const scaleX = actualWidth / originalWidth;
-                    const scaleY = actualHeight / originalHeight;
-
-                    const ledPatternItems = tile.querySelectorAll('.mode-tile-preview-led-container');
-                    ledPatternItems.forEach((item, index) => {
-                        if (!points[index]) return;
-
-                        let x = points[index].x;
-                        let y = points[index].y;
-                        x -= (ledSize);
-                        y -= (ledSize);
-                        x *= scaleX;
-                        y *= scaleY;
-                        item.style.position = 'absolute';
-                        item.style.left = `${x}px`;
-                        item.style.top = `${y}px`;
-                        item.style.width = `${ledSize}px`;
-                        item.style.height = `${ledSize}px`;
-                        item.style.display = 'block';
-
-                        if (deviceType === 'orbit') {
-                            if (index === 3 || index === 10 || index === 17 || index === 24) {
-                                item.style.width = '10px';
-                                item.style.height = '10px';
-                                item.style.left = `${x + 4}px`;
-                                item.style.top = `${y + 4}px`;
-                            }
-                            item.style.borderRadius = '50%';
-                        }
-                        item.setAttribute('title', points[index].name);
-                        item.setAttribute('data-index', index);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading LED positions:', error);
+        const promise = fetch((window.basePath || '') + `/data/${deviceType}-led-positions.json`)
+            .then(response => response.json())
+            .then(data => {
+                const points = data.points;
+                const circles = svg.querySelectorAll('.led-circle');
+                circles.forEach((circle, index) => {
+                    if (!points[index]) return;
+                    circle.setAttribute('cx', points[index].x);
+                    circle.setAttribute('cy', points[index].y);
+                    const radii = { gloves: 14, orbit: 15, handle: 14, duo: 16, chromadeck: 13, spark: 14 };
+                    circle.setAttribute('r', radii[deviceType] || 14);
+                    circle.setAttribute('title', points[index].name);
+                    circle.setAttribute('data-index', index);
                 });
+            })
+            .catch(error => {
+                console.error('Error loading LED positions:', error);
+            });
 
-            promises.push(promise);
-        } else {
-            console.error('Device type not found.');
-        }
+        promises.push(promise);
     });
 
     return Promise.all(promises);
 }
 
-// Process mode tiles and initialize lightshows after all tiles are processed
 processModeTiles().then(() => {
-    console.log('All mode tiles processed. Initializing lightshows.');
-    initLightshow().then(() => {
-        console.log('Lightshows initialized.');
-    }).catch(error => {
-        console.error('Error initializing lightshows:', error);
-    });
+    initLightshow();
 }).catch(error => {
     console.error('Error processing mode tiles:', error);
 });
-
