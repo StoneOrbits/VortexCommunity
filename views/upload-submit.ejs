@@ -1,60 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/head') %>
+<link rel="stylesheet" href="<%= basePath %>/css/pages/upload-submit.css">
 <body class="dark-theme">
-  <%- include('partials/header') %>
-  <%- include('partials/nav') %>
-  <main>
-    <div class="container" id="mode-data-container" data-mode-data='<%= JSON.stringify(modeData) %>'>
-      <section class="mode-submission-section">
-        <form action="<%= basePath %>/upload/submit" method="post">
-          <div class="mode-header">
-            <input type="text" id="name" name="name" value="<%= modeData.name %>" placeholder="Mode Title" required>
-            <textarea id="description" name="description" placeholder="Enter description..." rows="1"></textarea>
-          </div>
-          <div class="mode-content">
-            <div class="mode-patterns">
-              <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
-                <% if ((modeData.isDuplicates[index] & 2) === 0) { %>
-                  <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, patName: modeData.patNames[index], patDescription: modeData.patDescriptions[index], isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
-                <% } %>
-              <% }); %>
-              <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
-                <% if ((modeData.isDuplicates[index] & 2) !== 0) { %>
-                  <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, patName: modeData.patNames[index], patDescription: modeData.patDescriptions[index], isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
-                <% } %>
-              <% }); %>
-            </div>
-            <div class="mode-preview">
-              <div class="device-preview-container">
-                <div class="led-container">
-                  <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
-                    <!-- Lightshow visualization -->
-                    <%- include('partials/submission-preview-led-lightshow', { pat: pat, tempId: index }) %>
-                  <% }); %>
-                </div>
-                <img class="upload-device-image" src="<%= modeData.deviceType === 'Gloves' ? basePath + '/images/gloves-leds.png' : modeData.deviceType === 'Orbit' ? basePath + '/images/orbit-leds.png' : modeData.deviceType === 'Handle' ? basePath + '/images/handle-leds.png' : modeData.deviceType === 'Duo' ? basePath + '/images/duo-leds.png' : basePath + '/images/chromadeck-leds.png' %>" alt="Device Image">
-                <div class="highlight-container">
-                  <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
-                    <!-- Highlight visualization -->
-                    <%- include('partials/submission-preview-led-highlight', { ledIndex: index }) %>
-                  <% }); %>
-                </div>
+  <main class="submit-main">
+    <div class="submit-card" id="mode-data-container" data-mode-data='<%= JSON.stringify(modeData) %>' data-mode='<%= JSON.stringify(modeData) %>'>
+      <div class="submit-card-header">
+        <div class="submit-icon">
+          <i class="fas fa-magic"></i>
+        </div>
+        <h2>Review Your Mode</h2>
+        <p class="submit-subtitle">Give it a name and confirm your patterns</p>
+      </div>
+      <div class="submit-card-body">
+        <form action="<%= basePath %>/upload/submit" method="post" id="submitForm">
+          <div class="form-section">
+            <div class="form-row">
+              <div class="form-group-compact">
+                <label for="name"><i class="fas fa-tag"></i> Mode Name</label>
+                <input type="text" id="name" name="name" value="<%= modeData.name %>" placeholder="Enter a name for your mode" required>
               </div>
-              <div class="pattern-edit">
-                <input type="text" id="pattern-name" placeholder="Pattern Name">
-                <textarea id="pattern-description" placeholder="Pattern Description"></textarea>
+              <div class="form-group-compact">
+                <label for="description"><i class="fas fa-align-left"></i> Description</label>
+                <textarea id="description" name="description" placeholder="Describe your mode..." rows="2"><%= modeData.description %></textarea>
               </div>
             </div>
           </div>
-          <div class="submit-button">
-            <button type="submit">Submit Mode</button>
+
+          <div class="form-section">
+            <div class="section-header">
+              <h3 class="section-title"><i class="fas fa-palette"></i> Patterns</h3>
+              <div class="device-badge"><i class="fas fa-microchip"></i> <%= modeData.deviceType %></div>
+            </div>
+
+            <div class="patterns-layout">
+              <div class="mode-patterns patterns-list">
+                <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
+                  <% if ((modeData.isDuplicates[index] & 2) === 0) { %>
+                    <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, patName: modeData.patNames[index], patDescription: modeData.patDescriptions[index], isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
+                  <% } %>
+                <% }); %>
+                <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
+                  <% if ((modeData.isDuplicates[index] & 2) !== 0) { %>
+                    <%- include('partials/pat-list-item-submission', { pat: pat, tempId: index, patName: modeData.patNames[index], patDescription: modeData.patDescriptions[index], isDuplicate: modeData.isDuplicates[index], duplicateName: modeData.duplicateNames[index]}) %>
+                  <% } %>
+                <% }); %>
+              </div>
+
+              <div class="mode-preview">
+                <div class="device-preview-container">
+                  <div class="led-container">
+                    <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
+                      <%- include('partials/submission-preview-led-lightshow', { pat: pat, tempId: index }) %>
+                    <% }); %>
+                  </div>
+                  <img class="upload-device-image" src="<%= modeData.deviceType === 'Gloves' ? basePath + '/images/gloves-leds.png' : modeData.deviceType === 'Orbit' ? basePath + '/images/orbit-leds.png' : modeData.deviceType === 'Handle' ? basePath + '/images/handle-leds.png' : modeData.deviceType === 'Duo' ? basePath + '/images/duo-leds.png' : basePath + '/images/chromadeck-leds.png' %>" alt="Device Image">
+                  <div class="highlight-container">
+                    <% modeData.jsonData.modes[0].single_pats.forEach((pat, index) => { %>
+                      <%- include('partials/submission-preview-led-highlight', { ledIndex: index }) %>
+                    <% }); %>
+                  </div>
+                </div>
+                <div class="pattern-edit">
+                  <input type="text" id="pattern-name" placeholder="Pattern Name">
+                  <input type="text" id="pattern-description" placeholder="Pattern Description">
+                </div>
+              </div>
+            </div>
           </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-check-circle"></i> Submit Mode
+          </button>
         </form>
-      </section>
+      </div>
     </div>
   </main>
-  <%- include('partials/footer') %>
   <%- include('partials/script') %>
 </body>
 </html>

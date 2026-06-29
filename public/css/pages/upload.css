@@ -1,30 +1,237 @@
-/* upload.css */
+/* upload.css - Modern dark theme upload form */
 
-.upload-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding-top: 50px;
+.upload-main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 30px 20px;
+  min-height: 80vh;
 }
 
-.upload-section .form-group {
-    width: 100%;
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.upload-card {
+  background: linear-gradient(145deg, #1e1e1e, #252525);
+  border: 1px solid #333;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.upload-card-header {
+  text-align: center;
+  padding: 32px 32px 20px;
+}
+
+.upload-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.upload-card-header h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #f0f0f0;
+}
+
+.upload-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #888;
+}
+
+.upload-card-body {
+  padding: 0 32px 24px;
+}
+
+.upload-card-footer {
+  padding: 16px 32px;
+  background: #1a1a1a;
+  border-top: 1px solid #2a2a2a;
+  text-align: center;
+}
+
+.upload-card-footer p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.upload-card-footer a {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.upload-card-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed #444;
+  border-radius: 12px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.drop-zone-content i {
+  font-size: 40px;
+  color: #667eea;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.drop-zone-content p {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: #aaa;
+}
+
+.drop-zone-content strong {
+  color: #ddd;
+}
+
+.drop-zone-or {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin: 8px 0;
+}
+
+.drop-zone-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.drop-zone-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+}
+
+.drop-zone input[type="file"] {
+  display: none;
+}
+
+/* File list */
+.file-list {
+  margin-top: 16px;
+  text-align: left;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.file-item i {
+  color: #667eea;
 }
 
 .feedback {
-    margin-top: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #e74c3c;
 }
 
+/* Submit button */
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 24px;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Progress bar */
 .progress-bar {
-    display: none;
+  display: none;
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  margin-top: 16px;
+  overflow: hidden;
 }
 
 .progress {
-    width: 0%;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
+  transition: width 0.3s;
 }
 
+/* Alert overrides for the card */
+.upload-card .alert {
+  margin: 0 32px 16px;
+}
+
+/* Mobile adjustment */
+@media (max-width: 600px) {
+  .upload-main {
+    padding: 16px;
+  }
+
+  .upload-card-body {
+    padding: 0 20px 20px;
+  }
+
+  .upload-card-header {
+    padding: 24px 20px 16px;
+  }
+
+  .upload-card-footer {
+    padding: 12px 20px;
+  }
+}

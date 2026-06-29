@@ -2,44 +2,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/head') %>
+<link rel="stylesheet" href="<%= basePath %>/css/pages/upload.css">
 <body class="dark-theme">
-    <%- include('partials/header') %>
-    <%- include('partials/nav') %>
-    <main>
-        <div class="container">
+    <main class="upload-main">
+        <div class="upload-card">
+            <div class="upload-card-header">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h2>Share Your Mode</h2>
+                <p class="upload-subtitle">Upload your creation to the community</p>
+            </div>
             <% if (error_msg.length) { %><div class="alert alert-error"><%= error_msg %></div><% } %>
             <% if (success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
-            <section class="upload-section">
-                <h2>Share Your Modes</h2>
-                <div class="form-group">
-                    <a href="<%= lightshowUrl || 'https://lightshow.lol' %>" target="_blank" class="lightshow-button">Create on Lightshow.lol →</a>
-                    <h3> - or -</h3>
-                    <form id="uploadForm" action="<%= basePath %>/upload" method="post" enctype="multipart/form-data">
-                        <div id="drop_area" class="form-group">
-                            <label for="modeFile">Upload .vtxmode File(s):</label>
+            <div class="upload-card-body">
+                <form id="uploadForm" action="<%= basePath %>/upload" method="post" enctype="multipart/form-data">
+                    <div id="drop_area" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <i class="fas fa-file-upload"></i>
+                            <p>Drag & drop your <strong>.vtxmode</strong> files here</p>
+                            <span class="drop-zone-or">or</span>
+                            <label for="modeFile" class="drop-zone-btn">Browse Files</label>
                             <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
-                            <div id="fileError" class="feedback"></div>
                         </div>
-                        <div class="form-group">
-                            <button type="button" class="g-recaptcha"
-                                    data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk"
-                                    data-callback='onSubmit' data-action='submit'>Upload</button>
-                        </div>
-                        <div class="progress-bar" id="progressBar">
-                            <div class="progress" id="progress"></div>
-                        </div>
-                    </form>
-                </div>
-            </section>
+                        <div id="fileList" class="file-list"></div>
+                        <div id="fileError" class="feedback"></div>
+                    </div>
+                    <button type="button" class="g-recaptcha submit-btn"
+                            data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk"
+                            data-callback='onSubmit' data-action='submit'>
+                        <i class="fas fa-paper-plane"></i> Upload to Community
+                    </button>
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="upload-card-footer">
+                <p>Create a mode first in <a href="<%= lightshowUrl || 'https://lightshow.lol' %>" target="_blank">Lightshow.lol</a>, then share it here</p>
+            </div>
         </div>
     </main>
-    <%- include('partials/footer') %>
     <%- include('partials/script') %>
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
         function onSubmit(token) {
             document.getElementById("uploadForm").submit();
         }
+
+        // File list display
+        const fileInput = document.getElementById('modeFile');
+        const fileList = document.getElementById('fileList');
+        fileInput.addEventListener('change', () => {
+            const files = Array.from(fileInput.files);
+            if (files.length === 0) { fileList.innerHTML = ''; return; }
+            fileList.innerHTML = files.map(f => `<div class="file-item"><i class="fas fa-file"></i> ${f.name}</div>`).join('');
+        });
+
+        // Drag and drop
+        const dropZone = document.getElementById('drop_area');
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+        });
     </script>
 </body>
 </html>

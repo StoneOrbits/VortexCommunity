@@ -1,6 +1,7 @@
 /* main.css */
 
-.main-container {
+.main-container,
+.container {
     margin: 0 auto;
     max-width: 1460px;
     padding: 20px;
