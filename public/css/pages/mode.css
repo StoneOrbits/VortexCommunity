@@ -1,8 +1,7 @@
 /* mode.css */
 
 .mode-detail {
-  max-width: 960px;
-  margin: 24px auto;
+  margin: 24px 0;
 }
 
 .mode-detail-header {
@@ -128,16 +127,19 @@
   overflow: hidden;
   padding: 6px;
   align-self: start;
+  max-width: 100%;
 }
 
 .mode-detail-preview .device-svg {
   width: 100%;
   height: auto;
   display: block;
+  max-width: 100%;
 }
 
 .mode-detail-patterns {
   min-width: 0;
+  overflow: hidden;
 }
 
 .mode-detail-patterns-title {
@@ -234,6 +236,7 @@
 .lightshow-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   background: #1abc9c;
   color: #fff;
@@ -243,6 +246,7 @@
   font-weight: 600;
   text-decoration: none;
   transition: background 0.2s;
+  text-align: center;
 }
 
 .lightshow-btn:hover {
@@ -286,17 +290,40 @@
   opacity: 0.9;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   .mode-detail-body {
     grid-template-columns: 1fr;
   }
 
-  .mode-detail-header {
-    flex-direction: column-reverse;
+  .mode-detail-preview {
+    max-width: 100%;
   }
 
-  .mode-detail-actions {
-    flex-direction: row;
-    align-self: flex-end;
+  .mode-detail-patterns .submission-led-strip-container {
+    flex: 0 0 80px !important;
+    width: 80px !important;
+    height: 20px !important;
+  }
+
+  .lightshow-btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .mode-detail-patterns .submission-led-strip-container {
+    flex: 0 0 60px !important;
+    width: 60px !important;
+    height: 16px !important;
+  }
+
+  .pat-item-submission {
+    padding: 10px 10px;
+    gap: 8px;
+  }
+
+  .pat-name {
+    font-size: 13px;
   }
 }

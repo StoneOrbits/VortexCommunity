@@ -1,3 +1,35 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="<%= typeof basePath !== 'undefined' ? basePath : '' %>/css/layouts/main.css">
+  <link rel="stylesheet" href="<%= typeof basePath !== 'undefined' ? basePath : '' %>/css/pages/error.css">
+  <style>
+    body { background: #121212; color: #fff; font-family: Arial, sans-serif; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+    main { flex: 1; display: flex; justify-content: center; align-items: center; }
+    .error-card { text-align: center; padding: 48px 32px; max-width: 420px; }
+    .error-code { font-size: 72px; font-weight: 800; color: #1abc9c; margin: 0 0 8px; line-height: 1; }
+    .error-message { font-size: 18px; color: #eee; margin: 0 0 12px; }
+    .error-hint { font-size: 14px; color: #999; margin: 0 0 28px; line-height: 1.5; }
+    .error-home-btn { display: inline-block; background: #1abc9c; color: #fff; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; }
+    .error-home-btn:hover { background: #16a085; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="error-card">
+      <h1 class="error-code"><%= typeof status !== 'undefined' ? status : '?' %></h1>
+      <p class="error-message"><%= typeof message !== 'undefined' ? message : 'Unknown Error' %></p>
+      <% if (typeof status !== 'undefined' && status === 404) { %>
+        <p class="error-hint">The page you're looking for doesn't exist or has been moved.</p>
+      <% } else if (typeof status !== 'undefined' && status === 500) { %>
+        <p class="error-hint">A server error occurred.</p>
+      <% } else { %>
+        <p class="error-hint">Something went wrong.</p>
+      <% } %>
+      <a href="<%= typeof basePath !== 'undefined' ? basePath : '' %>/" class="error-home-btn">&larr; Go Home</a>
+    </div>
+  </main>
+</body>
+</html>

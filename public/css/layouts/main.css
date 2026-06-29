@@ -1,5 +1,12 @@
 /* main.css */
 
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
 .main-container {
     margin: 0 auto;
     max-width: 1460px;
