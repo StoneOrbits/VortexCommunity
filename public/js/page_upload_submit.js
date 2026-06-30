@@ -14,48 +14,11 @@ patternItems.forEach(item => {
   });
 });
 
-const newItems = document.querySelectorAll('.pat-item-submission:not(.duplicate)');
-newItems.forEach(item => {
-  item.addEventListener('click', function(e) {
-    e.stopPropagation();
-    const index = this.dataset.index;
-    selectPattern(index);
-  });
-});
-
 if (modeDetailPatterns) {
   modeDetailPatterns.addEventListener('mouseleave', function() {
     document.querySelectorAll('.led-circle').forEach(c => c.classList.remove('active-highlight'));
     document.querySelectorAll('.pat-item-submission').forEach(i => i.classList.remove('highlighted'));
   });
-  modeDetailPatterns.addEventListener('click', function() {
-    document.querySelectorAll('.led-circle').forEach(c => c.classList.remove('selected'));
-    document.querySelectorAll('.pat-item-submission').forEach(i => i.classList.remove('selected'));
-  });
-}
-
-const patternNameField = document.getElementById('pattern-name');
-const patternDescriptionField = document.getElementById('pattern-description');
-
-patternNameField.addEventListener('input', updatePatternData);
-patternDescriptionField.addEventListener('input', updatePatternData);
-
-function updatePatternData() {
-  const selectedPatternElement = document.querySelector('.pat-item-submission.selected');
-  if (!selectedPatternElement) return;
-
-  const selectedPatternIndex = selectedPatternElement.dataset.index;
-
-  if (selectedPatternIndex !== undefined) {
-    modeData.patNames[selectedPatternIndex] = patternNameField.value;
-    modeData.patDescriptions[selectedPatternIndex] = patternDescriptionField.value;
-
-    document.getElementById(`patternName-${selectedPatternIndex}`).value = patternNameField.value;
-    document.getElementById(`patternDescription-${selectedPatternIndex}`).value = patternDescriptionField.value;
-
-    const patternNameElement = selectedPatternElement.querySelector('.pat-name');
-    patternNameElement.textContent = patternNameField.value || 'Unnamed Pattern';
-  }
 }
 
 const svg = document.querySelector('.device-svg');
@@ -98,27 +61,6 @@ function highlightLEDsForPattern(patternIndex) {
       circle.classList.add('active-highlight');
     } else {
       circle.classList.remove('active-highlight');
-    }
-  });
-}
-
-function selectPattern(index) {
-  document.querySelectorAll('.pat-item-submission').forEach(i => {
-    i.classList.remove('selected');
-    i.classList.remove('highlighted');
-  });
-  const patItem = document.querySelector(`.pat-item-submission[data-index="${index}"]`);
-  if (patItem) patItem.classList.add('selected');
-
-  patternNameField.value = modeData.patNames[index] || 'Unnamed Pattern';
-  patternDescriptionField.value = '';
-
-  document.querySelectorAll('.led-circle').forEach(circle => {
-    const ledIndex = parseInt(circle.getAttribute('data-index'));
-    circle.classList.remove('active-highlight');
-    circle.classList.remove('selected');
-    if (patternsEqual(modeData.jsonData.modes[0].single_pats[ledIndex], modeData.jsonData.modes[0].single_pats[index])) {
-      circle.classList.add('selected');
     }
   });
 }

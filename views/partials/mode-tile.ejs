@@ -3,12 +3,14 @@
       <h2 class="mode-tile-title"><%= mode.name %></h2>
   </div>
   <div class="device-preview-container">
+    <div class="device-preview-inner">
     <svg viewBox="0 0 500 250" class="device-svg" preserveAspectRatio="xMidYMid meet">
       <image href="<%= mode.deviceType === 'Gloves' ? basePath + '/images/gloves.svg' : mode.deviceType === 'Orbit' ? basePath + '/images/orbit.svg' : mode.deviceType === 'Handle' ? basePath + '/images/handle.svg' : mode.deviceType === 'Duo' ? basePath + '/images/duo.svg' : mode.deviceType === 'Spark' ? basePath + '/images/spark.svg' : basePath + '/images/chromadeck.svg' %>" width="500" height="250"/>
       <% orderedPatternSets.forEach((pat, index) => { %>
         <circle class="led-circle" data-pat='<%= JSON.stringify(pat.data ? pat.data : pat) %>' data-type="flashing"/>
       <% }); %>
     </svg>
+    </div>
   </div>
   <div class="mode-tile-info-panel">
     <div class="mode-tile-info-header">

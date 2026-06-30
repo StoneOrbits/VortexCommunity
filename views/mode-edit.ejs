@@ -60,7 +60,7 @@
               <h3 class="mode-detail-patterns-title">Patterns</h3>
               <div class="mode-patterns">
                 <% patternSets.forEach((pat, index) => { %>
-                <%- include('partials/pat-list-item-submission', { pat: pat, tempId: patternIndexMap[pat.id], patName: pat.name, patDescription: pat.description, isDuplicate: false }) %>
+                    <%- include('partials/pat-list-item-submission', { pat: pat, tempId: patternIndexMap[pat.id], patName: pat.name, patDescription: pat.description, isDuplicate: false, editable: false }) %>
                 <% }); %>
               </div>
             </div>

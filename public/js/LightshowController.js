@@ -8,6 +8,9 @@ class LightshowController {
   register(instance) {
     this.instances.push(instance);
     this.applySettings(instance);
+    if (this.settings.playMode === 'always') {
+      setTimeout(() => { instance._pause = false; if (!instance._rafId) instance.start(); }, 50);
+    }
   }
 
   unregister(instance) {
@@ -69,6 +72,9 @@ class LightshowController {
     Object.assign(this.settings, newSettings);
     this.instances.forEach(inst => this.applySettings(inst));
     this.saveToStorage();
+    if (this.settings.playMode === 'always') {
+      setTimeout(() => this.instances.forEach(inst => { inst._pause = false; if (!inst._rafId) inst.start(); }), 50);
+    }
   }
 
   saveToStorage() {
