@@ -127,6 +127,17 @@ for _ in range(1):
                             temp[ny, nx] = True
     dilated = temp
 
+# Erode to thin the black lines before tracing
+for _ in range(2):
+    temp = dilated.copy()
+    for y in range(1, h-1):
+        for x in range(1, w-1):
+            if dilated[y, x]:
+                if not (dilated[y-1, x] and dilated[y+1, x] and dilated[y, x-1] and dilated[y, x+1] and
+                        dilated[y-1, x-1] and dilated[y-1, x+1] and dilated[y+1, x-1] and dilated[y+1, x+1]):
+                    temp[y, x] = False
+    dilated = temp
+
 # Find components
 visited = np.zeros_like(dilated, dtype=bool)
 contours = []

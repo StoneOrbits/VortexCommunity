@@ -1,5 +1,9 @@
 import controller from './LightshowController.js';
 
+const INNER = 0.12;
+const OUTER = 0.9;
+const TRAIL_LEN = 32;
+
 export default class LogoLightshow {
   constructor(vortexLib, canvas) {
     this.canvas = canvas;
@@ -15,9 +19,12 @@ export default class LogoLightshow {
     this.vortexLib.RunTick(this.vortex);
 
     this._lastTickTime = 0;
-    this._tickInterval = 1000 / 20;
+    this._tickInterval = 1000 / 24;
     this._pause = false;
     this._rafId = null;
+    this._sweepAngle = 0;
+    this._colorHistory = new Array(TRAIL_LEN).fill({ r: 60, g: 60, b: 100 });
+    this._head = 0;
 
     controller.register(this);
   }
@@ -63,26 +70,60 @@ export default class LogoLightshow {
     const now = performance.now();
     if (now - this._lastTickTime >= this._tickInterval) {
       this._lastTickTime = now;
-
       const newColor = this.vortexLib.RunTick(this.vortex);
-      if (newColor) {
-        const { red: r, green: g, blue: b } = newColor[0];
-        const w = this.canvas.width;
-        const h = this.canvas.height;
-        const cx = w / 2;
-        const cy = h / 2;
-        const r2 = Math.max(w, h) / 2;
-
-        const grad = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, r2);
-        grad.addColorStop(0, 'rgba(0,0,0,0)');
-        grad.addColorStop(0.15, 'rgba(0,0,0,0)');
-        grad.addColorStop(0.35, `rgba(${r},${g},${b},0.5)`);
-        grad.addColorStop(0.6, `rgb(${r},${g},${b})`);
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
-        this.ctx.fillStyle = grad;
-        this.ctx.fillRect(0, 0, w, h);
+      if (newColor && newColor[0]) {
+        this._colorHistory[this._head] = { r: newColor[0].red, g: newColor[0].green, b: newColor[0].blue };
+        this._head = (this._head + 1) % TRAIL_LEN;
       }
     }
+
+    this._sweepAngle += 0.05;
+    if (this._sweepAngle > 2 * Math.PI) this._sweepAngle -= 2 * Math.PI;
+
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const rMax = Math.min(w, h) / 2;
+    const rIn = rMax * INNER;
+    const rOut = rMax * OUTER;
+    const rMid = (rIn + rOut) / 2;
+    const rWidth = rOut - rIn;
+
+    this.ctx.clearRect(0, 0, w, h);
+
+    const imageData = this.ctx.createImageData(w, h);
+    const d = imageData.data;
+
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const dx = x - cx + 0.5;
+        const dy = y - cy + 0.5;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < rIn || dist > rOut) continue;
+
+        const angle = Math.atan2(dy, dx);
+        const relAngle = ((angle - this._sweepAngle) / (2 * Math.PI) + 1) % 1;
+        const trailIdx = Math.round(relAngle * (TRAIL_LEN - 1));
+        const idx = (this._head - 1 - trailIdx + TRAIL_LEN * 2) % TRAIL_LEN;
+        const c = this._colorHistory[idx];
+
+        const radialPos = (dist - rIn) / rWidth;
+        const falloff = 1 - Math.abs(radialPos - 0.5) * 1.4;
+        const trailWeight = Math.max(0, 1 - (trailIdx / TRAIL_LEN) * 0.7);
+
+        const alpha = Math.min(1, Math.max(0, trailWeight * falloff));
+        if (alpha < 0.02) continue;
+
+        const offset = (y * w + x) * 4;
+        d[offset] = Math.round(c.r * alpha);
+        d[offset + 1] = Math.round(c.g * alpha);
+        d[offset + 2] = Math.round(c.b * alpha);
+        d[offset + 3] = 255;
+      }
+    }
+
+    this.ctx.putImageData(imageData, 0, 0);
 
     this._rafId = requestAnimationFrame(() => this.draw());
   }
