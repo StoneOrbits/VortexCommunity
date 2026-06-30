@@ -23,7 +23,8 @@ export function initLightshow() {
         tiles.forEach(canvas => {
             const canvasId = canvas.getAttribute('id');
             const type = canvas.getAttribute('data-type') || 'scrolling';
-            const options = { type: type };
+            const tile = canvas.closest('.pat-tile, .mode-tile, .pat-item');
+            const options = { type: type, hoverEl: tile || canvas.closest('[class*="led-strip"]') || canvas.parentElement };
             new Lightshow(vortexLib, canvasId, options);
         });
 

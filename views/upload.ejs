@@ -1,48 +1,55 @@
-<!-- upload.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/head') %>
 <link rel="stylesheet" href="<%= basePath %>/css/pages/upload.css">
 <body class="dark-theme">
-    <main class="upload-main">
-        <div class="upload-card">
-            <div class="upload-card-header">
-                <div class="upload-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main>
+        <div class="container">
+            <div class="upload-section">
+                <div class="upload-header">
+                    <svg viewBox="0 0 256 256" class="upload-logo" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 104,19 L 142,19 L 152,29 L 172,26 L 181,31 L 202,45 L 206,66 L 222,69 L 235,101 L 235,111 L 229,117 L 228,125 L 236,134 L 236,147 L 227,176 L 211,180 L 212,198 L 210,202 L 186,222 L 173,224 L 168,221 L 162,221 L 159,223 L 156,233 L 151,236 L 113,236 L 103,226 L 83,229 L 74,224 L 53,210 L 49,189 L 33,186 L 20,154 L 20,144 L 26,138 L 27,130 L 19,121 L 19,108 L 28,79 L 44,75 L 43,57 L 45,53 L 69,33 L 82,31 L 87,34 L 93,34 L 96,32 L 99,22 L 103,20 Z M 117,27 L 140,27 L 140,33 L 141,34 L 144,60 L 145,61 L 145,69 L 149,90 L 149,100 L 145,100 L 136,95 L 135,91 L 130,83 L 129,79 L 111,44 L 111,42 L 106,33 L 106,28 L 116,28 Z M 166,35 L 171,35 L 194,50 L 195,51 L 195,57 L 184,76 L 166,112 L 163,117 L 159,117 L 155,110 L 155,100 L 156,99 L 159,75 L 163,59 L 166,36 Z M 75,40 L 80,40 L 88,48 L 128,90 L 128,94 L 115,96 L 52,62 L 52,58 L 74,41 Z M 212,76 L 216,76 L 217,78 L 221,91 L 227,104 L 227,108 L 165,139 L 159,139 L 161,126 L 212,77 Z M 35,85 L 107,97 L 107,102 L 100,109 L 86,110 L 85,111 L 79,111 L 66,114 L 37,117 L 36,118 L 27,118 L 28,108 L 33,93 L 34,86 Z M 120,102 L 135,102 L 138,103 L 142,105 L 150,113 L 152,117 L 153,120 L 153,135 L 152,138 L 150,142 L 142,150 L 138,152 L 135,153 L 120,153 L 117,152 L 113,150 L 105,142 L 103,138 L 102,135 L 102,120 L 103,117 L 105,113 L 113,105 L 119,103 Z M 90,116 L 96,116 L 94,129 L 43,179 L 39,179 L 34,164 L 28,151 L 28,147 L 89,117 Z M 219,137 L 228,137 L 227,147 L 220,170 L 148,158 L 148,153 L 155,146 L 176,144 L 177,143 L 202,140 L 203,139 L 218,138 Z M 92,138 L 96,138 L 100,145 L 100,155 L 99,156 L 96,180 L 92,196 L 89,220 L 84,220 L 61,205 L 60,204 L 60,198 L 92,139 Z M 106,155 L 110,155 L 119,160 L 120,164 L 125,172 L 126,176 L 149,222 L 149,227 L 115,228 L 115,222 L 114,221 L 111,195 L 110,194 L 110,186 L 106,165 L 106,156 Z M 135,159 L 140,159 L 157,169 L 189,185 L 200,192 L 202,192 L 203,197 L 180,215 L 175,215 L 127,165 L 127,161 L 134,160 Z" fill="#1abc9c" fill-rule="evenodd"/>
+                    </svg>
+                    <div>
+                        <h1 class="upload-title">Share Your Mode</h1>
+                        <p class="upload-subtitle">Upload your creation to the community</p>
+                    </div>
                 </div>
-                <h2>Share Your Mode</h2>
-                <p class="upload-subtitle">Upload your creation to the community</p>
-            </div>
-            <% if (error_msg.length) { %><div class="alert alert-error"><%= error_msg %></div><% } %>
-            <% if (success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
-            <div class="upload-card-body">
-                <form id="uploadForm" action="<%= basePath %>/upload" method="post" enctype="multipart/form-data">
-                    <div id="drop_area" class="drop-zone">
-                        <div class="drop-zone-content">
-                            <i class="fas fa-file-upload"></i>
-                            <p>Drag & drop your <strong>.vtxmode</strong> files here</p>
-                            <span class="drop-zone-or">or</span>
-                            <label for="modeFile" class="drop-zone-btn">Browse Files</label>
-                            <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
+
+                <% if (error_msg.length) { %><div class="alert alert-error"><%= error_msg %></div><% } %>
+                <% if (success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+
+                <div class="upload-card">
+                    <form id="uploadForm" action="<%= basePath %>/upload" method="post" enctype="multipart/form-data">
+                        <div id="drop_area" class="drop-zone">
+                            <div class="drop-zone-content">
+                                <i class="fas fa-file-upload"></i>
+                                <p>Drag & drop your <strong>.vtxmode</strong> files here</p>
+                                <span class="drop-zone-or">or</span>
+                                <label for="modeFile" class="drop-zone-btn">Browse Files</label>
+                                <input type="file" id="modeFile" name="modeFile" accept=".vtxmode" multiple required>
+                            </div>
+                            <div id="fileList" class="file-list"></div>
+                            <div id="fileError" class="feedback"></div>
                         </div>
-                        <div id="fileList" class="file-list"></div>
-                        <div id="fileError" class="feedback"></div>
-                    </div>
-                    <button type="button" class="g-recaptcha submit-btn"
-                            data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk"
-                            data-callback='onSubmit' data-action='submit'>
-                        <i class="fas fa-paper-plane"></i> Upload to Community
-                    </button>
-                    <div class="progress-bar" id="progressBar">
-                        <div class="progress" id="progress"></div>
-                    </div>
-                </form>
-            </div>
-            <div class="upload-card-footer">
-                <p>Create a mode first in <a href="<%= lightshowUrl || 'https://lightshow.lol' %>" target="_blank">Lightshow.lol</a>, then share it here</p>
+                        <button type="button" class="g-recaptcha submit-btn"
+                                data-sitekey="6LebppMpAAAAALluxJhaPmEk_fw-H452QV1HoTwk"
+                                data-callback='onSubmit' data-action='submit'>
+                            <i class="fas fa-paper-plane"></i> Upload to Community
+                        </button>
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress" id="progress"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <p class="upload-footer-note">Create a mode first in <a href="<%= lightshowUrl || 'https://lightshow.lol' %>" target="_blank">Lightshow.lol</a>, then share it here</p>
             </div>
         </div>
     </main>
+    <%- include('partials/footer') %>
     <%- include('partials/script') %>
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
@@ -50,7 +57,6 @@
             document.getElementById("uploadForm").submit();
         }
 
-        // File list display
         const fileInput = document.getElementById('modeFile');
         const fileList = document.getElementById('fileList');
         fileInput.addEventListener('change', () => {
@@ -59,7 +65,6 @@
             fileList.innerHTML = files.map(f => `<div class="file-item"><i class="fas fa-file"></i> ${f.name}</div>`).join('');
         });
 
-        // Drag and drop
         const dropZone = document.getElementById('drop_area');
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));

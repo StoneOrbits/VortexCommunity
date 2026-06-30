@@ -14,6 +14,19 @@
         <% }); %>
       <% } %>
     </div>
-    <%- include('lightshow', { pat: pat }) %>
-  </div>
+      <%- include('lightshow', { pat: pat }) %>
+    </div>
+    <div class="pat-tile-info-panel">
+      <div class="pat-tile-info-header">
+        <h3 class="pat-tile-info-title"><%= pat.name %></h3>
+        <span class="pat-tile-info-id">#<%= pat.id %></span>
+      </div>
+      <% if (data && data.colorset) { %>
+        <div class="pat-tile-info-swatches">
+          <% data.colorset.forEach(hex => { %>
+            <span class="color-swatch" style="background: <%= hex.replace('0x', '#') %>"></span>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
 </a>

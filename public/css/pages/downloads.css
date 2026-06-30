@@ -1,170 +1,146 @@
-/* downloads.css */
+/* downloads.css — modern card layout */
 
-/* General Section Styles */
-.downloads-section {
-    margin: 20px auto;
-    max-width: 1400px;
+.container > * + * {
+  margin-top: 24px;
 }
 
-.downloads-section h2 {
-    color: #FFF;
-    text-align: center;
-    margin-bottom: 20px;
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #fff;
 }
 
-.download-category {
-    background-color: #282828;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 10px;
+.section-desc {
+  font-size: 14px;
+  color: #999;
+  margin: 0 0 16px;
+  line-height: 1.5;
+  max-width: 600px;
 }
 
-.download-category-title {
-    color: #f1c40f;
-    margin-bottom: 10px;
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1abc9c;
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
 }
 
-.download-item {
-    padding: 10px 0;
-    border-bottom: 1px solid #888;
-    color: #FFF;
+.action-btn:hover {
+  background: #16a085;
 }
 
-.download-item:last-child {
-    border-bottom: none;
+.downloads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
 }
 
-.download-item h3 {
-    font-size: 20px;
-    margin-bottom: 5px;
+.download-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
-.download-info {
-    font-size: 14px;
-    color: #aaa;
+.download-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  border-color: #3a3a3a;
 }
 
-.download-button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin-top: 10px;
-    background-color: #007bff;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+.download-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.download-button:hover, .download-button:focus {
-    background-color: #0056b3;
-    color: #ffffff;
+.download-card-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
 }
 
-.download-button-disabled {
-    display: inline-block;
-    padding: 10px 20px;
-    margin-top: 10px;
-    background-color: #aaaaaa;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+.download-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #eee;
 }
 
-.download-button-disabled:hover, .download-button-disabled:focus {
-    background-color: #6c757d;
-    color: #ffffff;
+.download-card-body {
+  flex: 1;
+  margin-bottom: 12px;
 }
 
-.button-container {
-    text-align: center;
+.download-meta {
+  font-size: 13px;
+  color: #777;
+  margin: 2px 0;
 }
 
-.download-instructions-section {
-    background-color: #333;
-    padding: 20px;
-    margin: 50px auto;
-    border-radius: 10px;
-    max-width: 1400px;
+.download-card-actions {
+  padding-top: 12px;
+  border-top: 1px solid #2a2a2a;
 }
 
-.download-instructions-section h2 {
-    color: #f1c40f;
+.download-btn {
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Editor Section */
-.editor-section {
-    background-color: #333;
-    padding: 20px;
-    margin: 50px auto;
-    border-radius: 10px;
-    max-width: 1200px;
+.wiki-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px;
 }
 
-.editor-section h2 {
-    color: #f1c40f;
+.editor-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 48px;
+}
+
+.editor-screenshots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .editor-screenshot {
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
-    border-radius: 8px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #333;
+  flex: 1 1 300px;
 }
 
-.image-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
+.editor-download {
+  text-align: center;
+}
+
+.editor-download .download-meta {
+  margin-bottom: 12px;
 }
 
 @media (max-width: 768px) {
-    .editor-screenshot {
-        flex-basis: 100%;
-        max-width: 100%;
-        height: auto;
-    }
+  .downloads-grid {
+    grid-template-columns: 1fr;
+  }
 }
-
-/* Firmware Section */
-.device-section {
-    background-color: #282828;
-    padding: 20px;
-    margin: 20px auto;
-    border-radius: 10px;
-    max-width: 1300px;
-    display: flex;
-    align-items: center;
-}
-
-.download-device-image {
-    width: auto;
-    max-height: 200px; /* Make the image no more than 200px wide */
-    padding: 10px;
-    margin-right: 20px; /* Add space between image and content */
-    flex-shrink: 0; /* Prevent the image from shrinking */
-}
-
-.device-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.device-details {
-    text-align: left;
-}
-
-.device-details h3 {
-    color: #f1c40f;
-}
-
-.device-details p {
-    color: #aaa;
-}
-
-.download-button, .download-button-disabled {
-}
-

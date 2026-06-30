@@ -23,6 +23,7 @@ export default class LogoLightshow {
     this._pause = false;
     this._rafId = null;
     this._sweepAngle = 0;
+    this._lastFrameTime = 0;
     this._colorHistory = new Array(TRAIL_LEN).fill({ r: 60, g: 60, b: 100 });
     this._head = 0;
 
@@ -77,7 +78,9 @@ export default class LogoLightshow {
       }
     }
 
-    this._sweepAngle += 0.05;
+    const dt = this._lastFrameTime ? Math.min(now - this._lastFrameTime, 100) : 0;
+    this._lastFrameTime = now;
+    this._sweepAngle += dt * 0.003;
     if (this._sweepAngle > 2 * Math.PI) this._sweepAngle -= 2 * Math.PI;
 
     const w = this.canvas.width;

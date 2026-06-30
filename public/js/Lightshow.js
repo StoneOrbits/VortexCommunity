@@ -6,6 +6,7 @@ export default class Lightshow {
   constructor(vortexLib, canvasId, options = {}) {
     this.id = Lightshow.count++;
     this.type = options.type || 'scrolling'; // Default to 'scrolling' if no type is provided
+    this._hoverEl = options.hoverEl || null;
     this.setupCanvas(canvasId);
     this.setupOffScreenCanvas(canvasId);
     this.initializeVortex(vortexLib);

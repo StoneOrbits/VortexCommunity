@@ -6,6 +6,12 @@
     padding: 20px;
 }
 
+.pat-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
 @media (max-width: 768px) {
     .showcase {
         margin: 0 auto;

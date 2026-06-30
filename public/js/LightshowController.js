@@ -35,11 +35,12 @@ class LightshowController {
   }
 
   resolveHoverEl(instance) {
+    if (instance._hoverEl) return instance._hoverEl;
     if (instance.circle) {
       return instance.circle.closest('svg') || instance.circle;
     }
     if (instance.canvas) {
-      return instance.canvas.closest('.mode-tile, .pat-item, [class*="led-strip"]') || instance.canvas.parentElement;
+      return instance.canvas.closest('.pat-tile, .mode-tile, .pat-item') || instance.canvas.closest('[class*="led-strip"]') || instance.canvas.parentElement;
     }
     return null;
   }
