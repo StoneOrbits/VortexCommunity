@@ -1,3 +1,5 @@
+import controller from './LightshowController.js';
+
 export default class Lightshow {
   static count = 0;
 
@@ -12,7 +14,9 @@ export default class Lightshow {
     this.clearCanvas();
     this.boundScrollingDraw = this.scrollingDraw.bind(this); // Bind the scrolling draw function
     this.boundFlashDraw = this.flashDraw.bind(this); // Bind the flash draw function
-    this.vortex.setTickrate(50);
+    this._lastTickTime = 0;
+    this._tickInterval = 1000 / 20;
+    controller.register(this);
   }
 
   setupCanvas(canvasId) {
@@ -110,21 +114,26 @@ export default class Lightshow {
   scrollingDraw() {
     if (this._pause) return;
 
-    // Perform drawing operations on the off-screen canvas
-    this.offCtx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-    this.offCtx.fillRect(0, 0, this.offScreenCanvas.width, this.offScreenCanvas.height);
+    const now = performance.now();
+    if (now - this._lastTickTime >= this._tickInterval) {
+      this._lastTickTime = now;
 
-    const newColor = this.vortexLib.RunTick(this.vortex);
-    if (newColor) {
-      this.history.push({ color: newColor[0], x: 0, opacity: 1 });
+      // Perform drawing operations on the off-screen canvas
+      this.offCtx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      this.offCtx.fillRect(0, 0, this.offScreenCanvas.width, this.offScreenCanvas.height);
+
+      const newColor = this.vortexLib.RunTick(this.vortex);
+      if (newColor) {
+        this.history.push({ color: newColor[0], x: 0, opacity: 1 });
+      }
+
+      this.history.forEach(segment => this.drawSegment(segment));
+
+      this.history = this.history.filter(segment => segment.x < this.offScreenCanvas.width);
+
+      // Copy the off-screen canvas to the on-screen canvas in one operation
+      this.ctx.drawImage(this.offScreenCanvas, 0, 0);
     }
-
-    this.history.forEach(segment => this.drawSegment(segment));
-
-    this.history = this.history.filter(segment => segment.x < this.offScreenCanvas.width);
-
-    // Copy the off-screen canvas to the on-screen canvas in one operation
-    this.ctx.drawImage(this.offScreenCanvas, 0, 0);
 
     this.animationFrameId = requestAnimationFrame(this.boundScrollingDraw);
   }
@@ -132,10 +141,14 @@ export default class Lightshow {
   flashDraw() {
     if (this._pause) return;
 
-    const newColor = this.vortexLib.RunTick(this.vortex);
-    if (newColor) {
-      this.ctx.fillStyle = `rgba(${newColor[0].red}, ${newColor[0].green}, ${newColor[0].blue}, 1)`;
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    const now = performance.now();
+    if (now - this._lastTickTime >= this._tickInterval) {
+      this._lastTickTime = now;
+      const newColor = this.vortexLib.RunTick(this.vortex);
+      if (newColor) {
+        this.ctx.fillStyle = `rgba(${newColor[0].red}, ${newColor[0].green}, ${newColor[0].blue}, 1)`;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      }
     }
 
     this.animationFrameId = requestAnimationFrame(this.boundFlashDraw);

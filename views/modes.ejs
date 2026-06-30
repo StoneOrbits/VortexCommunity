@@ -15,15 +15,15 @@
         </section>
         <section class="filter-bar">
             <div class="device-filter">
-                <% var b = basePath; %>
-                <% let devices = [
-                    { id: 'gloves', name: 'Gloves', img: b + '/images/gloves-logo-square-64.png', checked: true },
-                    { id: 'orbit', name: 'Orbit', img: b + '/images/orbit-logo-square-64.png', checked: true },
-                    { id: 'handle', name: 'Handle', img: b + '/images/handle-logo-square-64.png', checked: true },
-                    { id: 'spark', name: 'Spark', img: b + '/images/spark-logo-square-64.png', checked: true },
-                    { id: 'chromadeck', name: 'Chromadeck', img: b + '/images/chromadeck-logo-square-64.png', checked: true },
-                    { id: 'duo', name: 'Duo', img: b + '/images/duo-logo-square-64.png', checked: true }
-                ]; %>
+                    <% var b = basePath; %>
+                    <% let devices = [
+                        { id: 'gloves', name: 'Gloves', img: b + '/images/gloves-logo-square-64.png', checked: true },
+                        { id: 'orbit', name: 'Orbit', img: b + '/images/orbit-logo-square-64.png', checked: true },
+                        { id: 'handle', name: 'Handle', img: b + '/images/handle-logo-square-64.png', checked: true },
+                        { id: 'spark', name: 'Spark', img: b + '/images/spark-logo-square-64.png', checked: true },
+                        { id: 'chromadeck', name: 'Chromadeck', img: b + '/images/chromadeck-logo-square-64.png', checked: true },
+                        { id: 'duo', name: 'Duo', img: b + '/images/duo-logo-square-64.png', checked: true }
+                    ]; %>
                 <% devices.forEach(function(device) { %>
                     <div class="filter-button">
                         <input type="checkbox" id="<%= device.id %>" name="device" value="<%= device.id %>" <%= device.checked ? 'checked' : '' %>>

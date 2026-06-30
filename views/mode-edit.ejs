@@ -1,34 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('partials/head') %>
-<body class="dark-theme">
+  <%- include('partials/head') %>
+  <link rel="stylesheet" href="<%= basePath %>/css/pages/mode.css">
+  <body class="dark-theme">
     <%- include('partials/header') %>
     <%- include('partials/nav') %>
     <main>
-        <div class="container">
-            <section class="mode-edit-section">
-                <form class="form-group" action="<%= basePath %>/mode/<%= mode.id %>/edit" method="post">
-                    <h2>Edit Mode: <%= mode.name %></h2>
-                    <div class="form-group">
-                        <label for="modeName">Name:</label>
-                        <input type="text" id="modeName" name="modeName" value="<%= mode.name %>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="modeDescription">Description:</label>
-                        <textarea id="modeDescription" name="modeDescription" rows="4" required><%= mode.description %></textarea>
-                    </div>
-                    <!-- Add more fields here as needed -->
-                    <div class="form-group">
-                        <button type="submit">Save Changes</button>
-                    </div>
-                    <div class="form-group">
-                        <a href="<%= basePath %>/mode/<%= mode.id %>">Cancel</a>
-                    </div>
-                </form>
-            </section>
+      <div class="container" id="mode-data-container" data-mode='<%= JSON.stringify(mode) %>' data-vortex-mode='<%= JSON.stringify(vortexMode) %>'>
+        <div class="mode-detail">
+          <div class="mode-detail-header">
+            <div class="mode-detail-info">
+              <h1 class="mode-detail-title"><%= mode.name %></h1>
+              <p class="mode-detail-meta">
+                by <% if (mode.creator) { %><a href="<%= basePath %>/user/<%= mode.creator.id %>"><%= mode.creator.username %></a><% } else { %>Unknown<% } %>
+                &middot; <%= mode.uploadDate %>
+                &middot; <%= mode.deviceType %>
+              </p>
+              <% if (mode.description) { %>
+                <p class="mode-detail-description"><%= mode.description %></p>
+              <% } %>
+              <% if (user && user.id === mode.createdBy) { %>
+                <div class="mode-detail-owner-actions">
+                  <a href="<%= basePath %>/mode/<%= mode.id %>/edit" class="owner-link">Edit</a>
+                  <a href="#" class="owner-link delete-link" onclick="confirmDelete()">Delete</a>
+                </div>
+                <div id="deleteConfirmModal" style="display:none;">
+                  <p>Are you sure you want to delete this mode?</p>
+                  <button onclick="document.getElementById('deleteForm').submit();">Yes, Delete</button>
+                  <button onclick="document.getElementById('deleteConfirmModal').style.display='none';">Cancel</button>
+                </div>
+                <form id="deleteForm" action="<%= basePath %>/mode/<%= mode.id %>/delete" method="post" style="display:none;"></form>
+              <% } %>
+            </div>
+            <div class="mode-detail-actions">
+              <form action="<%= basePath %>/mode/<%= mode.id %>/<%= user && isUpvoted ? 'unvote' : 'upvote' %>" method="post" class="vote-form">
+                <button type="submit" class="vote-btn">
+                  <img src="<%= user && isUpvoted ? basePath + '/images/color-upvote-icon.png' : basePath + '/images/bw-upvote-icon.png' %>" alt="Upvote" class="vote-icon">
+                  <span class="vote-count"><%= mode.votes %></span>
+                </button>
+              </form>
+              <form action="<%= basePath %>/mode/<%= mode.id %>/<%= user && isFavorited ? 'unfavorite' : 'favorite' %>" method="post" class="fav-form">
+                <button type="submit" class="vote-btn">
+                  <img src="<%= user && isFavorited ? basePath + '/images/color-star-icon.png' : basePath + '/images/bw-star-icon.png' %>" alt="Favorite" class="vote-icon">
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="mode-detail-body">
+            <div class="mode-detail-preview">
+              <svg viewBox="0 0 500 250" class="device-svg" preserveAspectRatio="xMidYMid meet">
+                <image href="<%= mode.deviceType === 'Gloves' ? basePath + '/images/gloves.svg' : mode.deviceType === 'Orbit' ? basePath + '/images/orbit.svg' : mode.deviceType === 'Handle' ? basePath + '/images/handle.svg' : mode.deviceType === 'Duo' ? basePath + '/images/duo.svg' : mode.deviceType === 'Spark' ? basePath + '/images/spark.svg' : basePath + '/images/chromadeck.svg' %>" width="500" height="250"/>
+                <% orderedPatternSets.forEach((pat, index) => { %>
+                <circle class="led-circle" data-pat='<%= JSON.stringify(pat.data ? pat.data : pat) %>' data-type="flashing" data-index="<%= index %>"/>
+                <% }); %>
+              </svg>
+            </div>
+            <div class="mode-detail-patterns">
+              <h3 class="mode-detail-patterns-title">Patterns</h3>
+              <div class="mode-patterns">
+                <% patternSets.forEach((pat, index) => { %>
+                <%- include('partials/pat-list-item-submission', { pat: pat, tempId: patternIndexMap[pat.id], patName: pat.name, patDescription: pat.description, isDuplicate: false }) %>
+                <% }); %>
+              </div>
+            </div>
+          </div>
+
+          <div class="mode-detail-footer">
+            <a href="#" id="openOnLightshow" class="lightshow-btn">Open in lightshow.lol &rarr;</a>
+          </div>
         </div>
+      </div>
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
-</body>
+    <script>
+      function confirmDelete() {
+        document.getElementById('deleteConfirmModal').style.display = 'block';
+      }
+    </script>
+  </body>
 </html>

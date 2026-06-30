@@ -1,4 +1,4 @@
-import { initLightshow } from './initLightshow.js';
+import { initLightshow, getLedPositions } from './initLightshow.js';
 initLightshow();
 
 const modeDataContainer = document.getElementById('mode-data-container');
@@ -58,9 +58,7 @@ if (deviceType) {
   const radii = { gloves: 14, orbit: 15, handle: 14, duo: 16, chromadeck: 13, spark: 14 };
   const ledSize = radii[deviceType] || 14;
 
-  fetch((window.basePath || '') + `/data/${deviceType}-led-positions.json`)
-    .then(response => response.json())
-    .then(data => {
+  getLedPositions(deviceType).then(data => {
       const points = data.points;
       const circles = svg.querySelectorAll('.led-circle');
       circles.forEach((circle, index) => {

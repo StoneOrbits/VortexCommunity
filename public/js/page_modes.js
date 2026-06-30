@@ -1,4 +1,4 @@
-import { initLightshow } from './initLightshow.js';
+import { initLightshow, getLedPositions } from './initLightshow.js';
 
 function filterModes() {
     const selectedDevices = Array.from(document.querySelectorAll('input[name="device"]:checked')).map(cb => cb.value);
@@ -48,9 +48,7 @@ function processModeTiles() {
 
         if (!deviceType) return;
 
-        const promise = fetch((window.basePath || '') + `/data/${deviceType}-led-positions.json`)
-            .then(response => response.json())
-            .then(data => {
+        const promise = getLedPositions(deviceType).then(data => {
                 const points = data.points;
                 const circles = svg.querySelectorAll('.led-circle');
                 circles.forEach((circle, index) => {
@@ -66,6 +64,7 @@ function processModeTiles() {
             .catch(error => {
                 console.error('Error loading LED positions:', error);
             });
+
 
         promises.push(promise);
     });

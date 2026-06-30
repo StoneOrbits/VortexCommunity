@@ -10,4 +10,22 @@
       <% }); %>
     </svg>
   </div>
+  <div class="mode-tile-info-panel">
+    <% let seenIds = []; %>
+    <% orderedPatternSets.forEach(pat => { %>
+      <% if (seenIds.includes(pat.id)) return; %>
+      <% seenIds.push(pat.id); %>
+      <% const data = pat.data || pat; %>
+      <div class="mode-tile-info-pattern">
+        <span class="mode-tile-info-pattern-name"><%= pat.name || 'Pattern' %></span>
+        <div class="mode-tile-info-swatches">
+          <% if (data && data.colorset) { %>
+            <% data.colorset.forEach(hex => { %>
+              <span class="color-swatch" style="background: <%= hex.replace('0x', '#') %>"></span>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+    <% }); %>
+  </div>
 </a>

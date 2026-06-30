@@ -1,3 +1,5 @@
+import controller from './LightshowController.js';
+
 export default class SvgLightshow {
   static count = 0;
 
@@ -7,12 +9,14 @@ export default class SvgLightshow {
     this.circle = circleElement;
     this.initializeVortex(vortexLib);
     this.loadPatData();
-    this.vortex.setTickrate(50);
     this.boundFlashDraw = this.flashDraw.bind(this);
+    this._lastTickTime = 0;
+    this._tickInterval = 1000 / 20;
     this.gradient = null;
     this.stop1 = null;
     this.stop2 = null;
     this.stop3 = null;
+    controller.register(this);
   }
 
   initializeVortex(vortexLib) {
@@ -106,16 +110,20 @@ export default class SvgLightshow {
   flashDraw() {
     if (this._pause) return;
 
-    const newColor = this.vortexLib.RunTick(this.vortex);
-    if (newColor) {
-      const r = newColor[0].red;
-      const g = newColor[0].green;
-      const b = newColor[0].blue;
-      this.ensureGradient();
-      if (this.stop1) {
-        const color = `rgb(${r},${g},${b})`;
-        this.stop1.setAttribute('stop-color', color);
-        this.stop2.setAttribute('stop-color', color);
+    const now = performance.now();
+    if (now - this._lastTickTime >= this._tickInterval) {
+      this._lastTickTime = now;
+      const newColor = this.vortexLib.RunTick(this.vortex);
+      if (newColor) {
+        const r = newColor[0].red;
+        const g = newColor[0].green;
+        const b = newColor[0].blue;
+        this.ensureGradient();
+        if (this.stop1) {
+          const color = `rgb(${r},${g},${b})`;
+          this.stop1.setAttribute('stop-color', color);
+          this.stop2.setAttribute('stop-color', color);
+        }
       }
     }
 

@@ -1,4 +1,4 @@
-import { initLightshow } from './initLightshow.js';
+import { initLightshow, getLedPositions } from './initLightshow.js';
 initLightshow();
 
 const modeDataContainer = document.getElementById('mode-data-container');
@@ -79,9 +79,7 @@ const ledSize = deviceType == 'chromadeck' ? 21 : 'orbit' ? 28 : 26;
 const highlightSize = 34;
 
 if (deviceType) {
-  fetch((window.basePath || '') + `/data/${deviceType}-led-positions.json`)
-    .then(response => response.json())
-    .then(data => {
+  getLedPositions(deviceType).then(data => {
       const points = data.points;
       const originalWidth = data.original_width;
       const originalHeight = data.original_height;
