@@ -49,7 +49,8 @@ function getScriptName(path) {
 var bp = window.basePath || '';
 Promise.all([
     import(bp + '/js/' + getScriptName(window.location.pathname)),
-    import(bp + '/js/controlPanel.js')
+    import(bp + '/js/controlPanel.js'),
+    import(bp + '/js/initLogo.js')
 ]).catch(function(e) {
     console.error('Error loading scripts:', e);
 });
