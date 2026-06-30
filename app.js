@@ -30,13 +30,13 @@ var app = express();
 app.set('trust proxy', 1);
 app.locals.basePath = BASE_PATH;
 
-const allowedOrigins = ['https://lightshow.lol', 'https://vortex.community', 'http://localhost:3000', 'http://127.0.0.1:8000'];
+const allowedOrigins = ['https://lightshow.lol', 'https://vortex.community', 'http://localhost:3000', 'http://127.0.0.1:8000', 'http://localhost:8000'];
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(null, false);
     }
   },
   methods: ['GET', 'POST', 'OPTIONS'],

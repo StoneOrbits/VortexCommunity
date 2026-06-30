@@ -1,64 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
   <%- include('partials/head') %>
+  <link rel="stylesheet" href="<%= basePath %>/css/pages/pat.css">
   <body class="dark-theme">
     <%- include('partials/header') %>
     <%- include('partials/nav') %>
     <main>
       <div class="container" id="pat-data-container" data-pat='<%= JSON.stringify(pat) %>'>
-        <section class="pat-profile-page">
-          <div class="pat-icons">
-            <form action="<%= basePath %>/pat/<%= pat.id %>/<%= user && isUpvoted ? 'unvote' : 'upvote' %>" method="post" class="votes-container">
-              <button type="submit" class="icon-button">
-                <img src="<%= user && isUpvoted ? basePath + '/images/color-upvote-icon.png' : basePath + '/images/bw-upvote-icon.png' %>" alt="Upvote" class="upvote-icon">
-              </button>
-              <span class="votes-count"><%= pat.votes %></span>
-            </form>
-            <form action="<%= basePath %>/pat/<%= pat.id %>/<%= user && isFavorited ? 'unfavorite' : 'favorite' %>" method="post" class="favorite-container">
-              <button type="submit" class="icon-button">
-                <img src="<%= user && isFavorited ? basePath + '/images/color-star-icon.png' : basePath + '/images/bw-star-icon.png' %>" alt="Favorite" class="favorite-icon">
-              </button>
-            </form>
-          </div>
-          <h2 class="pat-title"><%= pat.name %></h2>
-          <div class="pat-profile-header">
-            <p>Uploaded by <%= pat.creator ? `<a href="${basePath}/user/${pat.creator.id}">${pat.creator.username}</a>` : 'Unknown' %> on <%= uploadDate %></p>
-          </div>
-          <div class="pat-profile-details">
-            <p><%= pat.description %></p>
-            <% if (user && user.id === pat.createdBy) { %>
-            <a href="<%= basePath %>/pat/<%= pat.id %>/edit" class="edit-pat-link">Edit</a>
-            <a href="#" class="delete-pat-link" onclick="confirmDelete()">Delete</a>
-            <% } %>
-            <!-- Confirmation Modal HTML (hidden by default) -->
-            <div id="deleteConfirmModal" style="display:none;">
-              <p>Are you sure you want to delete this?</p>
-              <button onclick="document.getElementById('deleteForm').submit();">Yes, Delete</button>
-              <button onclick="document.getElementById('deleteConfirmModal').style.display='none';">Cancel</button>
+        <div class="pat-detail">
+          <div class="pat-detail-header">
+            <div class="pat-detail-info">
+              <h1 class="pat-detail-title"><%= pat.name %></h1>
+              <p class="pat-detail-meta">
+                by <% if (pat.creator) { %><a href="<%= basePath %>/user/<%= pat.creator.id %>"><%= pat.creator.username %></a><% } else { %>Unknown<% } %>
+                &middot; <%= uploadDate %>
+              </p>
+              <% if (pat.description) { %>
+                <p class="pat-detail-description"><%= pat.description %></p>
+              <% } %>
+              <% if (user && user.id === pat.createdBy) { %>
+                <div class="pat-detail-owner-actions">
+                  <a href="<%= basePath %>/pat/<%= pat.id %>/edit" class="owner-link">Edit</a>
+                  <a href="#" class="owner-link delete-link" onclick="confirmDelete()">Delete</a>
+                </div>
+                <div id="deleteConfirmModal" style="display:none;">
+                  <p>Are you sure you want to delete this pattern?</p>
+                  <button onclick="document.getElementById('deleteForm').submit();">Yes, Delete</button>
+                  <button onclick="document.getElementById('deleteConfirmModal').style.display='none';">Cancel</button>
+                </div>
+                <form id="deleteForm" action="<%= basePath %>/pat/<%= pat.id %>/delete" method="post" style="display:none;"></form>
+              <% } %>
+            </div>
+            <div class="pat-detail-actions">
+              <form action="<%= basePath %>/pat/<%= pat.id %>/<%= user && isUpvoted ? 'unvote' : 'upvote' %>" method="post" class="vote-form">
+                <button type="submit" class="vote-btn">
+                  <img src="<%= user && isUpvoted ? basePath + '/images/color-upvote-icon.png' : basePath + '/images/bw-upvote-icon.png' %>" alt="Upvote" class="vote-icon">
+                  <span class="vote-count"><%= pat.votes %></span>
+                </button>
+              </form>
+              <form action="<%= basePath %>/pat/<%= pat.id %>/<%= user && isFavorited ? 'unfavorite' : 'favorite' %>" method="post" class="fav-form">
+                <button type="submit" class="vote-btn">
+                  <img src="<%= user && isFavorited ? basePath + '/images/color-star-icon.png' : basePath + '/images/bw-star-icon.png' %>" alt="Favorite" class="vote-icon">
+                </button>
+              </form>
             </div>
           </div>
-          <%- include('partials/pat-profile-lightshow', { pat: pat }) %>
-          <div class="pat-profile-actions">
-            <% if (user) { %>
-            <a href="<%= basePath %>/pat/<%= pat.id %>/download" class="pat-profile-button download-button">Download</a>
-            <% } else { %>
-            <a href="<%= basePath %>/login" class="pat-profile-button download-button-disabled">Login to Download</a>
-            <% } %>
-            <a href="<%= lightshowUrl %>" id="openOnLightshow" class="pat-profile-button lightshow-button">lightshow.lol →</a>
+
+          <div class="pat-detail-body">
+            <div class="pat-detail-preview">
+              <% const data = pat.data || pat; %>
+              <% if (data && data.colorset) { %>
+                <div class="pat-swatches-preview">
+                  <% data.colorset.forEach(hex => { %>
+                    <span class="pat-swatch-large" style="background: <%= hex.replace('0x', '#') %>"></span>
+                  <% }); %>
+                </div>
+              <% } %>
+              <%- include('partials/pat-profile-lightshow', { pat: pat }) %>
+            </div>
+            <div class="pat-detail-info-panel">
+              <h3 class="pat-detail-panel-title">Colors</h3>
+              <div class="pat-colorset-grid">
+                <% if (data && data.colorset) { %>
+                  <% data.colorset.forEach(hex => { %>
+                    <div class="pat-color-item">
+                      <span class="pat-color-swatch" style="background: <%= hex.replace('0x', '#') %>"></span>
+                      <span class="pat-color-hex"><%= hex.replace('0x', '#') %></span>
+                    </div>
+                  <% }); %>
+                <% } %>
+              </div>
+            </div>
           </div>
-          <script>
-            function confirmDelete() {
-              var modal = document.getElementById('deleteConfirmModal');
-              modal.style.display = 'block';
-            }
-          </script>
-          <!-- Hidden form for deletion -->
-          <form id="deleteForm" action="<%= basePath %>/pat/<%= pat.id %>/delete" method="post" style="display:none;">
-          </form>
-        </section>
+
+          <div class="pat-detail-footer">
+            <a href="<%= lightshowUrl %>" id="openOnLightshow" class="lightshow-btn">Open in lightshow.lol &rarr;</a>
+          </div>
+        </div>
       </div>
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
+    <script>
+      function confirmDelete() {
+        document.getElementById('deleteConfirmModal').style.display = 'block';
+      }
+    </script>
   </body>
 </html>

@@ -4,6 +4,11 @@ import SvgLightshow from './SvgLightshow.js';
 
 const vortexLibPromise = VortexLib();
 
+['gloves','orbit','handle','spark','chromadeck','duo'].forEach(t => {
+    const cache = window._ledPositionsCache || (window._ledPositionsCache = {});
+    cache[t] = fetch((window.basePath || '') + `/data/${t}-led-positions.json`).then(r => r.json()).catch(() => {});
+});
+
 export function getLedPositions(deviceType) {
     const cache = window._ledPositionsCache || (window._ledPositionsCache = {});
     if (!cache[deviceType]) {

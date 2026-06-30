@@ -11,6 +11,18 @@
     </svg>
   </div>
   <div class="mode-tile-info-panel">
+    <div class="mode-tile-info-header">
+      <div class="mode-tile-info-meta">
+        <% if (mode.creator) { %>
+          <span class="mode-tile-info-creator"><%= mode.creator.username %></span>
+        <% } %>
+        <% if (mode.description) { %>
+          <p class="mode-tile-info-description"><%= mode.description %></p>
+        <% } %>
+      </div>
+      <img class="mode-tile-device-icon" src="<%= basePath + '/images/' + mode.deviceType.toLowerCase() + '-logo-square-64.png' %>" alt="<%= mode.deviceType %>">
+    </div>
+    <hr class="mode-tile-info-divider">
     <% let seenIds = []; %>
     <% orderedPatternSets.forEach(pat => { %>
       <% if (seenIds.includes(pat.id)) return; %>

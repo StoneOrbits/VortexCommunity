@@ -1,44 +1,82 @@
 import { initLightshow, getLedPositions } from './initLightshow.js';
 
+const PAGE_SIZE = 40;
+let currentPage = 1;
+
+const checkboxes = document.querySelectorAll('input[name="device"]');
+const modesList = document.getElementById('modes-list');
+const allTiles = Array.from(document.querySelectorAll('.mode-tile'));
+
 function filterModes() {
-    const selectedDevices = Array.from(document.querySelectorAll('input[name="device"]:checked')).map(cb => cb.value);
-    const searchQuery = document.querySelector('.search-input').value.toLowerCase();
-
-    document.querySelectorAll('.mode-tile').forEach(tile => {
-        const modeTitle = tile.querySelector('.mode-tile-title').textContent.toLowerCase();
+    const selectedDevices = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+    allTiles.forEach(tile => {
         const deviceType = tile.getAttribute('data-device-type').toLowerCase();
-
-        const matchesSearch = !searchQuery || modeTitle.includes(searchQuery);
-        const matchesDevice = selectedDevices.includes(deviceType);
-
-        if (matchesSearch && matchesDevice) {
-            tile.style.display = 'block';
-        } else {
-            tile.style.display = 'none';
-        }
+        tile._visible = selectedDevices.length === 0 || selectedDevices.includes(deviceType);
     });
 }
 
-const checkboxes = document.querySelectorAll('input[name="device"]');
-const searchForm = document.getElementById('search-form');
-const searchInput = document.querySelector('.search-input');
+function updatePagination() {
+    const visible = allTiles.filter(t => t._visible);
+    const pageCount = Math.ceil(visible.length / PAGE_SIZE) || 1;
+    if (currentPage > pageCount) currentPage = pageCount;
 
-checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', filterModes);
-});
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    const visibleOnPage = visible.slice(start, end);
 
-searchForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+    allTiles.forEach(tile => {
+        tile.style.display = visibleOnPage.includes(tile) ? '' : 'none';
+    });
+
+    const container = document.getElementById('pagination-container');
+    if (pageCount <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+
+    let html = '<div class="pagination-wrapper"><ul class="pagination">';
+
+    if (currentPage > 1) {
+        html += `<li><a href="#" data-page="${currentPage - 1}">&laquo;</a></li>`;
+    } else {
+        html += '<li class="disabled"><span>&laquo;</span></li>';
+    }
+
+    for (let i = 1; i <= pageCount; i++) {
+        const cls = i === currentPage ? 'active' : '';
+        html += `<li class="${cls}"><a href="#" data-page="${i}">${i}</a></li>`;
+    }
+
+    if (currentPage < pageCount) {
+        html += `<li><a href="#" data-page="${currentPage + 1}">&raquo;</a></li>`;
+    } else {
+        html += '<li class="disabled"><span>&raquo;</span></li>';
+    }
+
+    html += '</ul></div>';
+    container.innerHTML = html;
+
+    container.querySelectorAll('a[data-page]').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            currentPage = parseInt(a.getAttribute('data-page'), 10);
+            updatePagination();
+        });
+    });
+}
+
+function onFilterChange() {
     filterModes();
-});
+    currentPage = 1;
+    updatePagination();
+}
 
-filterModes();
+checkboxes.forEach(cb => cb.addEventListener('change', onFilterChange));
+
+onFilterChange();
 
 function processModeTiles() {
-    const modeTiles = document.querySelectorAll('.mode-tile');
-    const promises = [];
-
-    modeTiles.forEach(tile => {
+    allTiles.forEach(tile => {
         const svg = tile.querySelector('.device-svg');
         if (!svg) return;
 
@@ -48,7 +86,7 @@ function processModeTiles() {
 
         if (!deviceType) return;
 
-        const promise = getLedPositions(deviceType).then(data => {
+        getLedPositions(deviceType).then(data => {
                 const points = data.points;
                 const circles = svg.querySelectorAll('.led-circle');
                 circles.forEach((circle, index) => {
@@ -64,16 +102,8 @@ function processModeTiles() {
             .catch(error => {
                 console.error('Error loading LED positions:', error);
             });
-
-
-        promises.push(promise);
     });
-
-    return Promise.all(promises);
 }
 
-processModeTiles().then(() => {
-    initLightshow();
-}).catch(error => {
-    console.error('Error processing mode tiles:', error);
-});
+initLightshow();
+processModeTiles();

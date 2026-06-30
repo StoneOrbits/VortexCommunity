@@ -2,7 +2,6 @@ import { initLightshow, getLedPositions } from './initLightshow.js';
 
 function processModeTiles() {
     const modeTiles = document.querySelectorAll('.mode-tile');
-    const promises = [];
 
     modeTiles.forEach(tile => {
         const svg = tile.querySelector('.device-svg');
@@ -14,7 +13,7 @@ function processModeTiles() {
 
         if (!deviceType) return;
 
-        const promise = getLedPositions(deviceType).then(data => {
+        getLedPositions(deviceType).then(data => {
                 const points = data.points;
                 const circles = svg.querySelectorAll('.led-circle');
                 circles.forEach((circle, index) => {
@@ -30,16 +29,8 @@ function processModeTiles() {
             .catch(error => {
                 console.error('Error loading LED positions:', error);
             });
-
-
-        promises.push(promise);
     });
-
-    return Promise.all(promises);
 }
 
-processModeTiles().then(() => {
-    initLightshow();
-}).catch(error => {
-    console.error('Error processing mode tiles:', error);
-});
+initLightshow();
+processModeTiles();
