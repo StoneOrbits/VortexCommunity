@@ -31,6 +31,8 @@ document.getElementById('openOnLightshow').addEventListener('click', async (even
     if (found) {
       channel.postMessage({ type: 'importPattern', data: patData });
       channel.close();
+      const w = window.open('', 'lightshowTab');
+      if (w) w.focus();
       return;
     }
     channel.close();
