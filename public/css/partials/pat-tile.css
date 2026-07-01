@@ -1,55 +1,129 @@
-/* pat-tile.css */
-
 .pat-tile {
     display: flex;
     flex-direction: column;
-    border: 1px solid #888;
-    padding: 10px;
-    border-radius: 5px;
-    height: 120px;
-    position: relative;
-    background-color: #222;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #1a1a1a;
     color: #FFF;
     text-decoration: none;
-    transition: background-color 0.3s;
-    transition: transform 0.2s; /* Add a little animation for hover effect */
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
 .pat-tile:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.pat-tile h2 {
-    font-size: 20px;
-    margin-top: 0;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    border-color: #3a3a3a;
 }
 
 .pat-tile-content {
-    flex-grow: 1;
-    margin-bottom: 10px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.pat-tile-blurb {
-    font-size: 14px;
-    font-style: italic;
-    color: #aaa;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 12px 14px;
 }
 
 .pat-tile-title {
-    font-size: 20px;
+    font-size: 15px;
+    font-weight: 600;
     margin: 0;
-    color: #FFF;
-    width: 100%;
-    white-space: nowrap;
+    color: #eee;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
+.tile-id {
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+    position: relative;
+    top: -2.5px;
+    margin-right: 6px;
+}
 
+.pat-tile-description {
+    font-size: 12px;
+    color: #777;
+    margin: 4px 0 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pat-tile-preview {
+    border-top: 1px solid #2a2a2a;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pat-tile-swatches {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+}
+
+.pat-tile-swatches .color-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid #333;
+    flex-shrink: 0;
+}
+
+.pat-tile .led-strip-container {
+    position: static;
+    height: 32px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #0a0a0a;
+    margin: 0;
+}
+
+.pat-tile .lightshow-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.pat-tile-info-panel {
+    display: none;
+    padding: 10px 14px;
+    border-top: 1px solid #2a2a2a;
+}
+
+.preview-mode-info .pat-tile-info-panel {
+    display: block;
+}
+
+.preview-mode-info .pat-tile-preview {
+    display: none;
+}
+
+.pat-tile-info-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.pat-tile-info-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+    color: #eee;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pat-tile-info-swatches {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.pat-tile-info-meta {
+    font-size: 11px;
+    color: #777;
+    margin: 2px 0;
+}

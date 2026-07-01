@@ -1,22 +1,37 @@
-/* mode-tile-preview-lightshow.css */
+/* mode-tile-preview-lightshow.css - SVG device preview */
 
-.mode-tile-preview-container {
-    flex:3;
-    overflow: hidden;
-    border: 1px solid #888;
-    border-radius: 5px;
-    background-color: #1f1f1f;
-    padding: 0;
-    margin: 0;
-    margin-left: 5px;
+.device-svg {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-.mode-tile-preview-led-container {
-    width: 0px;
-    height: 0px;
-    overflow: hidden;
-    background-color: #333;
-    padding: 0;
-    margin: 0;
-    display: none;
+.led-circle {
+  fill: transparent;
+  transition: stroke 0.15s, stroke-width 0.15s;
+}
+
+.led-circle.active-highlight {
+  stroke: #0ad;
+  stroke-width: 3;
+}
+
+.led-circle.selected {
+  stroke: #ad0;
+  stroke-width: 3;
+}
+
+.led-circle.active-highlight {
+  stroke: #0ad;
+  stroke-width: 3;
+}
+
+.led-circle.selected {
+  stroke: #ad0;
+  stroke-width: 3;
+}
+
+.highlight-circle {
+  fill: transparent;
+  pointer-events: none;
 }

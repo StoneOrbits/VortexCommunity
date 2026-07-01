@@ -45,21 +45,13 @@ function getScriptName(path) {
     return 'page_home.js';
 }
 
-// Helper function to autoload script into DOM based on script path in public/
-function autoLoad(scriptPath) {
-    var script = document.createElement('script');
-    script.src = scriptPath;
-    script.type = 'module'; // Specify that the script is a module
-    script.onload = function() {
-        console.log(script.src + ' loaded successfully.');
-    };
-    script.onerror = function() {
-        console.log('Error loading script: ' + script.src);
-    };
-    document.body.appendChild(script);
-}
-
 // Determine the script name based on the route and autoload it
 var bp = window.basePath || '';
-autoLoad(bp + '/js/' + getScriptName(window.location.pathname));
+Promise.all([
+    import(bp + '/js/' + getScriptName(window.location.pathname)),
+    import(bp + '/js/controlPanel.js'),
+    import(bp + '/js/initLogo.js')
+]).catch(function(e) {
+    console.error('Error loading scripts:', e);
+});
 

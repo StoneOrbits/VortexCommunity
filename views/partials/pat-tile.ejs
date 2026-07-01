@@ -1,7 +1,28 @@
 <a href="<%= basePath %>/pat/<%= pat.id %>" class="pat-tile" data-pat-name="<%= pat.name %>">
-    <div class="pat-tile-content">
-        <h2 class="pat-tile-title"><%= pat.name %></h2>
-        <p class="pat-tile-blurb"><%= pat.description %></p>
+  <div class="pat-tile-content">
+    <h2 class="pat-tile-title"><span class="tile-id">#<%= pat.id %></span> <%= pat.name %></h2>
+    <% if (pat.description) { %>
+      <p class="pat-tile-description"><%= pat.description %></p>
+    <% } %>
+  </div>
+  <div class="pat-tile-preview">
+    <% const data = pat.data || pat; %>
+    <div class="pat-tile-swatches">
+      <% if (data && data.colorset) { %>
+        <% data.colorset.forEach(hex => { %>
+          <span class="color-swatch" style="background: <%= hex.replace('0x', '#') %>"></span>
+        <% }); %>
+      <% } %>
     </div>
-    <%- include('lightshow', { pat: pat }) %>
+      <%- include('lightshow', { pat: pat }) %>
+    </div>
+    <div class="pat-tile-info-panel">
+      <% if (data && data.colorset) { %>
+        <div class="pat-tile-info-swatches">
+          <% data.colorset.forEach(hex => { %>
+            <span class="color-swatch" style="background: <%= hex.replace('0x', '#') %>"></span>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
 </a>

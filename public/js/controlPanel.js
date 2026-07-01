@@ -1,0 +1,73 @@
+import controller from './LightshowController.js';
+
+const panel = document.getElementById('control-panel');
+const toggle = document.getElementById('control-panel-toggle');
+const speedSlider = document.getElementById('control-speed');
+const modeBtns = document.querySelectorAll('.control-panel-play-btn');
+const previewBtns = document.querySelectorAll('.control-panel-preview-btn');
+
+const logoSpeedSlider = document.getElementById('control-logo-speed');
+const logoModeBtns = document.querySelectorAll('.control-panel-logo-play-btn');
+
+let collapsed = localStorage.getItem('controlPanelCollapsed') === 'true';
+
+function setCollapsed(val) {
+  collapsed = val;
+  panel.classList.toggle('expanded', !collapsed);
+  localStorage.setItem('controlPanelCollapsed', val);
+}
+
+toggle.addEventListener('click', () => setCollapsed(!collapsed));
+
+function onSpeedChange() {
+  controller.updateSettings({ speed: parseInt(speedSlider.value) });
+}
+speedSlider.addEventListener('input', onSpeedChange);
+speedSlider.addEventListener('change', onSpeedChange);
+
+modeBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    modeBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    controller.updateSettings({ playMode: btn.dataset.mode });
+  });
+});
+
+previewBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    previewBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    controller.updateSettings({ previewMode: btn.dataset.mode });
+    document.body.classList.toggle('preview-mode-info', btn.dataset.mode === 'info');
+  });
+});
+
+function onLogoSpeedChange() {
+  controller.updateLogoSettings({ speed: parseInt(logoSpeedSlider.value) });
+}
+logoSpeedSlider.addEventListener('input', onLogoSpeedChange);
+logoSpeedSlider.addEventListener('change', onLogoSpeedChange);
+
+logoModeBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    logoModeBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    controller.updateLogoSettings({ playMode: btn.dataset.mode });
+  });
+});
+
+speedSlider.value = controller.settings.speed;
+modeBtns.forEach(btn => {
+  btn.classList.toggle('active', btn.dataset.mode === controller.settings.playMode);
+});
+previewBtns.forEach(btn => {
+  btn.classList.toggle('active', btn.dataset.mode === controller.settings.previewMode);
+});
+document.body.classList.toggle('preview-mode-info', controller.settings.previewMode === 'info');
+
+logoSpeedSlider.value = controller.logoSettings.speed;
+logoModeBtns.forEach(btn => {
+  btn.classList.toggle('active', btn.dataset.mode === controller.logoSettings.playMode);
+});
+
+setCollapsed(collapsed);

@@ -76,3 +76,34 @@
   text-align: center;
   margin-top: 5px;
 }
+
+.pat-name-input,
+.pat-desc-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #eee;
+  font-size: 13px;
+  padding: 8px 10px;
+  margin: 0 0 6px;
+}
+
+.pat-name-input:focus,
+.pat-desc-input:focus {
+  border-color: #1abc9c;
+  outline: none;
+}
+
+.pat-desc-input {
+  font-size: 12px;
+  color: #999;
+}
+
+.pat-duplicate-label {
+  font-size: 11px;
+  color: #666;
+  margin: 2px 0;
+  font-style: italic;
+}

@@ -30,13 +30,13 @@ var app = express();
 app.set('trust proxy', 1);
 app.locals.basePath = BASE_PATH;
 
-const allowedOrigins = ['https://lightshow.lol', 'https://vortex.community', 'http://localhost:3000', 'http://127.0.0.1:8000'];
+const allowedOrigins = ['https://lightshow.lol', 'https://vortex.community', 'http://localhost:3000', 'http://127.0.0.1:8000', 'http://localhost:8000'];
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(null, false);
     }
   },
   methods: ['GET', 'POST', 'OPTIONS'],
@@ -152,10 +152,30 @@ app.use(function(req, res, next) {
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-    res.status(err.status || 500);
-    res.render('error');
+    const status = err.status || 500;
+    const message = err.message || 'Unknown Error';
+    const basePath = res.locals && res.locals.basePath ? res.locals.basePath : '';
+    const hint = status === 404 ? 'The page you\'re looking for doesn\'t exist or has been moved.' :
+                 status === 500 ? 'A server error occurred.' : 'Something went wrong.';
+    res.status(status);
+    res.type('html').send(`<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+*{margin:0;padding:0}body{background:#121212;color:#fff;font-family:Arial,sans-serif;min-height:100vh;display:flex;justify-content:center;align-items:center}
+.card{text-align:center;padding:48px 32px;max-width:420px}
+.code{font-size:72px;font-weight:800;color:#1abc9c;margin:0 0 8px;line-height:1}
+.msg{font-size:18px;color:#eee;margin:0 0 12px}
+.hint{font-size:14px;color:#999;margin:0 0 28px}
+.btn{display:inline-block;background:#1abc9c;color:#fff;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none}
+.btn:hover{background:#16a085}
+</style></head>
+<body><div class="card">
+<h1 class="code">${status}</h1>
+<p class="msg">${message}</p>
+<p class="hint">${hint}</p>
+<a href="${basePath}/" class="btn">&larr; Go Home</a>
+</div></body></html>`);
 });
 
 module.exports = app;

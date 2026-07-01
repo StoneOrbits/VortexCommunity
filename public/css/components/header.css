@@ -1,37 +1,62 @@
 /* header.css */
 
 header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    max-width: 1460px;
-    margin: 0 auto;
+  max-width: 1460px;
+  margin: 0 auto;
+  padding: 20px 16px 16px;
 }
 
-header img {
-    width: 80px; /* Ensure a consistent size for the logo */
-    height: auto; /* Maintain aspect ratio */
-    margin-right: 10px;
-    transition: width 0.3s, height 0.3s;
+.header-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  text-decoration: none;
+  color: inherit;
 }
 
-header h1 {
-    font-size: 32px;
-    margin: 0;
-    transition: font-size 0.3s;
-    flex-grow: 1;
-    text-align: left;
+.cog-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.cog-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cog-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.header-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #eee;
+  letter-spacing: -0.5px;
 }
 
 @media (max-width: 768px) {
-    header h1 {
-        font-size: 20px;
-    }
+  header {
+    padding: 14px 16px 10px 16px;
+  }
 
-    header img {
-        width: 48px; /* Reduce logo size on smaller screens */
-        height: 48px;
-    }
+  .cog-container {
+    width: 64px;
+    height: 64px;
+  }
+
+  .header-title {
+    font-size: 22px;
+  }
 }
-

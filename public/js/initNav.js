@@ -1,37 +1,38 @@
-function toggleDropdown(event) {
-    event.preventDefault();
-    const parentLi = event.currentTarget.parentElement;
-    parentLi.classList.toggle('open');
-}
+(function () {
+  var toggle = document.querySelector('.nav-toggle');
+  var menu = document.querySelector('.nav-links');
+  var backdrop = document.querySelector('.nav-backdrop');
 
-document.addEventListener('DOMContentLoaded', function () {
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu');
+  if (!toggle || !menu) return;
 
-    hamburger.addEventListener('click', function () {
-        navMenu.classList.toggle('active');
-    });
+  function open() {
+    toggle.classList.add('open');
+    menu.classList.add('open');
+    if (backdrop) backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
 
-    // Initialize dropdowns as closed
-    const dropdowns = document.querySelectorAll('nav ul > li > ul.dropdown');
-    dropdowns.forEach(function (dropdown) {
-        dropdown.style.display = 'none';
-    });
+  function close() {
+    toggle.classList.remove('open');
+    menu.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
 
-    const dropdownToggles = document.querySelectorAll('nav ul > li > a[href="#"]');
-    dropdownToggles.forEach(function (toggle) {
-        toggle.addEventListener('click', function (event) {
-            event.preventDefault();
-            const parentLi = event.currentTarget.parentElement;
-            const dropdown = parentLi.querySelector('.dropdown');
-            if (parentLi.classList.contains('open')) {
-                parentLi.classList.remove('open');
-                dropdown.style.display = 'none';
-            } else {
-                parentLi.classList.add('open');
-                dropdown.style.display = 'block';
-            }
-        });
-    });
-});
+  toggle.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (menu.classList.contains('open')) {
+      close();
+    } else {
+      open();
+    }
+  });
 
+  menu.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', close);
+  });
+
+  if (backdrop) {
+    backdrop.addEventListener('click', close);
+  }
+})();

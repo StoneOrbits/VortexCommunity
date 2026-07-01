@@ -6,18 +6,23 @@ const { Op } = require('sequelize');
 router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page || 1, 10);
-    const pageSize = parseInt(req.query.pageSize || 40, 10);
+    const pageSize = parseInt(req.query.pageSize || 999, 10);
     const searchQuery = req.query.search || '';
     const sortQuery = req.query.sort || 'votes';
     const sortOrder = req.query.order === 'asc' ? 'ASC' : 'DESC';
-
-    const where = searchQuery ? { name: { [Op.iLike]: `%${searchQuery}%` } } : {};
+    const where = {};
+    if (searchQuery) {
+      where.name = { [Op.iLike]: `%${searchQuery}%` };
+    }
 
     const { count: totalCount, rows: modes } = await Mode.findAndCountAll({
       where,
       order: [[sortQuery, sortOrder]],
       offset: (page - 1) * pageSize,
-      limit: pageSize
+      limit: pageSize,
+      include: [
+        { model: User, as: 'creator', attributes: ['id', 'username'] }
+      ]
     });
 
     const orderedPatternSetsArray = await Promise.all(modes.map(async (mode) => {

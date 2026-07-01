@@ -3,84 +3,162 @@
 .mode-tile {
     display: flex;
     flex-direction: column;
-    border: 1px solid #888;
-    padding: 10px;
-    border-radius: 5px;
-    height: 180px;
-    position: relative; /* Ensure the device icon stays within the tile */
-    background-color: #222;
+    border: 1px solid #2a2a2a;
+    padding: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #141414;
     color: #FFF;
     text-decoration: none;
-    transition: background-color 0.3s;
-    transition: transform 0.2s; /* Add a little animation for hover effect */
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
 .mode-tile:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    border-color: #3a3a3a;
 }
 
-.device-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    height: 50px;
-    width: 50px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+.device-preview-container {
+    height: 140px;
+    background-color: #141414;
+    overflow: hidden;
+    align-self: center;
+    padding: 5px;
+}
+
+.device-preview-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.mode-tile .device-svg {
+    height: 100%;
+    width: auto;
+    display: block;
 }
 
 .mode-tile-content {
-    flex-direction: column;
-    text-align: left;
-    text-overflow: ellipsis;
-    margin-bottom: 10px;
+    padding: 12px 14px;
+    background-color: #1a1a1a;
 }
 
 .mode-tile-title {
-    font-size: 20px;
-    margin: 5px 0px;
-    width: 100%;
-    max-height: 40px;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #eee;
+}
+
+.tile-id {
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+    position: relative;
+    top: -2.5px;
+    margin-right: 6px;
+}
+
+.mode-tile-info-panel {
+    display: none;
+    aspect-ratio: 2 / 1;
+    background: #141414;
+    padding: 10px 10px 0;
+    overflow-y: auto;
+    flex-direction: column;
+    gap: 8px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.mode-tile-info-panel:after {
+    content: '';
+    display: block;
+    height: 6px;
+    flex-shrink: 0;
+}
+
+.preview-mode-info .mode-tile-info-panel {
+    display: flex;
+}
+
+.preview-mode-info .device-preview-container {
+    display: none;
+}
+
+.mode-tile-info-pattern {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mode-tile-info-pattern-name {
+    font-size: 11px;
+    color: #999;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 44px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mode-tile-info-swatches {
+    display: flex;
+    gap: 3px;
+}
+
+.color-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #333;
+    flex-shrink: 0;
+}
+
+.mode-tile-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.mode-tile-info-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.mode-tile-info-creator {
+    font-size: 12px;
+    color: #aaa;
+    font-weight: 500;
+}
+
+.mode-tile-info-description {
+    font-size: 11px;
+    color: #777;
+    margin: 2px 0 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.mode-tile-description {
-    font-size: 14px;
-    color: #aaa;
-    margin-bottom: 10px;
-    margin-top: 0px;
-    max-width: 100%;
-    max-height: 40px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.mode-tile-device-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    opacity: 0.8;
 }
 
-.mode-details {
-    font-size: 12px;
-    color: #ccc;
+.mode-tile-info-divider {
+    border: none;
+    border-top: 1px solid #2a2a2a;
+    margin: 6px 0 4px;
+    width: 100%;
+    flex-shrink: 0;
 }
-
-.device-icon.gloves {
-  background-image: url('../images/gloves-logo-square-64.png');
-}
-
-.device-icon.orbit {
-  background-image: url('../images/orbit-logo-square-64.png');
-}
-
-.device-icon.handle {
-  background-image: url('../images/handle-logo-square-64.png');
-}
-
-.device-icon.duo {
-  background-image: url('../images/duo-logo-square-64.png');
-}
-
-.device-icon.chromadeck {
-  background-image: url('../images/chromadeck-logo-square-64.png');
-}
-

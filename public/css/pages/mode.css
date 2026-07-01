@@ -1,252 +1,331 @@
 /* mode.css */
 
-.mode-profile-page {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #222;
-    border: 2px solid #888;
-    border-radius: 10px;
-    position: relative; /* Added for absolute positioning of actions */
+.mode-detail {
+  margin: 24px 0;
 }
 
-.mode-profile-header {
-    margin-bottom: 5px;
-    font-weight: bold;
-    font-size: 14px;
+.mode-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 24px;
 }
 
-.mode-title {
-    font-size: 20px;
-    margin: 5px 0px;
-    top: 15px;
-    left: 15px;
-    max-width: calc(100% - 80px); /* Adjust max-width to prevent overflow */
-    max-height: 40px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.mode-detail-info {
+  flex: 1;
+  min-width: 0;
 }
 
-.mode-icons {
-    margin: 0px;
-    position: relative;
-    height: 0;
-    width: 100%;
+.mode-detail-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #fff;
+  word-break: break-word;
 }
 
-.mode-profile-button {
-    text-decoration: none;
-    color: #FFF;
-    margin-top: 10px;
-    margin-left: 10px;
+.mode-detail-meta {
+  font-size: 13px;
+  color: #999;
+  margin: 0 0 10px;
 }
 
-.edit-mode-link,
-.delete-mode-link {
-    color: #FFFFFF;
-    text-decoration: underline;
-    cursor: pointer;
-    display: inline-block;
-    margin: 0px;
+.mode-detail-meta a {
+  color: #1abc9c;
+  text-decoration: none;
 }
 
-.mode-profile-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
+.mode-detail-meta a:hover {
+  text-decoration: underline;
 }
 
-.mode-profile-details {
-    margin: 5px 0;
+.mode-detail-description {
+  font-size: 14px;
+  color: #ccc;
+  margin: 0;
+  line-height: 1.5;
 }
 
-.mode-profile-description {
-    max-width: calc(100% - 20px); /* Adjust max-width to prevent overflow */
-    max-height: 80px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-top: 0;
+.mode-detail-owner-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 14px;
 }
 
-.mode-profile-image-container {
-    position: relative;
-    margin: 20px 0;
-    text-align: center;
+.owner-link {
+  color: #999;
+  text-decoration: none;
+  font-size: 13px;
 }
 
-.mode-device-image {
-    max-width: 100%;
-    border: 1px solid #888;
-    border-radius: 10px;
+.owner-link:hover {
+  color: #fff;
 }
 
-.pattern-dot {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    cursor: pointer;
+.delete-link {
+  color: #e74c3c;
 }
 
-.pattern-tooltip {
-    visibility: hidden;
-    background-color: #333;
-    color: #FFF;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%; /* Position above the dot */
-    left: 50%;
-    margin-left: -60px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    width: 120px;
+.delete-link:hover {
+  color: #ff6b6b;
 }
 
-.pattern-dot:hover .pattern-tooltip {
-    visibility: visible;
-    opacity: 1;
+.mode-detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.votes-container {
-    position: absolute;
-    top: 0px;
-    right: 30px;
+.vote-form,
+.fav-form {
+  margin: 0;
 }
 
-.upvote-icon {
-    width: 20px;
-    height: 20px;
+.vote-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.votes-count {
-    display: block;
-    text-align: center;
+.vote-btn:hover {
+  background: #222;
+  border-color: #555;
 }
 
-.favorite-icon {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 20px;
-    height: 20px;
+.vote-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
-.icon-button {
-    background: none !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    cursor: pointer;
-    outline: none !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    text-decoration: none !important;
+.vote-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ccc;
 }
 
-.icon-button:hover,
-.icon-button:focus {
-    background: none !important;
-    border: none !important;
-    outline: none !important;
-    text-decoration: none !important;
+.mode-detail-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
-.votes-container,
-.favorite-container {
-    padding: 0 !important;
-    margin: 0 !important;
-    display: inline-block;
+.mode-detail-preview {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 6px;
+  align-self: start;
+  max-width: 100%;
 }
 
-.edit-mode-link,
-.delete-mode-link {
-    color: #FFFFFF;
-    text-decoration: underline;
-    cursor: pointer;
-    display: inline-block;
-    margin: 0px;
+.mode-detail-preview .device-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 100%;
 }
 
-.mode-profile-button {
-    text-decoration: none;
-    color: #FFF;
-    margin-top: 10px;
-    margin-left: 10px;
+.mode-detail-patterns {
+  min-width: 0;
+  width: 100%;
 }
 
-.lightshow-button {
-    background-color: #1abc9c;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    text-decoration: none;
-    margin-right: 10px;
-    margin-left: 20px;
+.mode-detail-patterns-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: #ccc;
 }
 
-.lightshow-button:hover {
-    background-color: #16a085;
+.mode-patterns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.download-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    display: inline-block;
-    transition: background-color 0.3s;
+.pat-item-submission {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.download-button:hover {
-    background-color: #0056b3;
+.pat-item-submission:hover {
+  background: #222;
 }
 
-.download-button-disabled {
-    background-color: #aaaaaa;
-    color: #ffffff;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    display: inline-block;
-    transition: background-color 0.3s;
+.pat-item-submission.highlighted {
+  border-color: #1abc9c;
+  background: #1a2a22;
 }
 
-.download-button-disabled:hover {
-    background-color: #6c757d;
-    color: #ffffff;
+.pat-item-submission.selected {
+  border-color: #3498db;
+  background: #1a2230;
+}
+
+.pat-item-submission-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.pat-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #eee;
+  margin: 0;
+  word-break: break-word;
+}
+
+.mode-detail-patterns .submission-led-strip-container {
+  flex: 0 0 120px !important;
+  width: 120px !important;
+  height: 24px !important;
+  overflow: hidden !important;
+  border-radius: 4px;
+  background: #111;
+  border: 1px solid #333;
+  margin: 0 !important;
+  box-sizing: border-box;
+}
+
+.mode-detail-patterns .lightshow-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.mode-detail-patterns .pat-item-submission-content {
+  width: auto;
+  flex: 1;
+  min-width: 0;
+}
+
+.mode-detail-patterns .pat-name {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: break-word;
+  line-height: 1.4;
+  max-height: none;
+  -webkit-line-clamp: unset;
+}
+
+.mode-detail-footer {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 48px;
+}
+
+.lightshow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #1abc9c;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+  text-align: center;
+}
+
+.lightshow-btn:hover {
+  background: #16a085;
+}
+
+#deleteConfirmModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 24px;
+  z-index: 100;
+  text-align: center;
+}
+
+#deleteConfirmModal p {
+  margin: 0 0 16px;
+  color: #eee;
+}
+
+#deleteConfirmModal button {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  margin: 0 6px;
+  font-size: 14px;
+}
+
+#deleteConfirmModal button:last-child {
+  background: #555;
+}
+
+#deleteConfirmModal button:hover {
+  opacity: 0.9;
 }
 
 @media (max-width: 768px) {
-    .mode-profile-details {
-        margin: 20px 0;
-        padding-bottom: 20px;
-    }
+  .mode-detail-body {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-detail-preview {
+    max-width: 100%;
+  }
+
+  .mode-detail-patterns .submission-led-strip-container {
+    flex: 0 0 80px !important;
+    width: 80px !important;
+    height: 20px !important;
+  }
+
+  .lightshow-btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 
-@media (max-width: 338px) {
-    .mode-profile-button {
-        text-decoration: none;
-        color: #FFF;
-        margin-top: 10px;
-        margin-left: 5px;
-        font-size: 12px;
-    }
-}
+@media (max-width: 480px) {
+  .mode-detail-patterns .submission-led-strip-container {
+    flex: 0 0 60px !important;
+    width: 60px !important;
+    height: 16px !important;
+  }
 
-/* Specific CSS for mode icons */
-.mode-profile-page .votes-container {
-    top: 15px; /* Adjust to align with the mode title */
-    right: 70px; /* Adjust to provide space for the favorite icon */
-}
+  .pat-item-submission {
+    padding: 10px 10px;
+    gap: 8px;
+  }
 
-.mode-profile-page .favorite-container {
-    top: 15px; /* Adjust to align with the mode title */
-    right: 30px; /* Adjust to position next to the votes container */
+  .pat-name {
+    font-size: 13px;
+  }
 }
-

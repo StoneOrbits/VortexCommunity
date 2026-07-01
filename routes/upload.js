@@ -120,6 +120,7 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         switch (numLeds) {
           case 10: return 'Gloves';
           case 28: return 'Orbit';
+          case 6: return 'Spark';
           case 3: return 'Handle';
           case 2: return 'Duo';
           case 20: return 'Chromadeck';
@@ -145,12 +146,17 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         patDescriptions.push('');
       }
 
+      let normalizedJson = jsonData;
+      if (!normalizedJson.modes) {
+        normalizedJson = { modes: [jsonData] };
+      }
+
       req.session.modeData = {
         name: modeName || fileName,
         description: '',
         deviceType,
         flags,
-        jsonData,
+        jsonData: normalizedJson,
         isDuplicates,
         duplicateNames,
         patNames,
@@ -182,6 +188,7 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
       switch (numLeds) {
         case 10: return 'Gloves';
         case 28: return 'Orbit';
+        case 6: return 'Spark';
         case 3: return 'Handle';
         case 2: return 'Duo';
         case 20: return 'Chromadeck';
@@ -228,19 +235,62 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.get('/submit', ensureAuthenticated, (req, res) => {
+router.get('/submit', ensureAuthenticated, async (req, res) => {
   const modeData = req.session.modeData || {};
+  const basePath = req.app.locals.basePath || '';
+  if (!modeData.jsonData || !modeData.isDuplicates) {
+    req.flash('error', 'No mode data found. Please upload a mode first.');
+    return res.redirect(basePath + '/upload');
+  }
+
+  try {
+    const { flags, jsonData, deviceType } = modeData;
+    const pats = jsonData.modes[0].single_pats;
+    const patternSetIds = new Map();
+    let allExist = true;
+
+    for (const pat of pats) {
+      const sortedPatData = sortObjectKeys(pat);
+      const dataHash = computeHash(JSON.stringify(sortedPatData));
+      const ps = await PatternSet.findOne({ where: { dataHash } });
+      if (!ps) { allExist = false; break; }
+      patternSetIds.set(dataHash, ps.id);
+    }
+
+    if (allExist) {
+      const deduplicatedPatternSets = [...new Set(pats.map(pat => {
+        const dataHash = computeHash(JSON.stringify(sortObjectKeys(pat)));
+        return patternSetIds.get(dataHash);
+      }))];
+
+      const updatedLedPatternOrder = pats.map(pat => {
+        const dataHash = computeHash(JSON.stringify(sortObjectKeys(pat)));
+        return deduplicatedPatternSets.indexOf(patternSetIds.get(dataHash));
+      });
+
+      const modeHash = computeHash(JSON.stringify(deduplicatedPatternSets) + ":" + JSON.stringify(updatedLedPatternOrder) + ":" + flags + ":" + deviceType);
+      const existingMode = await Mode.findOne({ where: { dataHash: modeHash } });
+      if (existingMode) {
+        req.flash('error', 'This exact mode already exists on the website.');
+        delete req.session.modeData;
+        return res.redirect(basePath + '/upload');
+      }
+    }
+  } catch (e) {
+    console.error('Error checking for existing mode:', e);
+  }
+
   res.render('upload-submit', { modeData });
 });
 
 router.post('/submit', ensureAuthenticated, async (req, res) => {
+  const createdPatternSets = [];
+  const basePath = req.app.locals.basePath || '';
   try {
     const { name, description, patternNames, patternDescriptions } = req.body;
     const { deviceType, flags, jsonData, isDuplicates } = req.session.modeData;
-    const basePath = req.app.locals.basePath || '';
 
     const patternSetIds = new Map();
-    const createdPatternSets = [];
 
     for (let i = 0; i < jsonData.modes[0].single_pats.length; i++) {
       const pat = jsonData.modes[0].single_pats[i];
@@ -283,13 +333,19 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
       return deduplicatedPatternSets.indexOf(patternSetIds.get(dataHash));
     });
 
+    const modeHash = computeHash(JSON.stringify(deduplicatedPatternSets) + ":" + JSON.stringify(updatedLedPatternOrder) + ":" + flags + ":" + deviceType);
+    const existingMode = await Mode.findOne({ where: { dataHash: modeHash } });
+    if (existingMode) {
+      throw new Error('This mode already exists');
+    }
+
     const mode = await Mode.create({
       name,
       description,
       deviceType,
       createdBy: req.user.id,
       flags: parseInt(flags, 10),
-      dataHash: computeHash(JSON.stringify(deduplicatedPatternSets) + ":" + JSON.stringify(updatedLedPatternOrder) + ":" + flags + ":" + deviceType)
+      dataHash: modeHash
     });
 
     for (let i = 0; i < updatedLedPatternOrder.length; i++) {
@@ -303,7 +359,7 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
 
     req.flash('success', 'Mode and PatternSets successfully submitted!');
     delete req.session.modeData;
-    res.redirect(basePath + '/modes');
+    res.redirect(basePath + '/mode/' + mode.id);
   } catch (error) {
     console.error('Error saving modes and patterns:', error);
 
@@ -312,8 +368,8 @@ router.post('/submit', ensureAuthenticated, async (req, res) => {
       await PatternSet.destroy({ where: { id: createdPatternSets } });
     }
 
-    req.flash('error', 'An error occurred while submitting your mode.');
-    res.redirect(basePath + '/upload/submit');
+    req.flash('error', error.message === 'This mode already exists' ? 'This mode already exists on the website.' : 'An error occurred while submitting your mode.');
+    res.redirect(basePath + '/upload');
   }
 });
 

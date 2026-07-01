@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/head') %>
+<link rel="stylesheet" href="<%= basePath %>/css/pages/modes.css">
 <body class="dark-theme">
     <%- include('partials/header') %>
     <%- include('partials/nav') %>
     <main>
-        <section class="search-bar">
-            <form id="search-form" action="<%= basePath %>/modes" method="get">
+        <% function qsPage(page, search, sort, order) {
+            var params = 'page=' + page;
+            if (search) params += '&search=' + encodeURIComponent(search);
+            if (sort && sort !== 'votes') params += '&sort=' + encodeURIComponent(sort);
+            if (order && order !== 'desc') params += '&order=' + encodeURIComponent(order);
+            return params;
+        } %>
+        <form id="search-form" action="<%= basePath %>/modes" method="get">
+            <section class="search-bar">
                 <div class="search-container">
                     <input type="text" name="search" class="search-input" placeholder="Search..." value="<%= search %>">
                     <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
                 </div>
-            </form>
-        </section>
+            </section>
+        </form>
         <section class="filter-bar">
             <div class="device-filter">
-                <% var b = basePath; %>
                 <% let devices = [
-                    { id: 'gloves', name: 'Gloves', img: b + '/images/gloves-logo-square-64.png', checked: true },
-                    { id: 'orbit', name: 'Orbit', img: b + '/images/orbit-logo-square-64.png', checked: true },
-                    { id: 'handle', name: 'Handle', img: b + '/images/handle-logo-square-64.png', checked: true },
-                    { id: 'spark', name: 'Spark', img: b + '/images/spark-logo-square-64.png', checked: true },
-                    { id: 'chromadeck', name: 'Chromadeck', img: b + '/images/chromadeck-logo-square-64.png', checked: true },
-                    { id: 'duo', name: 'Duo', img: b + '/images/duo-logo-square-64.png', checked: true }
+                    { id: 'gloves', name: 'Gloves', img: basePath + '/images/gloves-logo-square-64.png' },
+                    { id: 'orbit', name: 'Orbit', img: basePath + '/images/orbit-logo-square-64.png' },
+                    { id: 'handle', name: 'Handle', img: basePath + '/images/handle-logo-square-64.png' },
+                    { id: 'spark', name: 'Spark', img: basePath + '/images/spark-logo-square-64.png' },
+                    { id: 'chromadeck', name: 'Chromadeck', img: basePath + '/images/chromadeck-logo-square-64.png' },
+                    { id: 'duo', name: 'Duo', img: basePath + '/images/duo-logo-square-64.png' }
                 ]; %>
                 <% devices.forEach(function(device) { %>
                     <div class="filter-button">
-                        <input type="checkbox" id="<%= device.id %>" name="device" value="<%= device.id %>" <%= device.checked ? 'checked' : '' %>>
+                        <input type="checkbox" id="<%= device.id %>" name="device" value="<%= device.id %>">
                         <label for="<%= device.id %>">
                             <img src="<%= device.img %>" alt="<%= device.name %> Icon">
                             <%= device.name %>
@@ -41,33 +48,10 @@
                     <%- include('partials/mode-tile', { mode: mode, orderedPatternSets: orderedPatternSetsArray[index] }) %>
                 <% }) %>
             </div>
-            <% if (pageCount > 1) { %>
-              <div class="pagination-wrapper">
-                <ul class="pagination">
-                  <% if (currentPage > 1) { %>
-                    <li><a href="<%= basePath %>/modes?page=<%= currentPage - 1 %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>">&laquo;</a></li>
-                  <% } else { %>
-                    <li class="disabled"><span>&laquo;</span></li>
-                  <% } %>
-
-                  <% for (let i = 1; i <= pageCount; i++) { %>
-                    <li class="<%= i === currentPage ? 'active' : '' %>">
-                      <a href="<%= basePath %>/modes?page=<%= i %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>"><%= i %></a>
-                    </li>
-                  <% } %>
-
-                  <% if (currentPage < pageCount) { %>
-                    <li><a href="<%= basePath %>/modes?page=<%= currentPage + 1 %>&search=<%= search %>&sort=<%= sort %>&order=<%= order %>">&raquo;</a></li>
-                  <% } else { %>
-                    <li class="disabled"><span>&raquo;</span></li>
-                  <% } %>
-                </ul>
-              </div>
-            <% } %>
+            <div id="pagination-container"></div>
         </section>
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
 </body>
 </html>
-
