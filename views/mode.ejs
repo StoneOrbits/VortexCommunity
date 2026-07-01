@@ -56,6 +56,34 @@
                 <% }); %>
               </svg>
             </div>
+            <div class="mode-detail-info-panel">
+              <div class="mode-detail-info-header">
+                <div class="mode-detail-info-meta">
+                  <span class="mode-detail-info-creator"><%= mode.creator ? mode.creator.username : 'Unknown' %></span>
+                  <% if (mode.description) { %>
+                    <p class="mode-detail-info-description"><%= mode.description %></p>
+                  <% } %>
+                </div>
+                <img class="mode-detail-device-icon" src="<%= basePath + '/images/' + mode.deviceType.toLowerCase() + '-logo-square-64.png' %>" alt="<%= mode.deviceType %>">
+              </div>
+              <hr class="mode-detail-info-divider">
+              <% let seenIds = []; %>
+              <% orderedPatternSets.forEach(pat => { %>
+                <% if (seenIds.includes(pat.id)) return; %>
+                <% seenIds.push(pat.id); %>
+                <% const data = pat.data || pat; %>
+                <div class="mode-detail-info-pattern">
+                  <span class="mode-detail-info-pattern-name"><%= pat.name || 'Pattern' %></span>
+                  <div class="mode-detail-info-swatches">
+                    <% if (data && data.colorset) { %>
+                      <% data.colorset.forEach(hex => { %>
+                        <span class="color-swatch" style="background: <%= hex.replace('0x', '#') %>"></span>
+                      <% }); %>
+                    <% } %>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
             <div class="mode-detail-patterns">
               <h3 class="mode-detail-patterns-title">Patterns</h3>
               <div class="mode-patterns">

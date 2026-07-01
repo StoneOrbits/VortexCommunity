@@ -329,3 +329,87 @@
     font-size: 13px;
   }
 }
+
+/* preview mode info panel */
+.mode-detail-info-panel {
+  display: none;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 16px;
+  overflow-y: auto;
+  flex-direction: column;
+  gap: 8px;
+  align-self: start;
+}
+
+.preview-mode-info .mode-detail-preview {
+  display: none;
+}
+
+.preview-mode-info .mode-detail-info-panel {
+  display: flex;
+}
+
+.mode-detail-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.mode-detail-info-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.mode-detail-info-creator {
+  font-size: 13px;
+  color: #aaa;
+  font-weight: 500;
+}
+
+.mode-detail-info-description {
+  font-size: 12px;
+  color: #777;
+  margin: 4px 0 0;
+}
+
+.mode-detail-device-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.mode-detail-info-divider {
+  border: none;
+  border-top: 1px solid #2a2a2a;
+  margin: 4px 0;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.mode-detail-info-pattern {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mode-detail-info-pattern-name {
+  font-size: 12px;
+  color: #999;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.mode-detail-info-swatches {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}

@@ -160,6 +160,7 @@
 }
 
 .pat-detail-info-panel {
+  display: none;
   background: #1a1a1a;
   border: 1px solid #2a2a2a;
   border-radius: 12px;
@@ -265,6 +266,15 @@
 
 #deleteConfirmModal button:hover {
   opacity: 0.9;
+}
+
+/* preview mode info toggle */
+.preview-mode-info .pat-detail-preview {
+  display: none;
+}
+
+.preview-mode-info .pat-detail-info-panel {
+  display: block;
 }
 
 @media (max-width: 768px) {
