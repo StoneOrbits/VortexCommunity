@@ -1,6 +1,6 @@
 <a href="<%= basePath %>/pat/<%= pat.id %>" class="pat-tile" data-pat-name="<%= pat.name %>">
   <div class="pat-tile-content">
-    <h2 class="pat-tile-title"><%= pat.name %></h2>
+    <h2 class="pat-tile-title"><span class="tile-id">#<%= pat.id %></span> <%= pat.name %></h2>
     <% if (pat.description) { %>
       <p class="pat-tile-description"><%= pat.description %></p>
     <% } %>
@@ -17,10 +17,6 @@
       <%- include('lightshow', { pat: pat }) %>
     </div>
     <div class="pat-tile-info-panel">
-      <div class="pat-tile-info-header">
-        <h3 class="pat-tile-info-title"><%= pat.name %></h3>
-        <span class="pat-tile-info-id">#<%= pat.id %></span>
-      </div>
       <% if (data && data.colorset) { %>
         <div class="pat-tile-info-swatches">
           <% data.colorset.forEach(hex => { %>

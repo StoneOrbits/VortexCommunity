@@ -10,7 +10,7 @@
         <div class="mode-detail">
           <div class="mode-detail-header">
             <div class="mode-detail-info">
-              <h1 class="mode-detail-title"><%= mode.name %></h1>
+              <h1 class="mode-detail-title"><span class="tile-id">#<%= mode.id %></span> <%= mode.name %></h1>
               <p class="mode-detail-meta">
                 by <% if (mode.creator) { %><a href="<%= basePath %>/user/<%= mode.creator.id %>"><%= mode.creator.username %></a><% } else { %>Unknown<% } %>
                 &middot; <%= mode.uploadDate %>

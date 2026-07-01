@@ -7,7 +7,7 @@
     padding: 0;
     border-radius: 12px;
     overflow: hidden;
-    background-color: #1a1a1a;
+    background-color: #141414;
     color: #FFF;
     text-decoration: none;
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -20,10 +20,11 @@
 }
 
 .device-preview-container {
-    aspect-ratio: 2 / 1;
+    height: 140px;
     background-color: #141414;
-    border-bottom: 1px solid #2a2a2a;
     overflow: hidden;
+    align-self: center;
+    padding: 5px;
 }
 
 .device-preview-inner {
@@ -34,14 +35,15 @@
     height: 100%;
 }
 
-.device-svg {
-    width: 100%;
+.mode-tile .device-svg {
     height: 100%;
+    width: auto;
     display: block;
 }
 
 .mode-tile-content {
     padding: 12px 14px;
+    background-color: #1a1a1a;
 }
 
 .mode-tile-title {
@@ -52,6 +54,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     color: #eee;
+}
+
+.tile-id {
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+    position: relative;
+    top: -2.5px;
+    margin-right: 6px;
 }
 
 .mode-tile-info-panel {

@@ -10,7 +10,7 @@
         <div class="pat-detail">
           <div class="pat-detail-header">
             <div class="pat-detail-info">
-              <h1 class="pat-detail-title"><%= pat.name %></h1>
+              <h1 class="pat-detail-title"><span class="tile-id">#<%= pat.id %></span> <%= pat.name %></h1>
               <p class="pat-detail-meta">
                 by <% if (pat.creator) { %><a href="<%= basePath %>/user/<%= pat.creator.id %>"><%= pat.creator.username %></a><% } else { %>Unknown<% } %>
                 &middot; <%= uploadDate %>

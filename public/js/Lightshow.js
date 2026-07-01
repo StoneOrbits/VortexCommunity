@@ -115,6 +115,11 @@ export default class Lightshow {
   scrollingDraw() {
     if (this._pause) return;
 
+    if (this.offScreenCanvas.width === 0 || this.offScreenCanvas.height === 0) {
+      this.animationFrameId = requestAnimationFrame(this.boundScrollingDraw);
+      return;
+    }
+
     const now = performance.now();
     if (now - this._lastTickTime >= this._tickInterval) {
       this._lastTickTime = now;
@@ -141,6 +146,11 @@ export default class Lightshow {
 
   flashDraw() {
     if (this._pause) return;
+
+    if (this.canvas.width === 0 || this.canvas.height === 0) {
+      this.animationFrameId = requestAnimationFrame(this.boundFlashDraw);
+      return;
+    }
 
     const now = performance.now();
     if (now - this._lastTickTime >= this._tickInterval) {

@@ -1,6 +1,6 @@
 <a href="<%= basePath %>/mode/<%= mode.id %>" class="mode-tile" data-device-type="<%= mode.deviceType.toLowerCase() %>" data-mode='<%= JSON.stringify(mode) %>'>
   <div class="mode-tile-content">
-      <h2 class="mode-tile-title"><%= mode.name %></h2>
+      <h2 class="mode-tile-title"><span class="tile-id">#<%= mode.id %></span> <%= mode.name %></h2>
   </div>
   <div class="device-preview-container">
     <div class="device-preview-inner">
