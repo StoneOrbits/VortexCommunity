@@ -14,6 +14,7 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const BASE_PATH = process.env.BASE_PATH || '';
+const LIGHTSHOWLOL_DIR = path.join(__dirname, 'lightshow.lol');
 
 const pgPool = new Pool({
   host: process.env.PG_HOST || '127.0.0.1',
@@ -68,6 +69,11 @@ app.use(
 
 app.use(BASE_PATH, express.static(path.join(__dirname, 'public')));
 
+// Dev only: serve lightshow.lol at root when checked out as a sibling
+if (require('fs').existsSync(LIGHTSHOWLOL_DIR)) {
+  app.use('/', express.static(LIGHTSHOWLOL_DIR));
+}
+
 app.use(require('./middleware/setPageStyles'));
 
 app.use(session({
@@ -78,7 +84,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
-    cookie: { path: BASE_PATH + '/', maxAge: 30 * 24 * 60 * 60 * 1000 }
+    cookie: { path: '/', maxAge: 30 * 24 * 60 * 60 * 1000 }
 }));
 
 app.use(passport.initialize());

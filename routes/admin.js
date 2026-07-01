@@ -1,5 +1,5 @@
 const express = require('express');
-const { User, PatternSet, Mode, Download } = require('../models/pg/index');
+const { User, PatternSet, Mode, Download, sequelize } = require('../models/pg/index');
 const { Op } = require('sequelize');
 const router = express.Router();
 
@@ -25,6 +25,33 @@ router.get('/users', isAdmin, async (req, res) => {
     ? { [Op.or]: [{ username: { [Op.iLike]: `%${q}%` } }, { email: { [Op.iLike]: `%${q}%` } }] }
     : {};
   const users = await User.findAll({ where, order: [['id', 'DESC']] });
+
+  const userIds = users.map(u => u.id);
+  const [patternRows, modeRows] = await Promise.all([
+    PatternSet.findAll({
+      attributes: ['createdBy', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+      where: { createdBy: userIds },
+      group: ['createdBy'],
+      raw: true
+    }),
+    Mode.findAll({
+      attributes: ['createdBy', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+      where: { createdBy: userIds },
+      group: ['createdBy'],
+      raw: true
+    })
+  ]);
+
+  const patCounts = {};
+  patternRows.forEach(r => { patCounts[r.createdBy] = parseInt(r.count, 10); });
+  const modCounts = {};
+  modeRows.forEach(r => { modCounts[r.createdBy] = parseInt(r.count, 10); });
+
+  users.forEach(u => {
+    u.dataValues.patternCount = patCounts[u.id] || 0;
+    u.dataValues.modeCount = modCounts[u.id] || 0;
+  });
+
   res.render('admin/index', { users, section: 'users' });
 });
 
@@ -57,7 +84,7 @@ router.get('/patterns', isAdmin, async (req, res) => {
   const where = q ? { name: { [Op.iLike]: `%${q}%` } } : {};
   const patterns = await PatternSet.findAll({
     where, order: [['id', 'DESC']],
-    include: [{ model: User, as: 'creator', attributes: ['username'] }]
+    include: [{ model: User, as: 'creator', attributes: ['id', 'username'] }]
   });
   res.render('admin/index', { patterns, section: 'patterns' });
 });
@@ -79,7 +106,7 @@ router.get('/modes', isAdmin, async (req, res) => {
   const where = q ? { name: { [Op.iLike]: `%${q}%` } } : {};
   const modes = await Mode.findAll({
     where, order: [['id', 'DESC']],
-    include: [{ model: User, as: 'creator', attributes: ['username'] }]
+    include: [{ model: User, as: 'creator', attributes: ['id', 'username'] }]
   });
   res.render('admin/index', { modes, section: 'modes' });
 });

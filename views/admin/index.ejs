@@ -48,6 +48,8 @@
               <th>ID</th>
               <th>Username</th>
               <th>Email</th>
+              <th>Modes</th>
+              <th>Patterns</th>
               <th>Created</th>
               <th>Actions</th>
             </tr>
@@ -56,8 +58,10 @@
             <% users.forEach(u => { %>
             <tr>
               <td><%= u.id %></td>
-              <td><%= u.username %></td>
+              <td><a href="<%= basePath %>/user/<%= u.id %>"><%= u.username %></a></td>
               <td><%= u.email || '-' %></td>
+              <td><%= u.getDataValue('modeCount') %></td>
+              <td><%= u.getDataValue('patternCount') %></td>
               <td><%= u.createdAt ? u.createdAt.toISOString().split('T')[0] : '-' %></td>
               <td class="actions-cell">
                 <form action="<%= basePath %>/control/users/update-username" method="POST" class="inline-form">
@@ -96,7 +100,7 @@
             <tr>
               <td><%= p.id %></td>
               <td><a href="<%= basePath %>/pat/<%= p.id %>"><%= p.name %></a></td>
-              <td><%= p.creator ? p.creator.username : 'deleted' %></td>
+              <td><% if (p.creator) { %><a href="<%= basePath %>/user/<%= p.creator.id %>"><%= p.creator.username %></a><% } else { %>deleted<% } %></td>
               <td><%= p.votes %></td>
               <td><%= p.createdAt ? p.createdAt.toISOString().split('T')[0] : '-' %></td>
               <td class="actions-cell">
@@ -133,7 +137,7 @@
               <td><%= m.id %></td>
               <td><a href="<%= basePath %>/mode/<%= m.id %>"><%= m.name %></a></td>
               <td><%= m.deviceType %></td>
-              <td><%= m.creator ? m.creator.username : 'deleted' %></td>
+              <td><% if (m.creator) { %><a href="<%= basePath %>/user/<%= m.creator.id %>"><%= m.creator.username %></a><% } else { %>deleted<% } %></td>
               <td><%= m.votes %></td>
               <td><%= m.createdAt ? m.createdAt.toISOString().split('T')[0] : '-' %></td>
               <td class="actions-cell">
