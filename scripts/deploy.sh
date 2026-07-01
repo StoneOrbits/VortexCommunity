@@ -41,5 +41,9 @@ fi
 
 chmod +x start.sh
 
+# Optimize assets (minify JS/CSS) before starting
+echo "Optimizing assets..."
+npm run optimize
+
 # Only start service once (final run)
 sudo systemctl start "$SERVICE"

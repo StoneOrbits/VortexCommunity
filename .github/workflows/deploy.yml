@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Optimize assets
+        run: npm run optimize
+
+      - name: Commit and push optimized files
+        run: |
+          if ! git diff --quiet -- 'public/'; then
+            git config user.name "vortex-deploy"
+            git config user.email "deploy@vortex.community"
+            git add -A 'public/'
+            git commit -m "Optimize assets [skip ci]"
+            git push
+          fi
