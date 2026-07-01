@@ -137,15 +137,45 @@ function selectPattern(index) {
   });
 }
 
-document.getElementById('openOnLightshow').addEventListener('click', (event) => {
+document.getElementById('openOnLightshow').addEventListener('click', async (event) => {
   event.preventDefault();
 
   const modeDataContainer = document.getElementById('mode-data-container');
-  const modeDataEncoded = btoa(modeDataContainer.getAttribute('data-vortex-mode'));
+  const vortexMode = JSON.parse(modeDataContainer.getAttribute('data-vortex-mode'));
 
   const lightshowUrl = window.LIGHTSHOWLOL_URL || 'https://lightshow.lol';
   const lightshowOrigin = window.LIGHTSHOWLOL_ORIGIN || 'https://lightshow.lol';
 
+  // Try BroadcastChannel first (same-origin cross-tab communication)
+  try {
+    const channel = new BroadcastChannel('vortex-bridge');
+    const found = await new Promise((resolve) => {
+      const handler = (e) => {
+        if (e.data.type === 'pong') {
+          channel.removeEventListener('message', handler);
+          resolve(true);
+        }
+      };
+      channel.addEventListener('message', handler);
+      channel.postMessage({ type: 'ping' });
+      setTimeout(() => {
+        channel.removeEventListener('message', handler);
+        resolve(false);
+      }, 300);
+    });
+
+    if (found) {
+      channel.postMessage({ type: 'importMode', data: vortexMode });
+      channel.close();
+      return;
+    }
+    channel.close();
+  } catch (e) {
+    console.log('BroadcastChannel not available, falling back to postMessage');
+  }
+
+  // Fallback: BroadcastChannel not available (cross-origin dev) — open new tab
+  const modeDataEncoded = btoa(JSON.stringify(vortexMode));
   const lightshowWindow = window.open(lightshowUrl, '_blank');
   if (!lightshowWindow) {
     console.error('Popup blocked! Allow popups for this site.');
