@@ -1,20 +1,35 @@
 class LightshowController {
   constructor() {
     this.settings = { speed: 20, playMode: 'always', previewMode: 'device' };
+    this.logoSettings = { speed: 20, playMode: 'always' };
     this.instances = [];
+    this.logoInstances = [];
     this.loadFromStorage();
   }
 
   register(instance) {
     this.instances.push(instance);
     this.applySettings(instance);
-    if (this.settings.playMode === 'always') {
+    if (this.settings.playMode === 'always' && this.settings.speed !== 0) {
+      setTimeout(() => { instance._pause = false; if (!instance._rafId) instance.start(); }, 50);
+    }
+  }
+
+  registerLogo(instance) {
+    instance._isLogo = true;
+    this.logoInstances.push(instance);
+    this.applyLogoSettings(instance);
+    if (this.logoSettings.playMode === 'always' && this.logoSettings.speed !== 0) {
       setTimeout(() => { instance._pause = false; if (!instance._rafId) instance.start(); }, 50);
     }
   }
 
   unregister(instance) {
-    this.instances = this.instances.filter(i => i !== instance);
+    if (instance._isLogo) {
+      this.logoInstances = this.logoInstances.filter(i => i !== instance);
+    } else {
+      this.instances = this.instances.filter(i => i !== instance);
+    }
   }
 
   applySettings(instance) {
@@ -32,6 +47,26 @@ class LightshowController {
       this.removeHover(instance);
       instance.start();
     } else if (this.settings.playMode === 'hover') {
+      instance.stop();
+      this.addHover(instance);
+    }
+  }
+
+  applyLogoSettings(instance) {
+    if (this.logoSettings.speed === 0) {
+      this.removeHover(instance);
+      instance.stop();
+      return;
+    }
+    if (instance.vortex) {
+      instance.vortex.setTickrate(this.logoSettings.speed);
+    }
+    instance._tickInterval = 1000 / this.logoSettings.speed;
+    instance._hoverEl = instance._hoverEl || this.resolveHoverEl(instance);
+    if (this.logoSettings.playMode === 'always') {
+      this.removeHover(instance);
+      instance.start();
+    } else if (this.logoSettings.playMode === 'hover') {
       instance.stop();
       this.addHover(instance);
     }
@@ -72,21 +107,39 @@ class LightshowController {
     Object.assign(this.settings, newSettings);
     this.instances.forEach(inst => this.applySettings(inst));
     this.saveToStorage();
-    if (this.settings.playMode === 'always') {
+    if (this.settings.playMode === 'always' && this.settings.speed !== 0) {
       setTimeout(() => this.instances.forEach(inst => { inst._pause = false; if (!inst._rafId) inst.start(); }), 50);
+    }
+  }
+
+  updateLogoSettings(newSettings) {
+    Object.assign(this.logoSettings, newSettings);
+    this.logoInstances.forEach(inst => this.applyLogoSettings(inst));
+    this.saveToStorage();
+    if (this.logoSettings.playMode === 'always' && this.logoSettings.speed !== 0) {
+      setTimeout(() => this.logoInstances.forEach(inst => { inst._pause = false; if (!inst._rafId) inst.start(); }), 50);
     }
   }
 
   saveToStorage() {
     try {
-      localStorage.setItem('lightshowSettings', JSON.stringify(this.settings));
+      const data = { main: this.settings, logo: this.logoSettings };
+      localStorage.setItem('lightshowSettings', JSON.stringify(data));
     } catch (e) {}
   }
 
   loadFromStorage() {
     try {
       const saved = localStorage.getItem('lightshowSettings');
-      if (saved) Object.assign(this.settings, JSON.parse(saved));
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.main) {
+          Object.assign(this.settings, parsed.main);
+        } else {
+          Object.assign(this.settings, parsed);
+        }
+        if (parsed.logo) Object.assign(this.logoSettings, parsed.logo);
+      }
     } catch (e) {}
   }
 }

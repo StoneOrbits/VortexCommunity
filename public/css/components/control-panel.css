@@ -1,6 +1,7 @@
 .control-panel {
   position: fixed;
-  right: 0;
+  left: 0;
+  right: auto;
   top: 50%;
   transform: translateY(-50%);
   z-index: 999;
@@ -11,7 +12,7 @@
   background: #1a1a1a;
   border: 1px solid #444;
   border-radius: 8px;
-  padding: 16px 40px 16px 16px;
+  padding: 16px 16px 16px 40px;
   min-width: 180px;
   display: none;
 }
@@ -22,7 +23,8 @@
 
 .control-panel-toggle {
   position: absolute;
-  right: 6px;
+  left: 6px;
+  right: auto;
   top: 50%;
   transform: translateY(-50%);
   width: 28px;
@@ -44,11 +46,16 @@
   color: #ccc;
 }
 
-.control-panel-section {
-  margin-bottom: 14px;
+.control-panel-header {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
 }
 
-.control-panel-section:last-child {
+.control-panel-section {
   margin-bottom: 0;
 }
 
@@ -60,6 +67,11 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 6px;
+  cursor: help;
+}
+
+.control-panel-section > .control-panel-label:not(:first-of-type) {
+  margin-top: 10px;
 }
 
 .control-panel-row {
@@ -139,4 +151,10 @@
 
 .control-panel-btn.active:hover {
   background: #16a085;
+}
+
+.control-panel-divider {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 12px 0;
 }

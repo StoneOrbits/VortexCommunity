@@ -1,23 +1,34 @@
 <div id="control-panel" class="control-panel expanded">
   <div class="control-panel-body">
     <div class="control-panel-section">
-      <label class="control-panel-label">Speed</label>
-      <input type="range" id="control-speed" class="control-speed-slider" min="0" max="50" value="20">
-    </div>
-    <div class="control-panel-section">
+      <div class="control-panel-header">Logo</div>
+      <label class="control-panel-label" title="Adjust the logo lightshow animation speed. 0 = paused.">Speed</label>
+      <input type="range" id="control-logo-speed" class="control-speed-slider" min="0" max="50" value="20">
       <label class="control-panel-label">Play Mode</label>
       <div class="control-panel-toggle-group">
-        <button class="control-panel-btn control-panel-play-btn active" data-mode="always">Always</button>
-        <button class="control-panel-btn control-panel-play-btn" data-mode="hover">Hover</button>
+        <button class="control-panel-btn control-panel-logo-play-btn active" data-mode="always" title="Animate logo at all times">Always</button>
+        <button class="control-panel-btn control-panel-logo-play-btn" data-mode="hover" title="Animate logo only when hovering over it">Hover</button>
       </div>
     </div>
+
+    <hr class="control-panel-divider">
+
     <div class="control-panel-section">
+      <div class="control-panel-header">Page</div>
+      <label class="control-panel-label" title="Adjust all pattern/mode lightshow speeds. 0 = paused.">Speed</label>
+      <input type="range" id="control-speed" class="control-speed-slider" min="0" max="50" value="20">
+      <label class="control-panel-label">Play Mode</label>
+      <div class="control-panel-toggle-group">
+        <button class="control-panel-btn control-panel-play-btn active" data-mode="always" title="Play all lightshows on the page at all times">Always</button>
+        <button class="control-panel-btn control-panel-play-btn" data-mode="hover" title="Play lightshows only when hovering over a tile">Hover</button>
+      </div>
       <label class="control-panel-label">Preview</label>
       <div class="control-panel-toggle-group">
-        <button class="control-panel-btn control-panel-preview-btn active" data-mode="device">Device</button>
-        <button class="control-panel-btn control-panel-preview-btn" data-mode="info">Info</button>
+        <button class="control-panel-btn control-panel-preview-btn active" data-mode="device" title="Show device silhouette with LED animation">Device</button>
+        <button class="control-panel-btn control-panel-preview-btn" data-mode="info" title="Show pattern info, creator, and color swatches">Info</button>
       </div>
     </div>
+
   </div>
   <button id="control-panel-toggle" class="control-panel-toggle" aria-label="Toggle lightshow controls">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

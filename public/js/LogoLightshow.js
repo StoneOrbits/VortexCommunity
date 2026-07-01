@@ -27,7 +27,7 @@ export default class LogoLightshow {
     this._colorHistory = new Array(TRAIL_LEN).fill({ r: 60, g: 60, b: 100 });
     this._head = 0;
 
-    controller.register(this);
+    controller.registerLogo(this);
   }
 
   loadPattern(patData) {
