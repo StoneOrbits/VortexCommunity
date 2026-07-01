@@ -6,8 +6,8 @@ var subRoutes = new Set([
 
 // Known patterns for dynamic routes and their corresponding scripts
 var dynamicRoutePatterns = [
-    { pattern: /^\/mode\/\d+$/, script: 'page_mode.js' },
-    { pattern: /^\/pat\/\d+$/, script: 'page_pat.js' },
+    { pattern: /^\/mode\/\d+(\/edit)?$/, script: 'page_mode.js' },
+    { pattern: /^\/pat\/\d+(\/edit)?$/, script: 'page_pat.js' },
     { pattern: /^\/user\/\d+$/, script: 'page_user.js' },
     // Add more patterns here as needed
 ];
