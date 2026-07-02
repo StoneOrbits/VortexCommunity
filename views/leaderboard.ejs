@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main class="leaderboard-page">
+        <div class="leaderboard-header">
+            <h1>Leaderboard</h1>
+            <div class="leaderboard-tabs">
+                <a href="/leaderboard?type=open" class="tab-btn <%= currentType === 'open' ? 'active' : '' %>">Open SR</a>
+                <a href="/leaderboard?type=closed" class="tab-btn <%= currentType === 'closed' ? 'active' : '' %>">Closed SR</a>
+            </div>
+        </div>
+        <div class="leaderboard-table-wrap">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Player</th>
+                        <th>SR</th>
+                        <th>Open SR</th>
+                        <th>Closed SR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (ranked.length === 0) { %>
+                        <tr><td colspan="5" class="leaderboard-empty">No players yet.</td></tr>
+                    <% } else { %>
+                        <% ranked.forEach(function(r) { %>
+                            <tr class="<%= user && r.id === user.id ? 'highlight-row' : '' %>">
+                                <td class="rank"><%= r.rank %></td>
+                                <td class="player-info">
+                                    <a href="/user/<%= r.id %>" class="player-link">
+                                        <img src="<%= r.profilePic || '/images/default-profile.png' %>" alt="" class="player-avatar">
+                                        <span class="player-name"><%= r.username %></span>
+                                    </a>
+                                </td>
+                                <td class="sr-value"><%= r.sr %></td>
+                                <td><%= r.open_sr %></td>
+                                <td><%= r.closed_sr %></td>
+                            </tr>
+                        <% }); %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+</body>
+</html>

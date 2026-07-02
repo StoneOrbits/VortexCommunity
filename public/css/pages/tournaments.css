@@ -1,0 +1,128 @@
+.tournaments-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px;
+}
+
+.tournaments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.tournaments-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #fff;
+}
+
+.tournaments-filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #aaa;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background: #1abc9c;
+    color: #fff;
+    border-color: #1abc9c;
+}
+
+.filter-btn:hover {
+    background: #333;
+    color: #fff;
+}
+
+.tournaments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tournament-card {
+    display: block;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 16px 20px;
+    text-decoration: none;
+    color: #ccc;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.tournament-card:hover {
+    border-color: #1abc9c;
+    background: #222;
+}
+
+.tournament-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.tournament-card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #fff;
+}
+
+.tournament-desc {
+    font-size: 14px;
+    color: #888;
+    margin: 0 0 10px;
+    line-height: 1.4;
+}
+
+.tournament-card-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: #888;
+}
+
+.tournament-card-meta i {
+    width: 14px;
+    margin-right: 4px;
+    color: #666;
+}
+
+.tournament-status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    text-transform: uppercase;
+}
+
+.status-draft { background: #555; color: #ddd; }
+.status-registration { background: #2980b9; color: #fff; }
+.status-in_progress { background: #27ae60; color: #fff; }
+.status-completed { background: #8e44ad; color: #fff; }
+.status-archived { background: #333; color: #888; }
+
+.tournaments-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+}
+
+@media (max-width: 600px) {
+    .tournaments-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+}

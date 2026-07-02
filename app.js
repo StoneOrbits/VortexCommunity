@@ -116,6 +116,8 @@ var logoutRouter = require('./routes/logout');
 var adminRouter = require('./routes/admin');
 var privacyRouter = require('./routes/privacy');
 var termsRouter = require('./routes/terms');
+var tournamentsRouter = require('./routes/tournaments');
+var leaderboardRouter = require('./routes/leaderboard');
 
 app.use('/', indexRouter);
 app.use('/upload', userUploadRouter);
@@ -137,6 +139,8 @@ app.use('/logout', logoutRouter);
 app.use('/privacy', privacyRouter);
 app.use('/terms', termsRouter);
 app.use('/control', adminRouter);
+app.use('/tournaments', tournamentsRouter);
+app.use('/leaderboard', leaderboardRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));
