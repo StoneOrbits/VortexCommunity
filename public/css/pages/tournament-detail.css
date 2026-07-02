@@ -1,0 +1,363 @@
+.tournament-detail-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px;
+}
+
+.td-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.td-header h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+    color: #fff;
+}
+
+.td-header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.td-description {
+    color: #999;
+    font-size: 15px;
+    margin: 0 0 16px;
+    max-width: 700px;
+    line-height: 1.5;
+}
+
+.td-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.td-meta i {
+    width: 14px;
+    margin-right: 4px;
+    color: #666;
+}
+
+.tournament-type-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: #8e44ad;
+    color: #fff;
+    margin-left: 8px;
+}
+
+.td-section {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.td-section h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: #ddd;
+}
+
+.td-current-match {
+    border-color: #1abc9c;
+}
+
+.match-card {
+    padding: 12px 0;
+}
+
+.match-competitors {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.competitor.you {
+    color: #1abc9c;
+}
+
+.vs {
+    color: #666;
+    font-size: 14px;
+}
+
+.match-status {
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+.match-submit-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.match-submit-form select {
+    padding: 8px 12px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    border-radius: 5px;
+    min-width: 200px;
+}
+
+.submission-status {
+    text-align: center;
+    font-size: 13px;
+    color: #27ae60;
+    margin: 6px 0;
+}
+
+.td-add-player .inline-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.td-add-player input {
+    padding: 8px 12px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.inline-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.inline-form select {
+    padding: 6px 10px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.bracket {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+}
+
+.bracket-round {
+    min-width: 220px;
+    flex-shrink: 0;
+}
+
+.bracket-round-title {
+    font-size: 14px;
+    color: #888;
+    margin: 0 0 12px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.bracket-match {
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #1e1e1e;
+}
+
+.bracket-match.completed {
+    border-color: #27ae60;
+}
+
+.bracket-match.judging {
+    border-color: #f39c12;
+}
+
+.bracket-match.submission {
+    border-color: #2980b9;
+}
+
+.match-players {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.player {
+    flex: 1;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.player.winner {
+    color: #f1c40f;
+    font-weight: 700;
+}
+
+.player.winner::before {
+    content: "\f091";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 4px;
+}
+
+.player.is-you {
+    color: #1abc9c;
+}
+
+.player .player-name {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.match-vs {
+    color: #666;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.match-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #888;
+}
+
+.match-winner {
+    color: #f1c40f;
+}
+
+.match-winner i {
+    margin-right: 3px;
+}
+
+.match-judge-form {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #333;
+}
+
+.match-judge-form select {
+    padding: 4px 8px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.match-judge-form .btn-sm {
+    padding: 4px 10px;
+    font-size: 13px;
+}
+
+.participants-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 6px 12px;
+    text-decoration: none;
+    color: #ccc;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.participant-item:hover {
+    border-color: #1abc9c;
+    color: #fff;
+}
+
+.participant-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.btn-danger {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-danger:hover {
+    background: #e74c3c;
+}
+
+.btn-secondary {
+    background: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #777;
+}
+
+@media (max-width: 768px) {
+    .td-header {
+        flex-direction: column;
+    }
+
+    .bracket {
+        flex-direction: column;
+    }
+
+    .bracket-round {
+        min-width: 100%;
+    }
+
+    .match-competitors {
+        font-size: 15px;
+    }
+}
