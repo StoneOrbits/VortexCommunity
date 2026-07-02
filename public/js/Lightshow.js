@@ -112,10 +112,28 @@ export default class Lightshow {
     return this.vortex.engine().leds().ledCount();
   }
 
+  resizeFromContainer() {
+    const container = this.canvas.parentElement;
+    if (!container) return;
+    const w = container.offsetWidth;
+    const h = container.offsetHeight;
+    if (w === 0 || h === 0) return;
+
+    this.canvas.width = w;
+    this.canvas.height = h;
+    this.offScreenCanvas.width = w;
+    this.offScreenCanvas.height = h;
+    this.sectionWidth = w / this.sectionCount;
+    this.history = [];
+    this.offCtx.fillStyle = 'rgba(0, 0, 0)';
+    this.offCtx.fillRect(0, 0, w, h);
+  }
+
   scrollingDraw() {
     if (this._pause) return;
 
     if (this.offScreenCanvas.width === 0 || this.offScreenCanvas.height === 0) {
+      this.resizeFromContainer();
       this.animationFrameId = requestAnimationFrame(this.boundScrollingDraw);
       return;
     }
@@ -148,6 +166,7 @@ export default class Lightshow {
     if (this._pause) return;
 
     if (this.canvas.width === 0 || this.canvas.height === 0) {
+      this.resizeFromContainer();
       this.animationFrameId = requestAnimationFrame(this.boundFlashDraw);
       return;
     }

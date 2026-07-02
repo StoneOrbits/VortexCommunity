@@ -69,7 +69,6 @@ app.use(
 
 app.use(BASE_PATH, express.static(path.join(__dirname, 'public')));
 
-// Dev only: serve lightshow.lol at root when checked out as a sibling
 if (require('fs').existsSync(LIGHTSHOWLOL_DIR)) {
   app.use('/', express.static(LIGHTSHOWLOL_DIR));
 }

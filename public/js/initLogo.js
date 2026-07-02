@@ -19,4 +19,14 @@ async function fetchRandomPat() {
 VortexLib().then(vortexLib => {
   const ls = new LogoLightshow(vortexLib, canvas);
   fetchRandomPat().then(pat => { if (pat) ls.loadPattern(pat); });
+
+  const container = canvas.closest('.cog-container');
+  if (container) {
+    container.addEventListener('click', () => {
+      container.classList.remove('cog-click');
+      void container.offsetWidth;
+      container.classList.add('cog-click');
+      fetchRandomPat().then(pat => { if (pat) ls.loadPattern(pat); });
+    });
+  }
 });
