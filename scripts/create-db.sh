@@ -1,5 +1,5 @@
 #!/bin/bash
-# db-migrate.sh — Ensure PostgreSQL database exists, then apply pending migrations
+# create-db.sh — Ensure PostgreSQL database exists, then apply pending migrations
 #
 # Bootstrap: creates database + user if they don't exist (uses sudo -u postgres
 # on the live server for Unix socket peer auth; falls back to docker exec).

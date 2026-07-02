@@ -4,7 +4,7 @@
 #
 # This only installs and configures PostgreSQL.
 # Database/user creation and schema migrations are handled separately
-# by db-migrate.sh (run on every deploy via GitHub Actions / start.sh).
+# by create-db.sh (run on every deploy via GitHub Actions / start.sh).
 set -e
 
 REMOTE_IP="172.232.170.43"   # lightshow.lol
@@ -45,5 +45,5 @@ echo "Remote IP:  ${REMOTE_IP}"
 echo ""
 echo "Next steps:"
 echo "  1. Add PG_* variables to /home/vortex/VortexCommunity/.env"
-echo "  2. Push code to trigger deploy (runs db-migrate.sh which creates DB + user)"
-echo "  3. Run 'bash scripts/db-migrate.sh' to apply schema migrations"
+echo "  2. Push code to trigger deploy (runs create-db.sh which creates DB + user)"
+echo "  3. Run 'bash scripts/create-db.sh' to apply schema migrations"

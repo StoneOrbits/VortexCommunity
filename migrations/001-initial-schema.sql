@@ -1,5 +1,5 @@
 -- Initial PostgreSQL schema for Vortex Community
--- Applied as a single transaction by db-migrate.sh
+-- Applied as a single transaction by create-db.sh
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
