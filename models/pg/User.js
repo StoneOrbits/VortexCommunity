@@ -35,14 +35,6 @@ const User = sequelize.define('User', {
   verificationToken: {
     type: DataTypes.STRING,
     allowNull: true
-  },
-  open_sr: {
-    type: DataTypes.INTEGER,
-    defaultValue: 1000
-  },
-  closed_sr: {
-    type: DataTypes.INTEGER,
-    defaultValue: 1000
   }
 }, {
   tableName: 'users',
