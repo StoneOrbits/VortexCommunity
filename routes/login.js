@@ -10,7 +10,8 @@ router.get('/', (req, res) => {
       error: req.flash('error'),
       success: req.flash('success')
     },
-    user: req.user
+    user: req.user,
+    captchaSiteKey: process.env.RECAPTCHA_SITE_KEY || ''
   });
 });
 

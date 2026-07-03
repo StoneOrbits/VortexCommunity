@@ -222,6 +222,59 @@ main.admin-page {
   margin-left: 4px;
 }
 
+.page-counter {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
+.page-counter span {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.admin-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+}
+.admin-pagination ul {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  gap: 6px;
+}
+.admin-pagination li {
+  display: inline-block;
+}
+.admin-pagination a,
+.admin-pagination span {
+  display: block;
+  padding: 8px 12px;
+  color: white;
+  background-color: #222;
+  border: 1px solid #888;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+.admin-pagination li.active a {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  pointer-events: none;
+}
+.admin-pagination a:hover {
+  background-color: #444;
+}
+.admin-pagination li.disabled span {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: default;
+}
+
 /* Create download form (collapsible) */
 .admin-create-form {
   margin-bottom: 20px;

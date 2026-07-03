@@ -81,12 +81,15 @@ router.post('/users/delete', isAdmin, async (req, res) => {
 
 router.get('/patterns', isAdmin, async (req, res) => {
   const { q } = req.query;
+  const page = Math.max(1, parseInt(req.query.page || 1, 10));
+  const pageSize = 50;
   const where = q ? { name: { [Op.iLike]: `%${q}%` } } : {};
-  const patterns = await PatternSet.findAll({
+  const { count: totalCount, rows: patterns } = await PatternSet.findAndCountAll({
     where, order: [['id', 'DESC']],
+    offset: (page - 1) * pageSize, limit: pageSize,
     include: [{ model: User, as: 'creator', attributes: ['id', 'username'] }]
   });
-  res.render('admin/index', { patterns, section: 'patterns' });
+  res.render('admin/index', { patterns, section: 'patterns', currentPage: page, pageCount: Math.ceil(totalCount / pageSize), totalCount });
 });
 
 router.post('/patterns/delete', isAdmin, async (req, res) => {
@@ -103,12 +106,15 @@ router.post('/patterns/delete', isAdmin, async (req, res) => {
 
 router.get('/modes', isAdmin, async (req, res) => {
   const { q } = req.query;
+  const page = Math.max(1, parseInt(req.query.page || 1, 10));
+  const pageSize = 50;
   const where = q ? { name: { [Op.iLike]: `%${q}%` } } : {};
-  const modes = await Mode.findAll({
+  const { count: totalCount, rows: modes } = await Mode.findAndCountAll({
     where, order: [['id', 'DESC']],
+    offset: (page - 1) * pageSize, limit: pageSize,
     include: [{ model: User, as: 'creator', attributes: ['id', 'username'] }]
   });
-  res.render('admin/index', { modes, section: 'modes' });
+  res.render('admin/index', { modes, section: 'modes', currentPage: page, pageCount: Math.ceil(totalCount / pageSize), totalCount });
 });
 
 router.post('/modes/delete', isAdmin, async (req, res) => {

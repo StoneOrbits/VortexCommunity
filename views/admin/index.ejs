@@ -84,6 +84,9 @@
           <input type="text" name="q" placeholder="Search by name..." value="<%= typeof q !== 'undefined' ? q : '' %>">
           <button type="submit">Search</button>
         </form>
+        <% if (pageCount > 1) { %>
+        <div class="page-counter"><span>Page <%= currentPage %> of <%= pageCount %></span></div>
+        <% } %>
         <table class="admin-table">
           <thead>
             <tr>
@@ -113,12 +116,32 @@
             <% }) %>
           </tbody>
         </table>
+        <% if (pageCount > 1) { %>
+        <div class="admin-pagination"><span>Page <%= currentPage %> of <%= pageCount %></span><ul>
+          <% if (currentPage > 1) { %>
+          <li><a href="?page=<%= currentPage - 1 %><%= q ? '&q=' + encodeURIComponent(q) : '' %>">&laquo; Prev</a></li>
+          <% } else { %>
+          <li class="disabled"><span>&laquo; Prev</span></li>
+          <% } %>
+          <% for (var p = 1; p <= pageCount; p++) { %>
+          <li class="<%= p === currentPage ? 'active' : '' %>"><a href="?page=<%= p %><%= q ? '&q=' + encodeURIComponent(q) : '' %>"><%= p %></a></li>
+          <% } %>
+          <% if (currentPage < pageCount) { %>
+          <li><a href="?page=<%= currentPage + 1 %><%= q ? '&q=' + encodeURIComponent(q) : '' %>">Next &raquo;</a></li>
+          <% } else { %>
+          <li class="disabled"><span>Next &raquo;</span></li>
+          <% } %>
+        </ul></div>
+        <% } %>
       <% } else if (section === 'modes') { %>
         <h2>Modes</h2>
         <form class="admin-search" method="GET">
           <input type="text" name="q" placeholder="Search by name..." value="<%= typeof q !== 'undefined' ? q : '' %>">
           <button type="submit">Search</button>
         </form>
+        <% if (pageCount > 1) { %>
+        <div class="page-counter"><span>Page <%= currentPage %> of <%= pageCount %></span></div>
+        <% } %>
         <table class="admin-table">
           <thead>
             <tr>
@@ -150,6 +173,23 @@
             <% }) %>
           </tbody>
         </table>
+        <% if (pageCount > 1) { %>
+        <div class="admin-pagination"><span>Page <%= currentPage %> of <%= pageCount %></span><ul>
+          <% if (currentPage > 1) { %>
+          <li><a href="?page=<%= currentPage - 1 %><%= q ? '&q=' + encodeURIComponent(q) : '' %>">&laquo; Prev</a></li>
+          <% } else { %>
+          <li class="disabled"><span>&laquo; Prev</span></li>
+          <% } %>
+          <% for (var p = 1; p <= pageCount; p++) { %>
+          <li class="<%= p === currentPage ? 'active' : '' %>"><a href="?page=<%= p %><%= q ? '&q=' + encodeURIComponent(q) : '' %>"><%= p %></a></li>
+          <% } %>
+          <% if (currentPage < pageCount) { %>
+          <li><a href="?page=<%= currentPage + 1 %><%= q ? '&q=' + encodeURIComponent(q) : '' %>">Next &raquo;</a></li>
+          <% } else { %>
+          <li class="disabled"><span>Next &raquo;</span></li>
+          <% } %>
+        </ul></div>
+        <% } %>
       <% } else if (section === 'downloads') { %>
         <h2>Downloads</h2>
         <details class="admin-create-form">
