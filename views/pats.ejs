@@ -15,10 +15,34 @@
                 </form>
             </section>
             <section class="showcase">
+                <div class="pagination-bar" id="pagination-bar-top">
+                    <div class="per-page">
+                        <select id="per-page-select">
+                            <option value="20">20</option>
+                            <option value="40" selected>40</option>
+                            <option value="60">60</option>
+                            <option value="100">100</option>
+                            <option value="0">All</option>
+                        </select>
+                    </div>
+                    <div id="pagination-container-top"></div>
+                </div>
                 <div class="pat-list">
                     <% pats.forEach(function(pat) { %>
                         <%- include('partials/pat-tile', { pat: pat }) %>
                     <% }); %>
+                </div>
+                <div class="pagination-bar" id="pagination-bar-bottom">
+                    <div class="per-page">
+                        <select id="per-page-select-bottom">
+                            <option value="20">20</option>
+                            <option value="40" selected>40</option>
+                            <option value="60">60</option>
+                            <option value="100">100</option>
+                            <option value="0">All</option>
+                        </select>
+                    </div>
+                    <div id="pagination-container"></div>
                 </div>
             </section>
         </main>

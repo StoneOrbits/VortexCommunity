@@ -1,11 +1,21 @@
 import { initLightshow, getLedPositions } from './initLightshow.js';
 
-const PAGE_SIZE = 40;
+let PAGE_SIZE = parseInt(document.getElementById('per-page-select')?.value) || 40;
 let currentPage = 1;
 
 const checkboxes = document.querySelectorAll('input[name="device"]');
 const modesList = document.getElementById('modes-list');
 const allTiles = Array.from(document.querySelectorAll('.mode-tile'));
+
+function getPerPage() {
+    const sel = document.getElementById('per-page-select') || document.getElementById('per-page-select-bottom');
+    return sel ? parseInt(sel.value) : 40;
+}
+
+function syncPerPage(value) {
+    document.getElementById('per-page-select').value = value;
+    document.getElementById('per-page-select-bottom').value = value;
+}
 
 function filterModes() {
     const selectedDevices = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
@@ -16,25 +26,29 @@ function filterModes() {
 }
 
 function updatePagination() {
+    PAGE_SIZE = getPerPage();
     const visible = allTiles.filter(t => t._visible);
-    const pageCount = Math.ceil(visible.length / PAGE_SIZE) || 1;
+    const effectiveSize = PAGE_SIZE || visible.length;
+    const pageCount = Math.ceil(visible.length / effectiveSize) || 1;
     if (currentPage > pageCount) currentPage = pageCount;
 
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
+    const start = (currentPage - 1) * effectiveSize;
+    const end = start + effectiveSize;
     const visibleOnPage = visible.slice(start, end);
 
     allTiles.forEach(tile => {
         tile.style.display = visibleOnPage.includes(tile) ? '' : 'none';
     });
 
-    const container = document.getElementById('pagination-container');
     if (pageCount <= 1) {
-        container.innerHTML = '';
+        ['pagination-container', 'pagination-container-top'].forEach(id => {
+            const c = document.getElementById(id);
+            if (c) c.innerHTML = '';
+        });
         return;
     }
 
-    let html = '<div class="pagination-wrapper"><ul class="pagination">';
+    let html = '<ul class="pagination">';
 
     if (currentPage > 1) {
         html += `<li><a href="#" data-page="${currentPage - 1}">&laquo;</a></li>`;
@@ -53,14 +67,18 @@ function updatePagination() {
         html += '<li class="disabled"><span>&raquo;</span></li>';
     }
 
-    html += '</ul></div>';
-    container.innerHTML = html;
+    html += '</ul>';
 
-    container.querySelectorAll('a[data-page]').forEach(a => {
-        a.addEventListener('click', e => {
-            e.preventDefault();
-            currentPage = parseInt(a.getAttribute('data-page'), 10);
-            updatePagination();
+    ['pagination-container', 'pagination-container-top'].forEach(id => {
+        const container = document.getElementById(id);
+        if (!container) return;
+        container.innerHTML = html;
+        container.querySelectorAll('a[data-page]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                currentPage = parseInt(a.getAttribute('data-page'), 10);
+                updatePagination();
+            });
         });
     });
 }
@@ -72,6 +90,13 @@ function onFilterChange() {
 }
 
 checkboxes.forEach(cb => cb.addEventListener('change', onFilterChange));
+['per-page-select', 'per-page-select-bottom'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', function() {
+        syncPerPage(this.value);
+        currentPage = 1;
+        updatePagination();
+    });
+});
 
 onFilterChange();
 

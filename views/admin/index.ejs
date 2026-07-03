@@ -86,6 +86,21 @@
         </form>
         <% if (pageCount > 1) { %>
         <div class="page-counter"><span>Page <%= currentPage %> of <%= pageCount %></span></div>
+        <div class="admin-pagination"><ul>
+          <% if (currentPage > 1) { %>
+          <li><a href="?page=<%= currentPage - 1 %><%= q ? '&q=' + encodeURIComponent(q) : '' %>">&laquo; Prev</a></li>
+          <% } else { %>
+          <li class="disabled"><span>&laquo; Prev</span></li>
+          <% } %>
+          <% for (var p = 1; p <= pageCount; p++) { %>
+          <li class="<%= p === currentPage ? 'active' : '' %>"><a href="?page=<%= p %><%= q ? '&q=' + encodeURIComponent(q) : '' %>"><%= p %></a></li>
+          <% } %>
+          <% if (currentPage < pageCount) { %>
+          <li><a href="?page=<%= currentPage + 1 %><%= q ? '&q=' + encodeURIComponent(q) : '' %>">Next &raquo;</a></li>
+          <% } else { %>
+          <li class="disabled"><span>Next &raquo;</span></li>
+          <% } %>
+        </ul></div>
         <% } %>
         <table class="admin-table">
           <thead>
@@ -141,6 +156,21 @@
         </form>
         <% if (pageCount > 1) { %>
         <div class="page-counter"><span>Page <%= currentPage %> of <%= pageCount %></span></div>
+        <div class="admin-pagination"><ul>
+          <% if (currentPage > 1) { %>
+          <li><a href="?page=<%= currentPage - 1 %><%= q ? '&q=' + encodeURIComponent(q) : '' %>">&laquo; Prev</a></li>
+          <% } else { %>
+          <li class="disabled"><span>&laquo; Prev</span></li>
+          <% } %>
+          <% for (var p = 1; p <= pageCount; p++) { %>
+          <li class="<%= p === currentPage ? 'active' : '' %>"><a href="?page=<%= p %><%= q ? '&q=' + encodeURIComponent(q) : '' %>"><%= p %></a></li>
+          <% } %>
+          <% if (currentPage < pageCount) { %>
+          <li><a href="?page=<%= currentPage + 1 %><%= q ? '&q=' + encodeURIComponent(q) : '' %>">Next &raquo;</a></li>
+          <% } else { %>
+          <li class="disabled"><span>Next &raquo;</span></li>
+          <% } %>
+        </ul></div>
         <% } %>
         <table class="admin-table">
           <thead>
