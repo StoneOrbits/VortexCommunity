@@ -1,0 +1,550 @@
+.tournament-detail-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px;
+}
+
+.td-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.td-header h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+    color: #fff;
+}
+
+.td-header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.td-description {
+    color: #999;
+    font-size: 15px;
+    margin: 0 0 16px;
+    max-width: 700px;
+    line-height: 1.5;
+}
+
+.td-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.td-meta i {
+    width: 14px;
+    margin-right: 4px;
+    color: #666;
+}
+
+.tournament-type-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: #8e44ad;
+    color: #fff;
+    margin-left: 8px;
+}
+
+.td-section {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.td-section h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: #ddd;
+}
+
+.td-current-match {
+    border-color: #1abc9c;
+}
+
+.match-card {
+    padding: 12px 0;
+}
+
+.match-competitors {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.competitor.you {
+    color: #1abc9c;
+}
+
+.vs {
+    color: #666;
+    font-size: 14px;
+}
+
+.match-status {
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+.match-submit-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.match-submit-form select {
+    padding: 8px 12px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    border-radius: 5px;
+    min-width: 200px;
+}
+
+.submission-status {
+    text-align: center;
+    font-size: 13px;
+    color: #27ae60;
+    margin: 6px 0;
+}
+
+.td-add-player .inline-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.td-add-player input {
+    padding: 8px 12px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.inline-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.inline-form select {
+    padding: 6px 10px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.bracket {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 20px 0 40px;
+    align-items: flex-start;
+}
+
+.bracket-col {
+    min-width: 260px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.bracket-col + .bracket-col {
+    margin-left: 40px;
+}
+
+.bracket-col + .bracket-col::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: transparent;
+}
+
+.bracket-round-title {
+    font-size: 12px;
+    color: #666;
+    margin: 0 0 16px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.bracket-matches {
+    position: relative;
+}
+
+.match-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.bracket-match {
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: #1e1e1e;
+    padding: 10px;
+    width: 240px;
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+.bracket-match.completed {
+    border-color: #27ae60;
+}
+
+.bracket-match.judging {
+    border-color: #f39c12;
+}
+
+.bracket-match.submission {
+    border-color: #2980b9;
+}
+
+.bracket-match.voting {
+    border-color: #8e44ad;
+}
+
+.mc-competitor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ccc;
+}
+
+.mc-competitor.winner {
+    color: #f1c40f;
+}
+
+.mc-competitor.winner .mc-name::before {
+    content: "\f091";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 4px;
+}
+
+.mc-competitor.is-you .mc-name {
+    color: #1abc9c;
+}
+
+.mc-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+.mc-video {
+    width: 80px;
+    height: 45px;
+    border: none;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.mc-vs {
+    text-align: center;
+    font-size: 10px;
+    color: #555;
+    padding: 0 6px;
+    line-height: 1;
+}
+
+.mc-status {
+    text-align: center;
+    font-size: 11px;
+    color: #777;
+    padding: 2px 0;
+}
+
+.mc-winner {
+    text-align: center;
+    font-size: 12px;
+    color: #f1c40f;
+    font-weight: 700;
+    padding: 2px 0;
+}
+
+.mc-winner i {
+    margin-right: 3px;
+}
+
+.mc-vote {
+    text-align: center;
+    padding: 6px 0 2px;
+    border-top: 1px solid #333;
+    margin-top: 6px;
+}
+
+.mc-vote form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-vote-sm {
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #555;
+    background: #222;
+    color: #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-vote-sm:hover {
+    border-color: #1abc9c;
+    color: #fff;
+    background: #1a2a28;
+}
+
+.btn-vote-sm.voted {
+    background: #1abc9c;
+    color: #fff;
+    border-color: #1abc9c;
+}
+
+.vote-sep {
+    font-size: 11px;
+    color: #555;
+}
+
+.mc-admin {
+    padding: 6px 0 2px;
+    border-top: 1px solid #333;
+    margin-top: 6px;
+    text-align: center;
+}
+
+.mc-admin form {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+}
+
+.mc-admin select {
+    padding: 3px 6px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.mc-admin .btn-sm {
+    padding: 3px 8px;
+    font-size: 12px;
+}
+
+.mc-connector {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    width: 20px;
+    height: 2px;
+    background: #555;
+}
+
+.bracket-col:last-child .match-wrapper .mc-connector {
+    display: none;
+}
+
+.match-wrapper::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 20px;
+    height: 2px;
+    background: #555;
+}
+
+.bracket-col:first-child .match-wrapper::before {
+    display: none;
+}
+
+.participants-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 6px 12px;
+    text-decoration: none;
+    color: #ccc;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.participant-item:hover {
+    border-color: #1abc9c;
+    color: #fff;
+}
+
+.participant-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.btn-danger {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-danger:hover {
+    background: #e74c3c;
+}
+
+.btn-secondary {
+    background: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #777;
+}
+
+.td-timeline {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.tl-item {
+    flex: 1;
+    min-width: 140px;
+    padding: 10px 14px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: #1a1a1a;
+    text-align: center;
+}
+
+.tl-item.tl-active {
+    border-color: #2980b9;
+    background: #1a2a3a;
+}
+
+.tl-item.tl-done {
+    border-color: #27ae60;
+    background: #1a2a1a;
+}
+
+.tl-label {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.tl-date {
+    display: block;
+    font-size: 13px;
+    color: #ccc;
+}
+
+.tl-item.tl-active .tl-label,
+.tl-item.tl-active .tl-date {
+    color: #5dade2;
+}
+
+.tl-item.tl-done .tl-label,
+.tl-item.tl-done .tl-date {
+    color: #58d68d;
+}
+
+
+
+.match-submit-form input[type="url"] {
+    padding: 8px 12px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    border-radius: 5px;
+    min-width: 300px;
+    font-size: 14px;
+}
+
+.match-submit-form input[type="url"]::placeholder {
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .td-header {
+        flex-direction: column;
+    }
+
+    .bracket {
+        flex-direction: column;
+    }
+
+    .bracket-round {
+        min-width: 100%;
+    }
+
+    .match-competitors {
+        font-size: 15px;
+    }
+}

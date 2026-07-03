@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main class="tournament-detail-page">
+        <div class="td-header">
+            <div>
+                <h1><%= tournament.name %></h1>
+                <span class="tournament-status status-<%= tournament.status %>"><%= tournament.status.replace('_', ' ') %></span>
+                <span class="tournament-type-badge"><%= tournament.type %> SR</span>
+            </div>
+            <div class="td-header-actions">
+                <% if (isCreator) { %>
+                    <% if (tournament.status === 'draft') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/start-registration" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-primary">Open Registration</button>
+                        </form>
+                    <% } %>
+                    <% if (tournament.status === 'registration') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/generate-bracket" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-primary">Generate Bracket</button>
+                        </form>
+                    <% } %>
+                    <% if (tournament.status === 'in_progress' && tournament.current_phase === 'submission') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-secondary">Force <%= tournament.type === 'open' ? 'Voting' : 'Judging' %> Phase</button>
+                        </form>
+                    <% } %>
+                    <% if (tournament.status === 'in_progress' && tournament.current_phase === 'voting') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-secondary">End Voting Phase</button>
+                        </form>
+                    <% } %>
+                    <% if (tournament.status === 'in_progress') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/complete" method="POST" style="display:inline" onsubmit="return confirm('Complete this tournament?')">
+                            <button type="submit" class="btn btn-danger">Complete Tournament</button>
+                        </form>
+                    <% } %>
+                    <% if (tournament.status === 'completed') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/archive" method="POST" style="display:inline" onsubmit="return confirm('Archive this tournament?')">
+                            <button type="submit" class="btn btn-secondary">Archive</button>
+                        </form>
+                    <% } %>
+                <% } %>
+            </div>
+        </div>
+
+        <% if (tournament.description) { %>
+            <p class="td-description"><%= tournament.description %></p>
+        <% } %>
+
+        <% if (tournament.registration_ends_at || tournament.submission_ends_at || tournament.voting_ends_at) { %>
+            <div class="td-timeline">
+                <% if (tournament.registration_ends_at) { %>
+                    <div class="tl-item <%= tournament.status === 'registration' ? 'tl-active' : (tournament.status !== 'draft' ? 'tl-done' : '') %>">
+                        <span class="tl-label">Registration</span>
+                        <span class="tl-date"><%= new Date(tournament.registration_ends_at).toLocaleString() %></span>
+                    </div>
+                <% } %>
+                <% if (tournament.submission_ends_at) { %>
+                    <div class="tl-item <%= tournament.current_phase === 'submission' ? 'tl-active' : (tournament.current_phase === 'judging' || tournament.current_phase === 'voting' || tournament.status === 'completed' ? 'tl-done' : '') %>">
+                        <span class="tl-label">Submission</span>
+                        <span class="tl-date"><%= new Date(tournament.submission_ends_at).toLocaleString() %></span>
+                    </div>
+                <% } %>
+                <% if (tournament.voting_ends_at && tournament.type === 'open') { %>
+                    <div class="tl-item <%= tournament.current_phase === 'voting' ? 'tl-active' : (tournament.status === 'completed' ? 'tl-done' : '') %>">
+                        <span class="tl-label">Voting</span>
+                        <span class="tl-date"><%= new Date(tournament.voting_ends_at).toLocaleString() %></span>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+
+        <div class="td-meta">
+            <span><i class="fas fa-users"></i> <%= tournament.TournamentRegistrations.length %> / <%= tournament.max_participants %> participants</span>
+            <span><i class="fas fa-user"></i> Hosted by <%= tournament.creator.username %></span>
+            <span><i class="fas fa-tag"></i> <%= tournament.type %> tournament</span>
+            <% if (tournament.status === 'in_progress') { %>
+                <span><i class="fas fa-flag"></i> Round <%= tournament.current_round %> — <%= tournament.current_phase %></span>
+            <% } %>
+        </div>
+
+        <% if (tournament.status === 'draft') { %>
+            <div class="td-section">
+                <p>This tournament is in draft mode. The creator will open registration when ready.</p>
+            </div>
+        <% } %>
+
+        <% if (tournament.status === 'registration') { %>
+            <div class="td-section">
+                <h2>Registration</h2>
+                <% if (tournament.type === 'open' && user) { %>
+                    <% if (!isRegistered) { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/register" method="POST">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Join Tournament</button>
+                        </form>
+                    <% } else { %>
+                        <p><i class="fas fa-check-circle"></i> You are registered!</p>
+                    <% } %>
+                <% } %>
+                <% if (isCreator && tournament.type === 'closed') { %>
+                    <div class="td-add-player">
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/add-player" method="POST" class="inline-form">
+                            <input type="text" name="username" placeholder="Enter username to add" required>
+                            <button type="submit" class="btn btn-primary">Add Player</button>
+                        </form>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+
+        <% if (tournament.status === 'in_progress' && userMatch) { %>
+            <div class="td-section td-current-match">
+                <h2><i class="fas fa-fist-raised"></i> Your Current Match — Round <%= tournament.current_round %></h2>
+                <div class="match-card">
+                    <div class="match-competitors">
+                        <span class="competitor <%= userMatch.competitor1_id === user.id ? 'you' : '' %>">
+                            <%= userMatch.competitor1 ? userMatch.competitor1.username : 'TBD' %>
+                        </span>
+                        <span class="vs">vs</span>
+                        <span class="competitor <%= userMatch.competitor2_id === user.id ? 'you' : '' %>">
+                            <%= userMatch.competitor2 ? userMatch.competitor2.username : 'TBD' %>
+                        </span>
+                    </div>
+                    <div class="match-status">Status: <%= userMatch.status %></div>
+                    <% if (tournament.current_phase === 'submission') { %>
+                        <% var userHasSubmitted = (userMatch.competitor1_id === user.id && userMatch.submission1_url) || (userMatch.competitor2_id === user.id && userMatch.submission2_url); %>
+                        <% if (!userHasSubmitted) { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/matches/<%= userMatch.id %>/submit" method="POST" class="match-submit-form">
+                                <label for="youtube_url">Submit your YouTube video link:</label>
+                                <input type="url" name="youtube_url" placeholder="https://youtu.be/... or https://youtube.com/watch?v=..." required class="form-input">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        <% } %>
+                    <% } %>
+                    <% if (userMatch.submission1_url) { %>
+                        <p class="submission-status"><i class="fas fa-check"></i> <%= userMatch.competitor1 ? userMatch.competitor1.username : 'Player 1' %> has submitted</p>
+                    <% } %>
+                    <% if (userMatch.submission2_url) { %>
+                        <p class="submission-status"><i class="fas fa-check"></i> <%= userMatch.competitor2 ? userMatch.competitor2.username : 'Player 2' %> has submitted</p>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
+
+        <% if (Object.keys(matchesByRound).length > 0) { %>
+            <div class="td-section">
+                <h2>Bracket</h2>
+                <div class="bracket">
+                    <%
+                    var roundKeys = Object.keys(matchesByRound).sort(function(a,b){return a-b});
+                    var MATCH_UNIT = 280; // match card height + gap in px
+                    var SLOT_UNIT = MATCH_UNIT / 2;
+                    %>
+                    <% roundKeys.forEach(function(round) { %>
+                        <div class="bracket-col">
+                            <h3 class="bracket-round-title">Round <%= round %></h3>
+                            <div class="bracket-matches">
+                                <% matchesByRound[round].forEach(function(m) { %>
+                                    <%
+                                    var mt = (Math.pow(2, round - 1) * (2 * m.position + 1) - 1) * SLOT_UNIT;
+                                    var ytId1 = null;
+                                    var ytId2 = null;
+                                    if (m.submission1_url) {
+                                        var match1 = m.submission1_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
+                                        if (match1) ytId1 = match1[1];
+                                    }
+                                    if (m.submission2_url) {
+                                        var match2 = m.submission2_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
+                                        if (match2) ytId2 = match2[1];
+                                    }
+                                    %>
+                                    <div class="match-wrapper" style="margin-top: <%= mt %>px">
+                                        <div class="bracket-match <%= m.status %>" data-match-id="<%= m.id %>">
+                                            <div class="mc-competitor <%= m.winner_id === m.competitor1_id ? 'winner' : '' %> <%= m.competitor1_id === (user ? user.id : null) ? 'is-you' : '' %>">
+                                                <span class="mc-name"><%= m.competitor1 ? m.competitor1.username : '—' %></span>
+                                                <% if (ytId1) { %>
+                                                    <iframe class="mc-video" src="https://www.youtube.com/embed/<%= ytId1 %>?rel=0&showinfo=0" allowfullscreen loading="lazy"></iframe>
+                                                <% } %>
+                                            </div>
+                                            <div class="mc-vs"><%= m.status === 'completed' && m.winner ? 'vs' : '' %></div>
+                                            <div class="mc-competitor <%= m.winner_id === m.competitor2_id ? 'winner' : '' %> <%= m.competitor2_id === (user ? user.id : null) ? 'is-you' : '' %>">
+                                                <span class="mc-name"><%= m.competitor2 ? m.competitor2.username : '—' %></span>
+                                                <% if (ytId2) { %>
+                                                    <iframe class="mc-video" src="https://www.youtube.com/embed/<%= ytId2 %>?rel=0&showinfo=0" allowfullscreen loading="lazy"></iframe>
+                                                <% } %>
+                                            </div>
+                                            <div class="mc-status"><%= m.status.replace('_', ' ') %></div>
+                                            <% if (m.status === 'completed' && m.winner) { %>
+                                                <div class="mc-winner"><i class="fas fa-trophy"></i> <%= m.winner.username %></div>
+                                            <% } %>
+                                            <% if (m.status === 'voting' && tournament.type === 'open' && m.round === tournament.current_round) { %>
+                                                <% if (user && user.id !== m.competitor1_id && user.id !== m.competitor2_id) { %>
+                                                    <div class="mc-vote">
+                                                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/matches/<%= m.id %>/vote" method="POST">
+                                                            <button type="submit" name="competitor_id" value="<%= m.competitor1_id %>" class="btn-vote-sm <%= m.TournamentVotes && m.TournamentVotes.some(function(v){return v.voter_id === user.id && v.competitor_id === m.competitor1_id}) ? 'voted' : '' %>"><%= m.competitor1 ? m.competitor1.username : '—' %></button>
+                                                            <span class="vote-sep">or</span>
+                                                            <button type="submit" name="competitor_id" value="<%= m.competitor2_id %>" class="btn-vote-sm <%= m.TournamentVotes && m.TournamentVotes.some(function(v){return v.voter_id === user.id && v.competitor_id === m.competitor2_id}) ? 'voted' : '' %>"><%= m.competitor2 ? m.competitor2.username : '—' %></button>
+                                                        </form>
+                                                    </div>
+                                                <% } %>
+                                                <% if (isCreator) { %>
+                                                    <div class="mc-admin">
+                                                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/matches/<%= m.id %>/winner" method="POST">
+                                                            <select name="winner_id" required>
+                                                                <option value="">Force winner</option>
+                                                                <% if (m.competitor1) { %><option value="<%= m.competitor1_id %>"><%= m.competitor1.username %></option><% } %>
+                                                                <% if (m.competitor2) { %><option value="<%= m.competitor2_id %>"><%= m.competitor2.username %></option><% } %>
+                                                            </select>
+                                                            <button type="submit" class="btn btn-sm btn-danger">Force</button>
+                                                        </form>
+                                                    </div>
+                                                <% } %>
+                                            <% } %>
+                                            <% if (isCreator && m.status === 'judging' && m.round === tournament.current_round) { %>
+                                                <div class="mc-admin">
+                                                    <form action="<%= basePath %>/tournaments/<%= tournament.id %>/matches/<%= m.id %>/winner" method="POST">
+                                                        <select name="winner_id" required>
+                                                            <option value="">Pick winner</option>
+                                                            <% if (m.competitor1) { %><option value="<%= m.competitor1_id %>"><%= m.competitor1.username %></option><% } %>
+                                                            <% if (m.competitor2) { %><option value="<%= m.competitor2_id %>"><%= m.competitor2.username %></option><% } %>
+                                                        </select>
+                                                        <button type="submit" class="btn btn-sm btn-primary">Declare</button>
+                                                    </form>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <% if (round < roundKeys.length) { %>
+                                            <div class="mc-connector"></div>
+                                        <% } %>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        <% } %>
+
+        <div class="td-section">
+            <h2>Participants (<%= tournament.TournamentRegistrations.length %>)</h2>
+            <div class="participants-list">
+                <% tournament.TournamentRegistrations.forEach(function(r) { %>
+                    <a href="<%= basePath %>/user/<%= r.User.id %>" class="participant-item">
+                        <img src="<%= r.User.profilePic || basePath + '/images/default-profile.png' %>" alt="" class="participant-avatar">
+                        <span><%= r.User.username %></span>
+                    </a>
+                <% }); %>
+            </div>
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+</body>
+</html>

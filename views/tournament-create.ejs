@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main class="tournament-create-page">
+        <h1>Create Tournament</h1>
+        <form action="<%= basePath %>/tournaments/create" method="POST" class="tournament-form">
+            <div class="form-group">
+                <label for="name">Tournament Name</label>
+                <input type="text" id="name" name="name" required minlength="3" placeholder="Enter tournament name">
+            </div>
+            <div class="form-group">
+                <label for="description">Description (optional)</label>
+                <textarea id="description" name="description" rows="4" placeholder="Describe your tournament rules and theme..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="type">Tournament Type</label>
+                <select id="type" name="type">
+                    <option value="open">Open SR — anyone can join</option>
+                    <option value="closed">Closed SR — creator adds players</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="max_participants">Max Participants</label>
+                <select id="max_participants" name="max_participants">
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16" selected>16</option>
+                    <option value="32">32</option>
+                    <option value="64">64</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="registration_ends_at">Registration Ends</label>
+                <input type="datetime-local" id="registration_ends_at" name="registration_ends_at">
+            </div>
+            <div class="form-group">
+                <label for="submission_ends_at">Submission Phase Ends</label>
+                <input type="datetime-local" id="submission_ends_at" name="submission_ends_at">
+            </div>
+            <div class="form-group" id="voting-ends-group">
+                <label for="voting_ends_at">Voting Phase Ends (open tournaments only)</label>
+                <input type="datetime-local" id="voting_ends_at" name="voting_ends_at">
+            </div>
+            <script>
+                document.getElementById('type').addEventListener('change', function() {
+                    document.getElementById('voting-ends-group').style.display = this.value === 'open' ? '' : 'none';
+                });
+                document.getElementById('voting-ends-group').style.display = document.getElementById('type').value === 'open' ? '' : 'none';
+            </script>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Tournament</button>
+                <a href="<%= basePath %>/tournaments" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+</body>
+</html>

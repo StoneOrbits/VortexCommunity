@@ -1,0 +1,92 @@
+.tournament-create-page {
+    max-width: 560px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.tournament-create-page h1 {
+    font-size: 26px;
+    color: #fff;
+    margin: 0 0 24px;
+    text-align: center;
+}
+
+.tournament-form {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 32px;
+}
+
+.tournament-form .form-group {
+    max-width: 100%;
+    align-items: stretch;
+    margin-bottom: 20px;
+}
+
+.tournament-form label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ccc;
+    margin-bottom: 8px;
+}
+
+.tournament-form input,
+.tournament-form textarea,
+.tournament-form select {
+    padding: 10px 14px;
+    border: 1px solid #444;
+    background: #222;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tournament-form input:focus,
+.tournament-form textarea:focus,
+.tournament-form select:focus {
+    border-color: #1abc9c;
+    outline: none;
+}
+
+.tournament-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.tournament-form select {
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 28px;
+}
+
+.form-actions .btn {
+    min-width: 140px;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .tournament-create-page {
+        margin: 20px auto;
+    }
+
+    .tournament-form {
+        padding: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
