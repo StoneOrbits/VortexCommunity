@@ -1,32 +1,33 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database-pg');
 
-const TournamentVote = sequelize.define('TournamentVote', {
+const TournamentSRHistory = sequelize.define('TournamentSRHistory', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  match_id: {
+  user_id: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  voter_id: {
+  tournament_id: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  competitor_id: {
+  sr_before: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  sr_after: {
     type: DataTypes.INTEGER,
     allowNull: false
   }
 }, {
-  tableName: 'tournament_votes',
+  tableName: 'tournament_sr_history',
   timestamps: true,
   createdAt: 'createdAt',
-  updatedAt: false,
-  indexes: [
-    { unique: true, fields: ['match_id', 'voter_id'] }
-  ]
+  updatedAt: false
 });
 
-module.exports = TournamentVote;
+module.exports = TournamentSRHistory;

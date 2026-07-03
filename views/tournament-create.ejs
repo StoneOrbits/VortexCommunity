@@ -18,9 +18,28 @@
             <div class="form-group">
                 <label for="type">Tournament Type</label>
                 <select id="type" name="type">
-                    <option value="open">Open SR — anyone can join</option>
-                    <option value="closed">Closed SR — creator adds players</option>
+                    <option value="open">Open Registration — anyone can join</option>
+                    <option value="closed">Closed Registration — creator adds players</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label>Judging Method</label>
+            <div class="radio-group">
+                <label class="radio-option">
+                    <input type="radio" name="judging_type" value="closed" checked>
+                    <div class="radio-text">
+                        <span class="radio-label">Closed Judging</span>
+                        <span class="radio-desc">Organizer manually picks the winner through administration. SR is not affected.</span>
+                    </div>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="judging_type" value="youtube_likes">
+                    <div class="radio-text">
+                        <span class="radio-label">YouTube Likes</span>
+                        <span class="radio-desc">Winner determined by the number of YouTube likes. SR is updated based on match results.</span>
+                    </div>
+                </label>
+            </div>
             </div>
             <div class="form-group">
                 <label for="max_participants">Max Participants</label>
@@ -33,23 +52,14 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="registration_ends_at">Registration Ends</label>
-                <input type="datetime-local" id="registration_ends_at" name="registration_ends_at">
+                <label for="registration_ends_at">Registration Ends (date bracket is announced, submission starts)</label>
+                <input type="date" id="registration_ends_at" name="registration_ends_at">
             </div>
             <div class="form-group">
-                <label for="submission_ends_at">Submission Phase Ends</label>
-                <input type="datetime-local" id="submission_ends_at" name="submission_ends_at">
+                <label for="submission_duration">Submission Duration (hours per round)</label>
+                <input type="number" id="submission_duration" name="submission_duration" min="1" value="72">
             </div>
-            <div class="form-group" id="voting-ends-group">
-                <label for="voting_ends_at">Voting Phase Ends (open tournaments only)</label>
-                <input type="datetime-local" id="voting_ends_at" name="voting_ends_at">
             </div>
-            <script>
-                document.getElementById('type').addEventListener('change', function() {
-                    document.getElementById('voting-ends-group').style.display = this.value === 'open' ? '' : 'none';
-                });
-                document.getElementById('voting-ends-group').style.display = document.getElementById('type').value === 'open' ? '' : 'none';
-            </script>
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Create Tournament</button>
                 <a href="<%= basePath %>/tournaments" class="btn btn-secondary">Cancel</a>

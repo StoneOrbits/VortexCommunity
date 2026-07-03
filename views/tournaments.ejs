@@ -4,23 +4,25 @@
 <body class="dark-theme">
     <%- include('partials/header') %>
     <%- include('partials/nav') %>
-    <main class="tournaments-page">
-        <div class="tournaments-header">
-            <h1>Tournaments</h1>
-        </div>
+<main class="tournaments-page">
+    <div class="tournaments-header">
+        <h1>Tournaments</h1>
+    </div>
 
-        <div class="tournaments-filters">
-            <a href="<%= basePath %>/tournaments?filter=active" class="filter-btn <%= currentFilter === 'active' ? 'active' : '' %>">Active</a>
-            <a href="<%= basePath %>/tournaments?filter=completed" class="filter-btn <%= currentFilter === 'completed' ? 'active' : '' %>">Completed</a>
-            <a href="<%= basePath %>/tournaments?filter=archived" class="filter-btn <%= currentFilter === 'archived' ? 'active' : '' %>">Archived</a>
-        </div>
+    <div class="tp-layout">
+        <div class="tp-main">
+            <div class="tournaments-filters">
+                <a href="<%= basePath %>/tournaments?filter=active&lbPage=1" class="filter-btn <%= currentFilter === 'active' ? 'active' : '' %>">Active</a>
+                <a href="<%= basePath %>/tournaments?filter=completed&lbPage=1" class="filter-btn <%= currentFilter === 'completed' ? 'active' : '' %>">Completed</a>
+                <a href="<%= basePath %>/tournaments?filter=archived&lbPage=1" class="filter-btn <%= currentFilter === 'archived' ? 'active' : '' %>">Archived</a>
+            </div>
 
-        <div class="tournaments-list">
+            <div class="tournaments-list">
             <% if (tournaments.length === 0) { %>
                 <div class="tournaments-empty">
                     <p>No tournaments found.</p>
                     <% if (user) { %>
-                        <a href="<%= basePath %>/tournaments/create" class="btn btn-primary">Create the first tournament</a>
+                        <a href="<%= basePath %>/tournaments/create" class="btn btn-primary">Create Tournament</a>
                     <% } %>
                 </div>
             <% } else { %>
@@ -42,7 +44,51 @@
                 <% }); %>
             <% } %>
         </div>
-    </main>
+        </div>
+
+        <aside class="tp-sidebar">
+            <div class="leaderboard-header">
+                <h2>Leaderboard</h2>
+            </div>
+            <div class="leaderboard-table-wrap">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Player</th>
+                            <th>SR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (ranked.length === 0) { %>
+                            <tr><td colspan="3" class="leaderboard-empty">No players yet.</td></tr>
+                        <% } else { %>
+                            <% ranked.forEach(function(r) { %>
+                                <tr class="<%= user && r.id === user.id ? 'highlight-row' : '' %>">
+                                    <td class="rank"><%= r.rank %></td>
+                                    <td class="player-info">
+                                        <a href="<%= basePath %>/user/<%= r.id %>" class="player-link">
+                                            <img src="<%= r.profilePic || basePath + '/images/default-profile.png' %>" alt="" class="player-avatar">
+                                            <span class="player-name"><%= r.username %></span>
+                                        </a>
+                                    </td>
+                                    <td class="sr-value"><%= r.sr %></td>
+                                </tr>
+                            <% }); %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <% if (lbTotalPages > 1) { %>
+                <div class="lb-pagination">
+                    <% for (var p = 1; p <= lbTotalPages; p++) { %>
+                        <a href="<%= basePath %>/tournaments?filter=<%= currentFilter %>&lbPage=<%= p %>" class="lb-page <%= p === lbPage ? 'active' : '' %>"><%= p %></a>
+                    <% } %>
+                </div>
+            <% } %>
+        </aside>
+    </div>
+</main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
 </body>

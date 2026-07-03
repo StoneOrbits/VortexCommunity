@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { User, Tournament, TournamentRegistration, TournamentMatch, TournamentSRHistory, TournamentVote } = require('../models/pg/index');
+const { User, Tournament, TournamentRegistration, TournamentMatch, TournamentSRHistory } = require('../models/pg/index');
 const { Op } = require('sequelize');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
 
@@ -34,10 +34,36 @@ router.get('/', async (req, res) => {
       registrationCounts[t.id] = count;
     }
 
+    const lbRawPage = Math.max(1, parseInt(req.query.lbPage) || 1);
+    const lbLimit = 15;
+
+    const lbTotal = await User.count();
+    const lbTotalPages = Math.max(1, Math.ceil(lbTotal / lbLimit));
+    const lbPage = Math.min(lbRawPage, lbTotalPages);
+    const lbOffset = (lbPage - 1) * lbLimit;
+
+    const lbUsers = await User.findAll({
+      order: [['sr', 'DESC']],
+      attributes: ['id', 'username', 'profilePic', 'sr'],
+      limit: lbLimit,
+      offset: lbOffset
+    });
+
+    const ranked = lbUsers.map((u, i) => ({
+      rank: lbOffset + i + 1,
+      id: u.id,
+      username: u.username,
+      profilePic: u.profilePic,
+      sr: u.sr
+    }));
+
     res.render('tournaments', {
       tournaments,
       registrationCounts,
       currentFilter: filter,
+      ranked,
+      lbPage,
+      lbTotalPages,
       user: req.user
     });
   } catch (err) {
@@ -52,7 +78,7 @@ router.get('/create', ensureAuthenticated, (req, res) => {
 
 router.post('/create', ensureAuthenticated, async (req, res) => {
   try {
-    const { name, description, type, max_participants } = req.body;
+    const { name, description, type, max_participants, judging_type } = req.body;
 
     if (!name || name.trim().length < 3) {
       req.flash('error', 'Tournament name must be at least 3 characters.');
@@ -67,20 +93,25 @@ router.post('/create', ensureAuthenticated, async (req, res) => {
       return res.redirect(bp(req) + '/tournaments/create');
     }
 
-    const registration_ends_at = req.body.registration_ends_at || null;
-    const submission_ends_at = req.body.submission_ends_at || null;
-    const voting_ends_at = req.body.voting_ends_at || null;
+    const registration_ends_at = req.body.registration_ends_at ? new Date(req.body.registration_ends_at + 'T23:59:59') : null;
+    const submission_duration = parseInt(req.body.submission_duration) || 72;
+
+    let submission_ends_at = null;
+    if (registration_ends_at) {
+      submission_ends_at = new Date(registration_ends_at.getTime() + submission_duration * 60 * 60 * 1000);
+    }
 
     const tournament = await Tournament.create({
       name: name.trim(),
       description: description || null,
       type: type || 'open',
+      judging_type: judging_type || 'closed',
       max_participants: parseInt(max_participants) || 16,
       created_by: req.user.id,
       status: 'draft',
       registration_ends_at,
       submission_ends_at,
-      voting_ends_at
+      submission_duration_hours: submission_duration
     });
 
     req.flash('success', 'Tournament created!');
@@ -101,8 +132,7 @@ router.get('/:id', async (req, res) => {
         { model: TournamentMatch, include: [
           { model: User, as: 'competitor1' },
           { model: User, as: 'competitor2' },
-          { model: User, as: 'winner' },
-          { model: TournamentVote }
+          { model: User, as: 'winner' }
         ]}
       ]
     });
@@ -113,99 +143,18 @@ router.get('/:id', async (req, res) => {
     const now = new Date();
     if (tournament.status === 'in_progress') {
       if (tournament.current_phase === 'submission' && tournament.submission_ends_at && new Date(tournament.submission_ends_at) <= now) {
-        if (tournament.type === 'open') {
-          tournament.current_phase = 'voting';
-          await tournament.save();
-          await TournamentMatch.update(
-            { status: 'voting' },
-            {
-              where: {
-                tournament_id: tournament.id,
-                round: tournament.current_round,
-                status: 'submission'
-              }
-            }
-          );
-        } else {
-          tournament.current_phase = 'judging';
-          await tournament.save();
-          await TournamentMatch.update(
-            { status: 'judging' },
-            {
-              where: {
-                tournament_id: tournament.id,
-                round: tournament.current_round,
-                status: 'submission'
-              }
-            }
-          );
-        }
-      } else if (tournament.current_phase === 'voting' && tournament.type === 'open' && tournament.voting_ends_at && new Date(tournament.voting_ends_at) <= now) {
-        // Auto-compute winners from votes
-        const roundMatches = await TournamentMatch.findAll({
-          where: { tournament_id: tournament.id, round: tournament.current_round, status: 'voting' },
-          include: [{ model: TournamentVote }]
-        });
-        for (const m of roundMatches) {
-          const votes1 = m.TournamentVotes ? m.TournamentVotes.filter(v => v.competitor_id === m.competitor1_id).length : 0;
-          const votes2 = m.TournamentVotes ? m.TournamentVotes.filter(v => v.competitor_id === m.competitor2_id).length : 0;
-          if (votes1 !== votes2) {
-            m.winner_id = votes1 > votes2 ? m.competitor1_id : m.competitor2_id;
-          }
-          m.status = 'completed';
-          await m.save();
-
-          // Advance winner to next round
-          const nextRound = m.round + 1;
-          const nextPos = Math.floor(m.position / 2);
-          const nextMatch = await TournamentMatch.findOne({
-            where: { tournament_id: tournament.id, round: nextRound, position: nextPos }
-          });
-          if (nextMatch && m.winner_id) {
-            if (m.position % 2 === 0) {
-              nextMatch.competitor1_id = m.winner_id;
-            } else {
-              nextMatch.competitor2_id = m.winner_id;
-            }
-            await nextMatch.save();
-          }
-
-          // SR update
-          const srType = tournament.type === 'closed' ? 'closed_sr' : 'open_sr';
-          if (m.winner_id) {
-            const c1 = await User.findByPk(m.competitor1_id);
-            const c2 = await User.findByPk(m.competitor2_id);
-            const winner = m.winner_id === m.competitor1_id ? c1 : c2;
-            const loser = m.winner_id === m.competitor1_id ? c2 : c1;
-            if (winner && loser) {
-              await updateSR(winner, loser, srType, tournament.id);
+        tournament.current_phase = 'judging';
+        await tournament.save();
+        await TournamentMatch.update(
+          { status: 'judging' },
+          {
+            where: {
+              tournament_id: tournament.id,
+              round: tournament.current_round,
+              status: 'submission'
             }
           }
-        }
-
-        const remainingInRound = await TournamentMatch.count({
-          where: { tournament_id: tournament.id, round: tournament.current_round, status: { [Op.ne]: 'completed' } }
-        });
-        if (remainingInRound === 0) {
-          const nextRound = tournament.current_round + 1;
-          const nextRoundMatches = await TournamentMatch.count({
-            where: { tournament_id: tournament.id, round: nextRound }
-          });
-          if (nextRoundMatches === 0) {
-            tournament.current_round = 0;
-            tournament.current_phase = null;
-            tournament.status = 'completed';
-            await tournament.save();
-          } else {
-            tournament.current_round = nextRound;
-            tournament.current_phase = 'submission';
-            await tournament.save();
-            await TournamentMatch.update(
-              { status: 'submission' },
-              { where: { tournament_id: tournament.id, round: nextRound } }
-            );
-          }
-        }
+        );
       }
     }
 
@@ -223,6 +172,9 @@ router.get('/:id', async (req, res) => {
     for (const m of tournament.TournamentMatches) {
       if (!matchesByRound[m.round]) matchesByRound[m.round] = [];
       matchesByRound[m.round].push(m);
+    }
+    for (const round in matchesByRound) {
+      matchesByRound[round].sort((a, b) => a.position - b.position);
     }
     const totalRounds = Object.keys(matchesByRound).length;
 
@@ -336,6 +288,11 @@ router.post('/:id/add-player', ensureAuthenticated, async (req, res) => {
       return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
     }
 
+    if (user.id === tournament.created_by) {
+      req.flash('error', 'You cannot add yourself to your own tournament.');
+      return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
+    }
+
     const existing = await TournamentRegistration.findOne({
       where: { tournament_id: tournament.id, user_id: user.id }
     });
@@ -437,7 +394,7 @@ router.post('/:id/generate-bracket', ensureAuthenticated, async (req, res) => {
       return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
     }
 
-    const sorted = registrations.sort((a, b) => (b.User.open_sr + b.User.closed_sr) - (a.User.open_sr + a.User.closed_sr));
+      const sorted = registrations.sort((a, b) => (b.User.sr) - (a.User.sr));
     const participantIds = sorted.map(r => r.user_id);
 
     const matches = generateBracket(participantIds);
@@ -461,6 +418,8 @@ router.post('/:id/generate-bracket', ensureAuthenticated, async (req, res) => {
     tournament.current_phase = 'submission';
     tournament.status = 'in_progress';
     await tournament.save();
+
+    await updateSubmissionEndsAt(tournament);
 
     const round1Matches = await TournamentMatch.findAll({
       where: { tournament_id: tournament.id, round: 1 }
@@ -519,10 +478,6 @@ router.post('/:id/matches/:matchId/submit', ensureAuthenticated, async (req, res
       return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
     }
 
-    if (match.submission1_url && match.submission2_url) {
-      match.status = tournament.type === 'open' ? 'voting' : 'judging';
-    }
-
     await match.save();
     req.flash('success', 'Submission received!');
     res.redirect(bp(req) + `/tournaments/${tournament.id}`);
@@ -533,84 +488,188 @@ router.post('/:id/matches/:matchId/submit', ensureAuthenticated, async (req, res
   }
 });
 
-async function updateSR(winner, loser, srType, tournamentId) {
+async function updateSR(winner, loser, tournamentId) {
   const K = 32;
-  const expected = 1 / (1 + Math.pow(10, (loser[srType] - winner[srType]) / 400));
+  const expected = 1 / (1 + Math.pow(10, (loser.sr - winner.sr) / 400));
   const winnerGain = Math.round(K * (1 - expected));
   const loserLoss = Math.round(K * (0 - (1 - expected)));
 
-  const winnerBefore = winner[srType];
-  const loserBefore = loser[srType];
-  winner[srType] += winnerGain;
-  loser[srType] += loserLoss;
+  const winnerBefore = winner.sr;
+  const loserBefore = loser.sr;
+  winner.sr += winnerGain;
+  loser.sr += loserLoss;
 
   await winner.save();
   await loser.save();
 
   await TournamentSRHistory.create({
-    user_id: winner.id, tournament_id: tournamentId, sr_type: srType,
-    sr_before: winnerBefore, sr_after: winner[srType]
+    user_id: winner.id, tournament_id: tournamentId,
+    sr_before: winnerBefore, sr_after: winner.sr
   });
   await TournamentSRHistory.create({
-    user_id: loser.id, tournament_id: tournamentId, sr_type: srType,
-    sr_before: loserBefore, sr_after: loser[srType]
+    user_id: loser.id, tournament_id: tournamentId,
+    sr_before: loserBefore, sr_after: loser.sr
   });
 }
 
-router.post('/:id/matches/:matchId/vote', ensureAuthenticated, async (req, res) => {
-  try {
-    const tournament = await Tournament.findByPk(req.params.id);
-    const match = await TournamentMatch.findByPk(req.params.matchId);
-    if (!tournament || !match || match.tournament_id !== tournament.id) {
-      req.flash('error', 'Match not found.');
-      return res.redirect(bp(req) + `/tournaments/${req.params.id}`);
-    }
-    if (tournament.type !== 'open') {
-      req.flash('error', 'Voting is only for open tournaments.');
-      return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
-    }
-    if (match.status !== 'voting') {
-      req.flash('error', 'This match is not in voting phase.');
-      return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
-    }
-    if (req.user.id === match.competitor1_id || req.user.id === match.competitor2_id) {
-      req.flash('error', 'Competitors cannot vote on their own match.');
-      return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
-    }
-
-    const competitorId = parseInt(req.body.competitor_id);
-    if (competitorId !== match.competitor1_id && competitorId !== match.competitor2_id) {
-      req.flash('error', 'Invalid competitor selection.');
-      return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
-    }
-
-    const existing = await TournamentVote.findOne({
-      where: { match_id: match.id, voter_id: req.user.id }
-    });
-    if (existing) {
-      existing.competitor_id = competitorId;
-      await existing.save();
-      req.flash('success', 'Vote updated!');
-    } else {
-      await TournamentVote.create({
-        match_id: match.id,
-        voter_id: req.user.id,
-        competitor_id: competitorId
-      });
-      req.flash('success', 'Vote cast!');
-    }
-
-    res.redirect(bp(req) + `/tournaments/${tournament.id}`);
-  } catch (err) {
-    console.error(err);
-    req.flash('error', 'Failed to vote.');
-    res.redirect(bp(req) + '/tournaments');
+async function updateSubmissionEndsAt(tournament) {
+  if (tournament.submission_duration_hours) {
+    tournament.submission_ends_at = new Date(Date.now() + tournament.submission_duration_hours * 60 * 60 * 1000);
+    await tournament.save();
   }
-});
+}
 
-async function declareWinnerAndAdvance(tournament, match, winnerId, req, res) {
-  const srType = tournament.type === 'closed' ? 'closed_sr' : 'open_sr';
+async function fetchYoutubeLikes(url) {
+  if (!url) return 0;
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
+  if (!match) return 0;
+  try {
+    const res = await fetch('https://www.youtube.com/watch?v=' + match[1]);
+    const html = await res.text();
+    const likeCountMatch = html.match(/"likeCount":"(\d+)"/);
+    if (likeCountMatch) {
+      return parseInt(likeCountMatch[1], 10) || 0;
+    }
+    const likesMatch = html.match(/"label":"(\d[\d,.]*)\s*likes?"/);
+    if (likesMatch) {
+      return parseInt(likesMatch[1].replace(/,/g, '')) || 0;
+    }
+    const simpleMatch = html.match(/(\d[\d,]*)\s*likes?\s*<\/span>/i);
+    if (simpleMatch) {
+      return parseInt(simpleMatch[1].replace(/,/g, '')) || 0;
+    }
+    const jsonLdMatch = html.match(/"interactionStatistic"[^}]*"userInteractionCount":(\d+)/);
+    if (jsonLdMatch) {
+      return parseInt(jsonLdMatch[1], 10) || 0;
+    }
+    return 0;
+  } catch (e) {
+    console.error('Failed to fetch YouTube likes for', url, e);
+    return 0;
+  }
+}
 
+async function resolveYoutubeLikesRound(tournament) {
+  const round = tournament.current_round;
+  const roundMatches = await TournamentMatch.findAll({
+    where: {
+      tournament_id: tournament.id,
+      round,
+      status: { [Op.in]: ['submission', 'judging'] }
+    }
+  });
+
+  if (roundMatches.length === 0) return false;
+
+  // Fetch ALL likes in parallel so all videos are sampled at the same moment
+  const likePromises = roundMatches.map(m => {
+    if (!m.submission1_url || !m.submission2_url) return null;
+    return Promise.all([
+      fetchYoutubeLikes(m.submission1_url),
+      fetchYoutubeLikes(m.submission2_url)
+    ]);
+  });
+  const likeResults = await Promise.all(likePromises);
+
+  let anyResolved = false;
+
+  for (let i = 0; i < roundMatches.length; i++) {
+    const m = roundMatches[i];
+    const likes = likeResults[i];
+    if (!likes) continue;
+
+    const [likes1, likes2] = likes;
+    if (likes1 === 0 && likes2 === 0) {
+      console.warn('Could not fetch likes for match', m.id, m.submission1_url, m.submission2_url);
+      continue;
+    }
+
+    try {
+      const winnerId = likes1 > likes2 ? m.competitor1_id : m.competitor2_id;
+      m.winner_id = winnerId;
+      m.status = 'completed';
+      m.likes1 = likes1;
+      m.likes2 = likes2;
+      await m.save();
+
+      const c1 = await User.findByPk(m.competitor1_id);
+      const c2 = await User.findByPk(m.competitor2_id);
+      const winner = winnerId === m.competitor1_id ? c1 : c2;
+      const loser = winnerId === m.competitor1_id ? c2 : c1;
+      if (winner && loser) {
+        await updateSR(winner, loser, tournament.id);
+      }
+
+      const nextRound = m.round + 1;
+      const nextPos = Math.floor(m.position / 2);
+      const nextMatch = await TournamentMatch.findOne({
+        where: { tournament_id: tournament.id, round: nextRound, position: nextPos }
+      });
+      if (nextMatch && winnerId) {
+        if (m.position % 2 === 0) {
+          nextMatch.competitor1_id = winnerId;
+        } else {
+          nextMatch.competitor2_id = winnerId;
+        }
+        await nextMatch.save();
+      }
+
+      anyResolved = true;
+    } catch (e) {
+      console.error('Failed to process match', m.id, e);
+    }
+  }
+
+  return anyResolved;
+}
+
+async function advanceTournamentRound(tournament) {
+  const remaining = await TournamentMatch.count({
+    where: { tournament_id: tournament.id, round: tournament.current_round, status: { [Op.ne]: 'completed' } }
+  });
+  if (remaining > 0) return;
+
+  const nextRound = tournament.current_round + 1;
+  const nextRoundMatches = await TournamentMatch.count({
+    where: { tournament_id: tournament.id, round: nextRound }
+  });
+  if (nextRoundMatches === 0) {
+    tournament.current_round = 0;
+    tournament.current_phase = null;
+    tournament.status = 'completed';
+    await tournament.save();
+  } else {
+    // Promote winners from current round into next-round slots
+    const prevMatches = await TournamentMatch.findAll({
+      where: { tournament_id: tournament.id, round: tournament.current_round, status: 'completed' }
+    });
+    for (const m of prevMatches) {
+      if (!m.winner_id) continue;
+      const nextPos = Math.floor(m.position / 2);
+      const nextMatch = await TournamentMatch.findOne({
+        where: { tournament_id: tournament.id, round: nextRound, position: nextPos }
+      });
+      if (!nextMatch) continue;
+      if (m.position % 2 === 0) {
+        if (!nextMatch.competitor1_id) nextMatch.competitor1_id = m.winner_id;
+      } else {
+        if (!nextMatch.competitor2_id) nextMatch.competitor2_id = m.winner_id;
+      }
+      await nextMatch.save();
+    }
+
+    tournament.current_round = nextRound;
+    tournament.current_phase = 'submission';
+    await tournament.save();
+    await updateSubmissionEndsAt(tournament);
+    await TournamentMatch.update(
+      { status: 'submission' },
+      { where: { tournament_id: tournament.id, round: nextRound } }
+    );
+  }
+}
+
+async function declareWinnerAndAdvance(tournament, match, winnerId) {
   const c1 = await User.findByPk(match.competitor1_id);
   const c2 = await User.findByPk(match.competitor2_id);
   const winner = winnerId === match.competitor1_id ? c1 : c2;
@@ -620,8 +679,8 @@ async function declareWinnerAndAdvance(tournament, match, winnerId, req, res) {
   match.status = 'completed';
   await match.save();
 
-  if (winner && loser) {
-    await updateSR(winner, loser, srType, tournament.id);
+  if (winner && loser && tournament.judging_type === 'youtube_likes') {
+    await updateSR(winner, loser, tournament.id);
   }
 
   const nextRound = match.round + 1;
@@ -639,34 +698,7 @@ async function declareWinnerAndAdvance(tournament, match, winnerId, req, res) {
     await nextMatch.save();
   }
 
-  const remainingInRound = await TournamentMatch.count({
-    where: { tournament_id: tournament.id, round: match.round, status: { [Op.ne]: 'completed' } }
-  });
-
-  if (remainingInRound === 0) {
-    const nextRoundMatches = await TournamentMatch.count({
-      where: { tournament_id: tournament.id, round: nextRound }
-    });
-    if (nextRoundMatches === 0) {
-      tournament.current_round = 0;
-      tournament.current_phase = null;
-      tournament.status = 'completed';
-      await tournament.save();
-    } else {
-      const nextRoundPending = await TournamentMatch.count({
-        where: { tournament_id: tournament.id, round: nextRound, competitor1_id: null }
-      });
-      if (nextRoundPending === 0) {
-        tournament.current_round = nextRound;
-        tournament.current_phase = 'submission';
-        await tournament.save();
-        await TournamentMatch.update(
-          { status: 'submission' },
-          { where: { tournament_id: tournament.id, round: nextRound } }
-        );
-      }
-    }
-  }
+  await advanceTournamentRound(tournament);
 }
 
 router.post('/:id/matches/:matchId/winner', ensureAuthenticated, async (req, res) => {
@@ -682,14 +714,14 @@ router.post('/:id/matches/:matchId/winner', ensureAuthenticated, async (req, res
       return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
     }
 
-    if (tournament.type === 'closed') {
-      if (match.status !== 'judging') {
-        req.flash('error', 'Match is not in judging phase.');
+    if (tournament.judging_type === 'youtube_likes') {
+      if (match.status !== 'judging' && match.status !== 'submission') {
+        req.flash('error', 'Match is not in a phase where a winner can be declared.');
         return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
       }
     } else {
-      if (match.status !== 'voting' && match.status !== 'judging') {
-        req.flash('error', 'Match is not in a phase where a winner can be forced.');
+      if (match.status !== 'judging') {
+        req.flash('error', 'Match is not in judging phase.');
         return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
       }
     }
@@ -727,18 +759,22 @@ router.post('/:id/advance-phase', ensureAuthenticated, async (req, res) => {
         where: {
           tournament_id: tournament.id,
           round: tournament.current_round,
-          status: 'submission'
+          status: 'submission',
+          [Op.or]: [
+            { submission1_url: null },
+            { submission2_url: null }
+          ]
         }
       });
       if (pendingSubmissions > 0) {
         req.flash('error', 'Not all competitors have submitted yet.');
         return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
       }
-      const nextPhase = tournament.type === 'open' ? 'voting' : 'judging';
-      tournament.current_phase = nextPhase;
+
+      tournament.current_phase = 'judging';
       await tournament.save();
       await TournamentMatch.update(
-        { status: nextPhase },
+        { status: 'judging' },
         {
           where: {
             tournament_id: tournament.id,
@@ -747,30 +783,53 @@ router.post('/:id/advance-phase', ensureAuthenticated, async (req, res) => {
           }
         }
       );
-      req.flash('success', `Round ${tournament.current_round} is now in ${nextPhase} phase.`);
+      req.flash('success', `Round ${tournament.current_round} is now in judging phase.`);
     } else if (tournament.current_phase === 'judging') {
-      const pendingJudging = await TournamentMatch.count({
-        where: {
-          tournament_id: tournament.id,
-          round: tournament.current_round,
-          status: 'judging'
+      if (tournament.judging_type === 'youtube_likes') {
+        const resolved = await resolveYoutubeLikesRound(tournament);
+        if (resolved) {
+          await advanceTournamentRound(tournament);
+          req.flash('success', 'Round resolved by YouTube likes!');
+        } else {
+          const remaining = await TournamentMatch.count({
+            where: {
+              tournament_id: tournament.id,
+              round: tournament.current_round,
+              status: { [Op.ne]: 'completed' }
+            }
+          });
+          if (remaining === 0) {
+            await advanceTournamentRound(tournament);
+            req.flash('success', 'Round advanced!');
+          } else {
+            const pendingJudging = await TournamentMatch.count({
+              where: {
+                tournament_id: tournament.id,
+                round: tournament.current_round,
+                status: 'judging'
+              }
+            });
+            if (pendingJudging > 0) {
+              req.flash('error', 'Not all matches have been judged yet.');
+              return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
+            }
+            req.flash('success', 'No matches to resolve.');
+          }
         }
-      });
-      if (pendingJudging > 0) {
-        req.flash('error', 'Not all matches have been judged yet.');
-        return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
-      }
-    } else if (tournament.current_phase === 'voting') {
-      const pendingVoting = await TournamentMatch.count({
-        where: {
-          tournament_id: tournament.id,
-          round: tournament.current_round,
-          status: 'voting'
+      } else {
+        const pendingJudging = await TournamentMatch.count({
+          where: {
+            tournament_id: tournament.id,
+            round: tournament.current_round,
+            status: 'judging'
+          }
+        });
+        if (pendingJudging > 0) {
+          req.flash('error', 'Not all matches have been judged yet.');
+          return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
         }
-      });
-      if (pendingVoting > 0) {
-        req.flash('error', 'Not all matches have votes cast yet.');
-        return res.redirect(bp(req) + `/tournaments/${tournament.id}`);
+        await advanceTournamentRound(tournament);
+        req.flash('success', 'Round advanced!');
       }
     }
 

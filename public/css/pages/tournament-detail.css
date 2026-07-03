@@ -58,6 +58,16 @@
     margin-left: 8px;
 }
 
+.tournament-judging-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: #2c3e50;
+    color: #fff;
+    margin-left: 8px;
+}
+
 .td-section {
     background: #1a1a1a;
     border: 1px solid #333;
@@ -158,245 +168,139 @@
     border-radius: 5px;
 }
 
-.bracket {
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-    padding: 20px 0 40px;
-    align-items: flex-start;
-}
-
-.bracket-col {
-    min-width: 260px;
-    flex-shrink: 0;
-    position: relative;
-}
-
-.bracket-col + .bracket-col {
-    margin-left: 40px;
-}
-
-.bracket-col + .bracket-col::before {
-    content: '';
-    position: absolute;
-    left: -20px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: transparent;
-}
-
-.bracket-round-title {
-    font-size: 12px;
-    color: #666;
-    margin: 0 0 16px;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-}
-
-.bracket-matches {
-    position: relative;
-}
-
-.match-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.bracket-match {
-    border: 1px solid #444;
-    border-radius: 8px;
-    background: #1e1e1e;
-    padding: 10px;
-    width: 240px;
-    position: relative;
-    transition: border-color 0.2s;
-}
-
-.bracket-match.completed {
-    border-color: #27ae60;
-}
-
-.bracket-match.judging {
-    border-color: #f39c12;
-}
-
-.bracket-match.submission {
-    border-color: #2980b9;
-}
-
-.bracket-match.voting {
+.td-voting {
     border-color: #8e44ad;
 }
 
-.mc-competitor {
+.vote-card {
+    margin-bottom: 24px;
+}
+
+.vote-card:last-child {
+    margin-bottom: 0;
+}
+
+.vote-players {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 6px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #ccc;
-}
-
-.mc-competitor.winner {
-    color: #f1c40f;
-}
-
-.mc-competitor.winner .mc-name::before {
-    content: "\f091";
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    margin-right: 4px;
-}
-
-.mc-competitor.is-you .mc-name {
-    color: #1abc9c;
-}
-
-.mc-name {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-    flex-shrink: 1;
-}
-
-.mc-video {
-    width: 80px;
-    height: 45px;
-    border: none;
-    border-radius: 4px;
-    flex-shrink: 0;
-    margin-left: auto;
-}
-
-.mc-vs {
-    text-align: center;
-    font-size: 10px;
-    color: #555;
-    padding: 0 6px;
-    line-height: 1;
-}
-
-.mc-status {
-    text-align: center;
-    font-size: 11px;
-    color: #777;
-    padding: 2px 0;
-}
-
-.mc-winner {
-    text-align: center;
-    font-size: 12px;
-    color: #f1c40f;
-    font-weight: 700;
-    padding: 2px 0;
-}
-
-.mc-winner i {
-    margin-right: 3px;
-}
-
-.mc-vote {
-    text-align: center;
-    padding: 6px 0 2px;
-    border-top: 1px solid #333;
-    margin-top: 6px;
-}
-
-.mc-vote form {
-    display: flex;
-    align-items: center;
+    gap: 20px;
+    align-items: flex-start;
     justify-content: center;
-    gap: 6px;
+    flex-wrap: wrap;
 }
 
-.btn-vote-sm {
-    padding: 3px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    border: 1px solid #555;
+.vp-side {
+    flex: 1;
+    min-width: 280px;
+    max-width: 480px;
+    text-align: center;
+    padding: 16px;
+    border: 2px solid #444;
+    border-radius: 10px;
+    background: #1a1a1a;
+    transition: border-color 0.2s;
+}
+
+.vp-side.voted {
+    border-color: #1abc9c;
+}
+
+.vp-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ddd;
+    margin-bottom: 10px;
+}
+
+.vp-video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    border-radius: 6px;
+}
+
+.vp-side form {
+    margin-top: 12px;
+}
+
+.btn-vote-lg {
+    padding: 10px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    border: 2px solid #555;
     background: #222;
     color: #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.btn-vote-sm:hover {
+.btn-vote-lg:hover {
     border-color: #1abc9c;
     color: #fff;
     background: #1a2a28;
 }
 
-.btn-vote-sm.voted {
+.btn-vote-lg.voted {
     background: #1abc9c;
     color: #fff;
     border-color: #1abc9c;
 }
 
-.vote-sep {
-    font-size: 11px;
-    color: #555;
-}
-
-.mc-admin {
-    padding: 6px 0 2px;
-    border-top: 1px solid #333;
-    margin-top: 6px;
-    text-align: center;
-}
-
-.mc-admin form {
+.vp-vs {
     display: flex;
-    gap: 4px;
     align-items: center;
-    justify-content: center;
+    font-size: 24px;
+    font-weight: 900;
+    color: #555;
+    padding: 0 8px;
+    flex-shrink: 0;
 }
 
-.mc-admin select {
-    padding: 3px 6px;
-    border: 1px solid #555;
+.bc-container {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: #111;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.bc-container:active {
+    cursor: grabbing;
+}
+
+#bracket-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#bc-admin-overlay {
+    position: absolute;
     background: #222;
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 12px;
+    z-index: 10;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+
+#bc-admin-overlay select {
+    padding: 4px 8px;
+    border: 1px solid #555;
+    background: #1a1a1a;
     color: #fff;
     border-radius: 4px;
+    font-size: 13px;
+    margin-right: 6px;
+}
+
+#bc-admin-overlay .btn-sm {
+    padding: 4px 10px;
     font-size: 12px;
-}
-
-.mc-admin .btn-sm {
-    padding: 3px 8px;
-    font-size: 12px;
-}
-
-.mc-connector {
-    position: absolute;
-    left: 100%;
-    top: 50%;
-    width: 20px;
-    height: 2px;
-    background: #555;
-}
-
-.bracket-col:last-child .match-wrapper .mc-connector {
-    display: none;
-}
-
-.match-wrapper::before {
-    content: '';
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    width: 20px;
-    height: 2px;
-    background: #555;
-}
-
-.bracket-col:first-child .match-wrapper::before {
-    display: none;
 }
 
 .participants-list {
@@ -536,15 +440,69 @@
         flex-direction: column;
     }
 
-    .bracket {
-        flex-direction: column;
-    }
-
-    .bracket-round {
-        min-width: 100%;
-    }
-
     .match-competitors {
         font-size: 15px;
     }
+}
+
+.tl-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 20px 0;
+    padding: 12px 16px;
+    background: #1a1a2e;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.tl-round {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 90px;
+}
+
+.tl-round-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tl-phases {
+    display: flex;
+    gap: 4px;
+}
+
+.tl-phase {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    background: #2a2a3e;
+    color: #666;
+    white-space: nowrap;
+}
+
+.tl-phase.tl-active {
+    background: #2980b9;
+    color: #fff;
+}
+
+.tl-phase.tl-done {
+    background: #27ae60;
+    color: #fff;
+}
+
+.tl-connector {
+    width: 24px;
+    height: 2px;
+    background: #333;
+    flex-shrink: 0;
 }

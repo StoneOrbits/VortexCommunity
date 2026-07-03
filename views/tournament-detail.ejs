@@ -10,6 +10,7 @@
                 <h1><%= tournament.name %></h1>
                 <span class="tournament-status status-<%= tournament.status %>"><%= tournament.status.replace('_', ' ') %></span>
                 <span class="tournament-type-badge"><%= tournament.type %> SR</span>
+                <span class="tournament-judging-badge"><%= tournament.judging_type.replace('_', ' ') %></span>
             </div>
             <div class="td-header-actions">
                 <% if (isCreator) { %>
@@ -24,14 +25,26 @@
                         </form>
                     <% } %>
                     <% if (tournament.status === 'in_progress' && tournament.current_phase === 'submission') { %>
-                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
-                            <button type="submit" class="btn btn-secondary">Force <%= tournament.type === 'open' ? 'Voting' : 'Judging' %> Phase</button>
-                        </form>
+                        <% if (tournament.judging_type === 'youtube_likes') { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                                <button type="submit" class="btn btn-secondary">Advance Round</button>
+                            </form>
+                        <% } else { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                                <button type="submit" class="btn btn-secondary">Force Judging Phase</button>
+                            </form>
+                        <% } %>
                     <% } %>
-                    <% if (tournament.status === 'in_progress' && tournament.current_phase === 'voting') { %>
-                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
-                            <button type="submit" class="btn btn-secondary">End Voting Phase</button>
-                        </form>
+                    <% if (tournament.status === 'in_progress' && tournament.current_phase === 'judging') { %>
+                        <% if (tournament.judging_type === 'youtube_likes') { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                                <button type="submit" class="btn btn-secondary">Advance Round</button>
+                            </form>
+                        <% } else { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                                <button type="submit" class="btn btn-secondary">Advance Round</button>
+                            </form>
+                        <% } %>
                     <% } %>
                     <% if (tournament.status === 'in_progress') { %>
                         <form action="<%= basePath %>/tournaments/<%= tournament.id %>/complete" method="POST" style="display:inline" onsubmit="return confirm('Complete this tournament?')">
@@ -51,33 +64,11 @@
             <p class="td-description"><%= tournament.description %></p>
         <% } %>
 
-        <% if (tournament.registration_ends_at || tournament.submission_ends_at || tournament.voting_ends_at) { %>
-            <div class="td-timeline">
-                <% if (tournament.registration_ends_at) { %>
-                    <div class="tl-item <%= tournament.status === 'registration' ? 'tl-active' : (tournament.status !== 'draft' ? 'tl-done' : '') %>">
-                        <span class="tl-label">Registration</span>
-                        <span class="tl-date"><%= new Date(tournament.registration_ends_at).toLocaleString() %></span>
-                    </div>
-                <% } %>
-                <% if (tournament.submission_ends_at) { %>
-                    <div class="tl-item <%= tournament.current_phase === 'submission' ? 'tl-active' : (tournament.current_phase === 'judging' || tournament.current_phase === 'voting' || tournament.status === 'completed' ? 'tl-done' : '') %>">
-                        <span class="tl-label">Submission</span>
-                        <span class="tl-date"><%= new Date(tournament.submission_ends_at).toLocaleString() %></span>
-                    </div>
-                <% } %>
-                <% if (tournament.voting_ends_at && tournament.type === 'open') { %>
-                    <div class="tl-item <%= tournament.current_phase === 'voting' ? 'tl-active' : (tournament.status === 'completed' ? 'tl-done' : '') %>">
-                        <span class="tl-label">Voting</span>
-                        <span class="tl-date"><%= new Date(tournament.voting_ends_at).toLocaleString() %></span>
-                    </div>
-                <% } %>
-            </div>
-        <% } %>
-
         <div class="td-meta">
             <span><i class="fas fa-users"></i> <%= tournament.TournamentRegistrations.length %> / <%= tournament.max_participants %> participants</span>
             <span><i class="fas fa-user"></i> Hosted by <%= tournament.creator.username %></span>
             <span><i class="fas fa-tag"></i> <%= tournament.type %> tournament</span>
+            <span><i class="fas fa-gavel"></i> <%= tournament.judging_type.replace('_', ' ') %></span>
             <% if (tournament.status === 'in_progress') { %>
                 <span><i class="fas fa-flag"></i> Round <%= tournament.current_round %> — <%= tournament.current_phase %></span>
             <% } %>
@@ -147,95 +138,58 @@
         <% } %>
 
         <% if (Object.keys(matchesByRound).length > 0) { %>
+            <%
+            var roundKeys = Object.keys(matchesByRound).sort(function(a,b){return a-b});
+            var judgingLabel = 'Judge';
+            %>
+            <div class="tl-wrapper">
+                <% roundKeys.forEach(function(rk, idx) { %>
+                    <% var isLast = idx === roundKeys.length - 1; %>
+                    <% var roundNum = +rk; %>
+                    <% var roundLabel = isLast && matchesByRound[rk].length === 1 ? 'Finals' : 'Round ' + roundNum; %>
+                    <% var subDone = tournament.current_round > roundNum || (tournament.current_round === roundNum && tournament.status === 'in_progress' && tournament.current_phase !== 'submission') || tournament.status === 'completed'; %>
+                    <% var subActive = tournament.current_round === roundNum && tournament.status === 'in_progress' && tournament.current_phase === 'submission'; %>
+                    <% var judgeDone = tournament.current_round > roundNum || tournament.status === 'completed'; %>
+                    <% var judgeActive = tournament.current_round === roundNum && tournament.status === 'in_progress' && tournament.current_phase === 'judging'; %>
+                    <div class="tl-round">
+                        <div class="tl-round-label"><%= roundLabel %></div>
+                        <div class="tl-phases">
+                            <div class="tl-phase <%= subDone ? 'tl-done' : (subActive ? 'tl-active' : '') %>">Submission</div>
+                            <div class="tl-phase <%= judgeDone ? 'tl-done' : (judgeActive ? 'tl-active' : '') %>"><%= judgingLabel %></div>
+                        </div>
+                    </div>
+                    <% if (!isLast) { %><div class="tl-connector"></div><% } %>
+                <% }); %>
+                <% if (tournament.status === 'completed') { %>
+                    <div class="tl-connector"></div>
+                    <div class="tl-round">
+                        <div class="tl-round-label">Done</div>
+                        <div class="tl-phases">
+                            <div class="tl-phase tl-done">Complete</div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+            <%
+            /* Centered tree formula */
+            var SU = 72;
+            function marginTop(round, pos) {
+                if (+round === 1 && pos > 0) return 10;
+                if (+round === 2) return 110;
+                return (Math.pow(2, round - 1) * (2 * pos + 1) - 1) * SU;
+            }
+
+            for (var rk in matchesByRound) {
+                matchesByRound[rk].sort(function(a,b){return a.position - b.position});
+            }
+            %>
+
             <div class="td-section">
                 <h2>Bracket</h2>
-                <div class="bracket">
-                    <%
-                    var roundKeys = Object.keys(matchesByRound).sort(function(a,b){return a-b});
-                    var MATCH_UNIT = 280; // match card height + gap in px
-                    var SLOT_UNIT = MATCH_UNIT / 2;
-                    %>
-                    <% roundKeys.forEach(function(round) { %>
-                        <div class="bracket-col">
-                            <h3 class="bracket-round-title">Round <%= round %></h3>
-                            <div class="bracket-matches">
-                                <% matchesByRound[round].forEach(function(m) { %>
-                                    <%
-                                    var mt = (Math.pow(2, round - 1) * (2 * m.position + 1) - 1) * SLOT_UNIT;
-                                    var ytId1 = null;
-                                    var ytId2 = null;
-                                    if (m.submission1_url) {
-                                        var match1 = m.submission1_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
-                                        if (match1) ytId1 = match1[1];
-                                    }
-                                    if (m.submission2_url) {
-                                        var match2 = m.submission2_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
-                                        if (match2) ytId2 = match2[1];
-                                    }
-                                    %>
-                                    <div class="match-wrapper" style="margin-top: <%= mt %>px">
-                                        <div class="bracket-match <%= m.status %>" data-match-id="<%= m.id %>">
-                                            <div class="mc-competitor <%= m.winner_id === m.competitor1_id ? 'winner' : '' %> <%= m.competitor1_id === (user ? user.id : null) ? 'is-you' : '' %>">
-                                                <span class="mc-name"><%= m.competitor1 ? m.competitor1.username : '—' %></span>
-                                                <% if (ytId1) { %>
-                                                    <iframe class="mc-video" src="https://www.youtube.com/embed/<%= ytId1 %>?rel=0&showinfo=0" allowfullscreen loading="lazy"></iframe>
-                                                <% } %>
-                                            </div>
-                                            <div class="mc-vs"><%= m.status === 'completed' && m.winner ? 'vs' : '' %></div>
-                                            <div class="mc-competitor <%= m.winner_id === m.competitor2_id ? 'winner' : '' %> <%= m.competitor2_id === (user ? user.id : null) ? 'is-you' : '' %>">
-                                                <span class="mc-name"><%= m.competitor2 ? m.competitor2.username : '—' %></span>
-                                                <% if (ytId2) { %>
-                                                    <iframe class="mc-video" src="https://www.youtube.com/embed/<%= ytId2 %>?rel=0&showinfo=0" allowfullscreen loading="lazy"></iframe>
-                                                <% } %>
-                                            </div>
-                                            <div class="mc-status"><%= m.status.replace('_', ' ') %></div>
-                                            <% if (m.status === 'completed' && m.winner) { %>
-                                                <div class="mc-winner"><i class="fas fa-trophy"></i> <%= m.winner.username %></div>
-                                            <% } %>
-                                            <% if (m.status === 'voting' && tournament.type === 'open' && m.round === tournament.current_round) { %>
-                                                <% if (user && user.id !== m.competitor1_id && user.id !== m.competitor2_id) { %>
-                                                    <div class="mc-vote">
-                                                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/matches/<%= m.id %>/vote" method="POST">
-                                                            <button type="submit" name="competitor_id" value="<%= m.competitor1_id %>" class="btn-vote-sm <%= m.TournamentVotes && m.TournamentVotes.some(function(v){return v.voter_id === user.id && v.competitor_id === m.competitor1_id}) ? 'voted' : '' %>"><%= m.competitor1 ? m.competitor1.username : '—' %></button>
-                                                            <span class="vote-sep">or</span>
-                                                            <button type="submit" name="competitor_id" value="<%= m.competitor2_id %>" class="btn-vote-sm <%= m.TournamentVotes && m.TournamentVotes.some(function(v){return v.voter_id === user.id && v.competitor_id === m.competitor2_id}) ? 'voted' : '' %>"><%= m.competitor2 ? m.competitor2.username : '—' %></button>
-                                                        </form>
-                                                    </div>
-                                                <% } %>
-                                                <% if (isCreator) { %>
-                                                    <div class="mc-admin">
-                                                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/matches/<%= m.id %>/winner" method="POST">
-                                                            <select name="winner_id" required>
-                                                                <option value="">Force winner</option>
-                                                                <% if (m.competitor1) { %><option value="<%= m.competitor1_id %>"><%= m.competitor1.username %></option><% } %>
-                                                                <% if (m.competitor2) { %><option value="<%= m.competitor2_id %>"><%= m.competitor2.username %></option><% } %>
-                                                            </select>
-                                                            <button type="submit" class="btn btn-sm btn-danger">Force</button>
-                                                        </form>
-                                                    </div>
-                                                <% } %>
-                                            <% } %>
-                                            <% if (isCreator && m.status === 'judging' && m.round === tournament.current_round) { %>
-                                                <div class="mc-admin">
-                                                    <form action="<%= basePath %>/tournaments/<%= tournament.id %>/matches/<%= m.id %>/winner" method="POST">
-                                                        <select name="winner_id" required>
-                                                            <option value="">Pick winner</option>
-                                                            <% if (m.competitor1) { %><option value="<%= m.competitor1_id %>"><%= m.competitor1.username %></option><% } %>
-                                                            <% if (m.competitor2) { %><option value="<%= m.competitor2_id %>"><%= m.competitor2.username %></option><% } %>
-                                                        </select>
-                                                        <button type="submit" class="btn btn-sm btn-primary">Declare</button>
-                                                    </form>
-                                                </div>
-                                            <% } %>
-                                        </div>
-                                        <% if (round < roundKeys.length) { %>
-                                            <div class="mc-connector"></div>
-                                        <% } %>
-                                    </div>
-                                <% }); %>
-                            </div>
-                        </div>
-                    <% }); %>
+                <div class="bc-container">
+                    <canvas id="bracket-canvas"></canvas>
+                    <div id="bc-admin-overlay" style="display:none"></div>
                 </div>
             </div>
         <% } %>
@@ -254,5 +208,411 @@
     </main>
     <%- include('partials/footer') %>
     <%- include('partials/script') %>
+<% if (typeof roundKeys !== 'undefined' && roundKeys.length > 0) { %>
+<script>
+<%
+var bracketRounds = roundKeys.map(function(rk) {
+    return {
+        round: +rk,
+        matches: matchesByRound[rk].map(function(m) {
+            var ytId1 = null, ytId2 = null;
+            if (m.submission1_url) { var mm = m.submission1_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/); if (mm) ytId1 = mm[1]; }
+            if (m.submission2_url) { var mm = m.submission2_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/); if (mm) ytId2 = mm[1]; }
+            return {
+                id: m.id, position: m.position, status: m.status,
+                round: +rk,
+                c1: m.competitor1 ? m.competitor1.username : null,
+                c2: m.competitor2 ? m.competitor2.username : null,
+                c1id: m.competitor1_id, c2id: m.competitor2_id, wid: m.winner_id,
+                yt1: ytId1, yt2: ytId2,
+                l1: m.likes1, l2: m.likes2
+            };
+        })
+    };
+});
+%>
+(function(){
+    var CARD_W = 200, CARD_H = 80, GAP = 10, CONN_H = 30, COL_GAP = 60;
+    var FONT = '12px sans-serif';
+    var isCreator = <%= isCreator ? 'true' : 'false' %>;
+    var userId = <%= user ? user.id : 'null' %>;
+    var isCompleted = <%= tournament.status === 'completed' ? 'true' : 'false' %>;
+    var judgingType = '<%= tournament.judging_type %>';
+    var basePath = '<%= basePath %>/tournaments/<%= tournament.id %>';
+
+    var rounds = <%- JSON.stringify(bracketRounds) %>;
+
+    var canvas = document.getElementById('bracket-canvas');
+    var ctx = canvas.getContext('2d');
+    var container = canvas.parentElement;
+
+    var panX = 0, panY = 0, scale = 1;
+    var isDrag = false, dragSX, dragSY, dragPX, dragPY;
+    var loadedImages = {};
+    var pendingImages = 0;
+
+    function resize() {
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        autoFit();
+        draw();
+    }
+
+    function autoFit() {
+        var numRounds = rounds.length;
+        var numR1 = rounds[0].matches.length;
+        var maxX = (numRounds - 1) * (CARD_W + CONN_H + COL_GAP) + CARD_W;
+        if (isCompleted) {
+            maxX += CONN_H + COL_GAP + CARD_W;
+        }
+        var maxY = (numR1 - 1) * (CARD_H + GAP) + CARD_H;
+        var margin = 20;
+        var cw = canvas.width, ch = canvas.height;
+        if (cw === 0 || ch === 0) return;
+        var availW = cw - 2 * margin;
+        var availH = ch - 2 * margin;
+        scale = Math.min(availW / maxX, availH / maxY, 1.2);
+        scale = Math.max(scale, 0.2);
+        panX = margin + (availW - maxX * scale) / 2;
+        panY = margin + (availH - maxY * scale) / 2;
+    }
+
+    function computeY(round, pos) {
+        if (round === 1) return pos * (CARD_H + GAP);
+        var f1 = computeY(round - 1, pos * 2);
+        var f2 = computeY(round - 1, pos * 2 + 1);
+        return (f1 + f2) / 2;
+    }
+
+    function preloadImages() {
+        rounds.forEach(function(r) {
+            r.matches.forEach(function(m) {
+                [m.yt1, m.yt2].forEach(function(yt) {
+                    if (!yt || loadedImages[yt]) return;
+                    loadedImages[yt] = false;
+                    pendingImages++;
+                    var img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.onload = function() { loadedImages[yt] = img; pendingImages--; draw(); };
+                    img.onerror = function() { loadedImages[yt] = null; pendingImages--; draw(); };
+                    img.src = 'https://img.youtube.com/vi/' + yt + '/mqdefault.jpg';
+                });
+            });
+        });
+    }
+
+    function drawRoundLabel(x, y, text) {
+        ctx.fillStyle = '#666';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(text, x + CARD_W / 2, y - 6);
+    }
+
+    function drawCard(x, y, m) {
+        var bw = 1;
+        var colors = { pending: '#444', completed: '#27ae60', submission: '#2980b9', judging: '#f39c12' };
+        var borderColor = colors[m.status] || '#444';
+
+        ctx.fillStyle = '#1e1e1e';
+        ctx.beginPath();
+        ctx.roundRect(x, y, CARD_W, CARD_H, 6);
+        ctx.fill();
+
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = bw;
+        ctx.beginPath();
+        ctx.roundRect(x + bw/2, y + bw/2, CARD_W - bw, CARD_H - bw, 5);
+        ctx.stroke();
+
+        var pad = 6, rowH = 24, gap = 4;
+        var rowY = y + (CARD_H - 2 * rowH - gap - 14) / 2;
+
+        function drawCompetitor(name, yt, isWinner, isYou) {
+            if (yt && loadedImages[yt]) {
+                ctx.drawImage(loadedImages[yt], x + pad, rowY, 44, 24);
+                ctx.fillStyle = isWinner ? '#f1c40f' : (isYou ? '#1abc9c' : '#ccc');
+                ctx.font = FONT;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(name || '\u2014', x + pad + 48, rowY + 12);
+            } else {
+                ctx.fillStyle = isWinner ? '#f1c40f' : (isYou ? '#1abc9c' : '#ccc');
+                ctx.font = FONT;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(name || '\u2014', x + pad, rowY + 12);
+            }
+        }
+
+        drawCompetitor(m.c1, m.yt1, m.wid === m.c1id, m.c1id === userId);
+        if (m.l1 != null) {
+            ctx.fillStyle = '#999';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(Number(m.l1).toLocaleString(), x + CARD_W - pad, rowY + 12);
+        }
+
+        rowY += rowH + gap;
+
+        // Status line
+        ctx.fillStyle = '#777';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(m.status.replace('_', ' '), x + CARD_W - pad, rowY + 7);
+
+        rowY += 14 + gap;
+
+        drawCompetitor(m.c2, m.yt2, m.wid === m.c2id, m.c2id === userId);
+        if (m.l2 != null) {
+            ctx.fillStyle = '#999';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(Number(m.l2).toLocaleString(), x + CARD_W - pad, rowY + 12);
+        }
+    }
+
+    function drawConnectors() {
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+
+        for (var ri = 0; ri < rounds.length - 1; ri++) {
+            var cur = rounds[ri].matches;
+            for (var i = 0; i < cur.length; i += 2) {
+                var topM = cur[i], botM = cur[i + 1];
+                if (!botM) continue;
+
+                var colX = ri * (CARD_W + CONN_H + COL_GAP);
+                var topY = computeY(topM.round, topM.position);
+                var botY = computeY(botM.round, botM.position);
+                var topCY = topY + CARD_H / 2;
+                var botCY = botY + CARD_H / 2;
+                var branchY = (topCY + botCY) / 2;
+                var x1 = colX + CARD_W;
+                var x2 = x1 + CONN_H;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, topCY);
+                ctx.lineTo(x2, topCY);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(x1, botCY);
+                ctx.lineTo(x2, botCY);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(x2, topCY);
+                ctx.lineTo(x2, botCY);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(x2, branchY);
+                ctx.lineTo(x2 + COL_GAP, branchY);
+                ctx.stroke();
+            }
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(panX, panY);
+        ctx.scale(scale, scale);
+
+        drawConnectors();
+
+        rounds.forEach(function(r) {
+            var colX = (r.round - 1) * (CARD_W + CONN_H + COL_GAP);
+            var label = r.round === rounds.length && r.matches.length === 1 ? 'Finals' : 'Round ' + r.round;
+            drawRoundLabel(colX, 0, label);
+            r.matches.forEach(function(m) {
+                var y = computeY(m.round, m.position);
+                drawCard(colX, y, m);
+            });
+        });
+
+        if (isCompleted && rounds.length > 0) {
+            var lastR = rounds[rounds.length - 1];
+            var finalsM = lastR.matches[0];
+            if (finalsM && finalsM.wid) {
+                var champName = finalsM.wid === finalsM.c1id ? finalsM.c1 : finalsM.c2;
+                if (champName) {
+                    var champX = (lastR.round) * (CARD_W + CONN_H + COL_GAP);
+                    var finalsY = computeY(finalsM.round, finalsM.position);
+                    var champH = 50;
+
+                    ctx.strokeStyle = 'rgba(241, 196, 15, 0.6)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.roundRect(champX + 2, finalsY + (CARD_H - champH) / 2, CARD_W - 4, champH - 4, 8);
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'rgba(241, 196, 15, 0.05)';
+                    ctx.beginPath();
+                    ctx.roundRect(champX + 2, finalsY + (CARD_H - champH) / 2, CARD_W - 4, champH - 4, 8);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.font = 'bold 18px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('\u2605 ' + champName + ' \u2605', champX + CARD_W / 2, finalsY + CARD_H / 2);
+
+                    ctx.font = '11px sans-serif';
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText('WINNER', champX + CARD_W / 2, finalsY + (CARD_H - champH) / 2 - 4);
+
+                    var cx1 = (lastR.round - 1) * (CARD_W + CONN_H + COL_GAP) + CARD_W;
+                    var cx2 = champX;
+                    var cy = finalsY + CARD_H / 2;
+                    ctx.strokeStyle = 'rgba(241, 196, 15, 0.4)';
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(cx1, cy);
+                    ctx.lineTo(cx2, cy);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+        }
+
+        ctx.restore();
+    }
+
+    // Events
+    canvas.addEventListener('mousedown', function(e) {
+        isDrag = true;
+        var r = canvas.getBoundingClientRect();
+        dragSX = e.clientX - r.left;
+        dragSY = e.clientY - r.top;
+        dragPX = panX;
+        dragPY = panY;
+    });
+
+    canvas.addEventListener('mousemove', function(e) {
+        var r = canvas.getBoundingClientRect();
+        var mx = (e.clientX - r.left - panX) / scale;
+        var my = (e.clientY - r.top - panY) / scale;
+        var overThumb = false;
+        for (var ri = 0; ri < rounds.length && !overThumb; ri++) {
+            var colX = ri * (CARD_W + CONN_H + COL_GAP);
+            var matches = rounds[ri].matches;
+            for (var i = 0; i < matches.length && !overThumb; i++) {
+                var m = matches[i];
+                var y = computeY(m.round, m.position);
+                if (mx >= colX && mx <= colX + CARD_W && my >= y && my <= y + CARD_H) {
+                    var pad = 6, rowH = 24, gap = 4;
+                    var rowY = y + (CARD_H - 2 * rowH - gap - 14) / 2;
+                    var row2Y = rowY + rowH + gap + 14 + gap;
+                    if (m.yt1 && mx >= colX + pad && mx <= colX + pad + 44 && my >= rowY && my <= rowY + rowH) overThumb = true;
+                    if (m.yt2 && mx >= colX + pad && mx <= colX + pad + 44 && my >= row2Y && my <= row2Y + rowH) overThumb = true;
+                }
+            }
+        }
+        canvas.style.cursor = overThumb ? 'pointer' : '';
+    });
+
+    window.addEventListener('mousemove', function(e) {
+        if (!isDrag) return;
+        var r = canvas.getBoundingClientRect();
+        var mx = e.clientX - r.left;
+        var my = e.clientY - r.top;
+        panX = dragPX + (mx - dragSX);
+        panY = dragPY + (my - dragSY);
+        draw();
+    });
+
+    window.addEventListener('mouseup', function() { isDrag = false; });
+
+    canvas.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        var r = canvas.getBoundingClientRect();
+        var mx = e.clientX - r.left;
+        var my = e.clientY - r.top;
+
+        var oldS = scale;
+        var delta = e.deltaY > 0 ? 0.9 : 1.1;
+        scale = Math.max(0.3, Math.min(3, scale * delta));
+        var f = scale / oldS;
+
+        panX = mx - f * (mx - panX);
+        panY = my - f * (my - panY);
+        draw();
+    }, { passive: false });
+
+    canvas.addEventListener('click', function(e) {
+        if (isDrag) return;
+        var r = canvas.getBoundingClientRect();
+        var mx = (e.clientX - r.left - panX) / scale;
+        var my = (e.clientY - r.top - panY) / scale;
+
+        for (var ri = 0; ri < rounds.length; ri++) {
+            var colX = ri * (CARD_W + CONN_H + COL_GAP);
+            var matches = rounds[ri].matches;
+            for (var i = 0; i < matches.length; i++) {
+                var m = matches[i];
+                var y = computeY(m.round, m.position);
+                if (mx >= colX && mx <= colX + CARD_W && my >= y && my <= y + CARD_H) {
+                    var pad = 6, rowH = 24, gap = 4;
+                    var rowY = y + (CARD_H - 2 * rowH - gap - 14) / 2;
+                    var row2Y = rowY + rowH + gap + 14 + gap;
+                    if (m.yt1 && mx >= colX + pad && mx <= colX + pad + 44 && my >= rowY && my <= rowY + rowH) {
+                        window.open('https://www.youtube.com/watch?v=' + m.yt1, '_blank');
+                        return;
+                    }
+                    if (m.yt2 && mx >= colX + pad && mx <= colX + pad + 44 && my >= row2Y && my <= row2Y + rowH) {
+                        window.open('https://www.youtube.com/watch?v=' + m.yt2, '_blank');
+                        return;
+                    }
+                    if (isCreator && (m.status === 'judging' || m.status === 'submission')) {
+                        showAdmin(m);
+                    }
+                    return;
+                }
+            }
+        }
+        hideAdmin();
+    });
+
+    var adminOverlay = document.getElementById('bc-admin-overlay');
+
+    function showAdmin(m) {
+        var html = '<form action="' + basePath + '/matches/' + m.id + '/winner" method="POST">';
+        html += '<select name="winner_id" required><option value="">' + (m.status === 'judging' ? 'Pick winner' : 'Force winner') + '</option>';
+        if (m.c1) html += '<option value="' + m.c1id + '">' + m.c1 + '</option>';
+        if (m.c2) html += '<option value="' + m.c2id + '">' + m.c2 + '</option>';
+        html += '</select>';
+        html += '<button type="submit" class="btn btn-sm ' + (m.status === 'judging' ? 'btn-primary' : 'btn-danger') + '">' + (m.status === 'judging' ? 'Declare' : 'Force') + '</button>';
+        html += ' <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById(\'bc-admin-overlay\').style.display=\'none\'">Cancel</button>';
+        html += '</form>';
+        adminOverlay.innerHTML = html;
+        adminOverlay.style.display = 'block';
+
+        var colX = (m.round - 1) * (CARD_W + CONN_H + COL_GAP);
+        var my = computeY(m.round, m.position);
+        var sx = colX + CARD_W + 10;
+        var sy = my;
+        var osx = sx * scale + panX;
+        var osy = sy * scale + panY;
+        adminOverlay.style.left = Math.min(osx, container.offsetWidth - 220) + 'px';
+        adminOverlay.style.top = Math.min(osy, container.offsetHeight - 80) + 'px';
+    }
+
+    function hideAdmin() { adminOverlay.style.display = 'none'; }
+
+    window.addEventListener('resize', resize);
+    preloadImages();
+    resize();
+})();
+</script>
+<% } %>
 </body>
 </html>

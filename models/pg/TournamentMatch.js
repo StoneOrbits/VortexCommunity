@@ -43,6 +43,14 @@ const TournamentMatch = sequelize.define('TournamentMatch', {
     type: DataTypes.STRING(20),
     defaultValue: 'pending',
     validate: { isIn: [['pending', 'submission', 'judging', 'completed']] }
+  },
+  likes1: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  likes2: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   }
 }, {
   tableName: 'tournament_matches',

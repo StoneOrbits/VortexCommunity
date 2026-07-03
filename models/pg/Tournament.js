@@ -20,6 +20,11 @@ const Tournament = sequelize.define('Tournament', {
     allowNull: false,
     validate: { isIn: [['open', 'closed']] }
   },
+  judging_type: {
+    type: DataTypes.STRING(20),
+    defaultValue: 'closed',
+    validate: { isIn: [['closed', 'youtube_likes']] }
+  },
   status: {
     type: DataTypes.STRING(20),
     defaultValue: 'draft',
@@ -50,9 +55,9 @@ const Tournament = sequelize.define('Tournament', {
     type: DataTypes.DATE,
     allowNull: true
   },
-  voting_ends_at: {
-    type: DataTypes.DATE,
-    allowNull: true
+  submission_duration_hours: {
+    type: DataTypes.INTEGER,
+    defaultValue: 72
   }
 }, {
   tableName: 'tournaments',
