@@ -43,33 +43,12 @@
             </div>
         </section>
         <section class="showcase">
-            <div class="pagination-wrapper page-counter" id="pagination-container">
-                <% if (pageCount > 1) { %><span>Page <%= currentPage %> of <%= pageCount %></span><% } %>
-            </div>
             <div class="modes-list" id="modes-list">
                 <% modes.forEach((mode, index) => { %>
                     <%- include('partials/mode-tile', { mode: mode, orderedPatternSets: orderedPatternSetsArray[index] }) %>
                 <% }) %>
             </div>
-            <% if (pageCount > 1) { %>
-            <div class="pagination-wrapper page-counter"><span>Page <%= currentPage %> of <%= pageCount %></span>
-                <ul class="pagination">
-                    <% if (currentPage > 1) { %>
-                    <li><a href="?<%= qsPage(currentPage - 1, search, sort, order) %>">&laquo; Prev</a></li>
-                    <% } else { %>
-                    <li class="disabled"><span>&laquo; Prev</span></li>
-                    <% } %>
-                    <% for (var p = 1; p <= pageCount; p++) { %>
-                    <li class="<%= p === currentPage ? 'active' : '' %>"><a href="?<%= qsPage(p, search, sort, order) %>"><%= p %></a></li>
-                    <% } %>
-                    <% if (currentPage < pageCount) { %>
-                    <li><a href="?<%= qsPage(currentPage + 1, search, sort, order) %>">Next &raquo;</a></li>
-                    <% } else { %>
-                    <li class="disabled"><span>Next &raquo;</span></li>
-                    <% } %>
-                </ul>
-            </div>
-            <% } %>
+            <div id="pagination-container"></div>
         </section>
     </main>
     <%- include('partials/footer') %>
