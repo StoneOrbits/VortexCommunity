@@ -6,7 +6,10 @@ const router = express.Router();
 require('dotenv').config();
 
 router.get('/', (req, res) => {
-  res.render('register', { user: req.user });
+  res.render('register', {
+    user: req.user,
+    captchaSiteKey: process.env.RECAPTCHA_SITE_KEY || ''
+  });
 });
 
 const fetch = require('node-fetch');

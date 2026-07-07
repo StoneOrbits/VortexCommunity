@@ -129,20 +129,14 @@ function validateForm() {
   return isValid;
 }
 
-function onRecaptchaSuccess(token) {
-  if (validateForm()) { // Ensure validateForm now returns a boolean indicating pass/fail
-    document.getElementById("registerForm").submit();
-  } else {
-    grecaptcha.reset(); // Resets the reCAPTCHA widget if validation fails
-  }
+if (document.querySelector('.g-recaptcha')) {
+  window.onSubmit = function(token) {
+    validateForm();
+  };
+
+  var script = document.createElement('script');
+  script.src = 'https://www.google.com/recaptcha/api.js';
+  script.async = true;
+  script.defer = true;
+  document.head.appendChild(script);
 }
-
-window.onSubmit = function(token) {
-    validateForm(); // Adjust this call to your form validation logic
-};
-
-var script = document.createElement('script');
-script.src = 'https://www.google.com/recaptcha/api.js';
-script.async = true;
-script.defer = true;
-document.head.appendChild(script);
