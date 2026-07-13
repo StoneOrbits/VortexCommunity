@@ -99,6 +99,12 @@ app.use((req, res, next) => {
     const lightshowUrl = process.env.LIGHTSHOWLOL_URL || 'https://lightshow.lol';
     res.locals.lightshowUrl = lightshowUrl;
     res.locals.lightshowOrigin = new URL(lightshowUrl).origin;
+    if (req.path === '/' || req.path === '/login') {
+      console.log('[SESSION]', req.method, req.path,
+        'cookie:', req.headers.cookie ? 'present' : 'MISSING',
+        'sid:', req.session && req.session.id,
+        'user:', req.user ? req.user.id : 'none');
+    }
     next();
 });
 
