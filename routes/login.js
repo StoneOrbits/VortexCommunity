@@ -6,10 +6,6 @@ require('dotenv').config();
 
 router.get('/', (req, res) => {
   res.render('login', {
-    messages: {
-      error: req.flash('error'),
-      success: req.flash('success')
-    },
     user: req.user,
     captchaSiteKey: process.env.RECAPTCHA_SITE_KEY || ''
   });
@@ -37,14 +33,18 @@ const verifyRecaptcha = async (req, res, next) => {
 };
 
 router.post('/', verifyRecaptcha, (req, res, next) => {
+  console.log('[LOGIN] attempt for username:', req.body.username);
   passport.authenticate('local', (err, user, info) => {
-    if (err) return next(err);
+    if (err) { console.error('[LOGIN] auth error:', err); return next(err); }
     if (!user) {
+      console.log('[LOGIN] auth failed:', info ? info.message : 'no info');
       req.flash('error', info ? info.message : 'Login failed');
       return res.redirect((req.app.locals.basePath || '') + '/login');
     }
+    console.log('[LOGIN] auth ok, user id:', user.id, '- logging in...');
     req.logIn(user, (err) => {
-      if (err) return next(err);
+      if (err) { console.error('[LOGIN] logIn error:', err); return next(err); }
+      console.log('[LOGIN] session saved, redirecting. session:', req.session.id, 'user:', req.user && req.user.id);
       return res.redirect((req.app.locals.basePath || '') + '/');
     });
   })(req, res, next);

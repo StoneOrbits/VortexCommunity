@@ -36,6 +36,8 @@ const updateInputFeedback = (inputElement, feedback, isValid) => {
   inputElement.style.borderColor = isValid ? 'green' : 'red';
 };
 
+let isSubmitting = false;
+
 const checkUsernameAvailability = debounce(function() {
   if (!usernameInput.value) {
     updateInputFeedback(usernameInput, 'Username is empty', false);
@@ -47,7 +49,7 @@ const checkUsernameAvailability = debounce(function() {
     .then(data => {
       updateInputFeedback(usernameInput, data.message, data.valid);
     }).catch(error => {
-      console.error('Error checking username availability:', error);
+      if (!isSubmitting) console.error('Error checking username availability:', error);
     });
 }, 250);
 
@@ -61,7 +63,7 @@ const checkEmailAvailability = debounce(function() {
     .then(data => {
       updateInputFeedback(emailInput, data.message, data.valid);
     }).catch(error => {
-      console.error('Error checking email availability:', error);
+      if (!isSubmitting) console.error('Error checking email availability:', error);
     });
 }, 250);
 
@@ -122,6 +124,7 @@ function validateForm() {
     });
 
     if (isValid) {
+      isSubmitting = true;
       document.getElementById("registerForm").submit();
     }
   }, 300); // Adjust timeout as necessary based on your async validation response times

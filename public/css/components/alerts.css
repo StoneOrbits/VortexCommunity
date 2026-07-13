@@ -8,6 +8,7 @@
     max-width: 600px;
 }
 
+.alert-danger,
 .alert-error {
     background: #3d1a1a;
     border: 1px solid #e74c3c;
