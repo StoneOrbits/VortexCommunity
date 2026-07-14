@@ -57,6 +57,7 @@ document.querySelectorAll('.pat-item-submission').forEach(item => {
 // --- Pattern click → yellow LEDs ---
 document.querySelectorAll('.pat-item-submission:not(.duplicate)').forEach(item => {
   item.addEventListener('click', function(e) {
+    if (e.target.closest('.pat-item-link')) return;
     e.stopPropagation();
     const index = parseInt(this.dataset.index);
 
