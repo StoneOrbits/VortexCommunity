@@ -267,6 +267,51 @@
   opacity: 0.9;
 }
 
+.pat-used-by {
+  margin-top: 24px;
+}
+
+.pat-used-by-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ccc;
+  margin: 0 0 12px;
+}
+
+.pat-used-by-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pat-used-by-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #fff;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.pat-used-by-item:hover {
+  background: #222;
+  border-color: #444;
+}
+
+.pat-used-by-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pat-used-by-meta {
+  font-size: 12px;
+  color: #888;
+}
+
 @media (max-width: 768px) {
   .pat-detail-body {
     grid-template-columns: 1fr;

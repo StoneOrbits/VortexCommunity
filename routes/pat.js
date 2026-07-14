@@ -49,13 +49,26 @@ router.get('/:patId', async (req, res) => {
       isFavorited = !!favorite;
     }
 
+    const usedByModes = await Mode.findAll({
+      include: [
+        {
+          model: PatternSet,
+          as: 'patternSets',
+          where: { id: pat.id },
+          required: true
+        },
+        { model: User, as: 'creator' }
+      ]
+    });
+
     res.render('pat', {
       pat: pat,
       uploadDate: uploadDate,
       user: req.user,
       lightshowUrl: lightshowUrl,
       isUpvoted: isUpvoted,
-      isFavorited: isFavorited
+      isFavorited: isFavorited,
+      usedByModes: usedByModes
     });
   } catch (err) {
     console.error(err);
