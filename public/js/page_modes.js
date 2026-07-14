@@ -112,6 +112,7 @@ function processModeTiles() {
         if (!deviceType) return;
 
         getLedPositions(deviceType).then(data => {
+                if (!data) return;
                 const points = data.points;
                 const circles = svg.querySelectorAll('.led-circle');
                 circles.forEach((circle, index) => {

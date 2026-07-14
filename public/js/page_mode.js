@@ -59,6 +59,7 @@ if (deviceType) {
   const ledSize = radii[deviceType] || 14;
 
   getLedPositions(deviceType).then(data => {
+      if (!data) return;
       const points = data.points;
       const circles = svg.querySelectorAll('.led-circle');
       circles.forEach((circle, index) => {
