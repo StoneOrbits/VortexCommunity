@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "optimize": "bash scripts/compress_js.sh && bash scripts/compress_css.sh"
+    "bundle": "bash scripts/bundle_css.sh",
+    "optimize": "bash scripts/bundle_css.sh && bash scripts/compress_js.sh && bash scripts/compress_css.sh"
   },
   "devDependencies": {
     "csso": "^5.0.5",

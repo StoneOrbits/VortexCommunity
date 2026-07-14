@@ -16,6 +16,13 @@ require('dotenv').config();
 const BASE_PATH = process.env.BASE_PATH || '';
 const LIGHTSHOWLOL_DIR = path.join(__dirname, 'lightshow.lol');
 
+// Load build version for cache busting
+let buildVersion = Date.now().toString();
+try {
+  const build = require('./public/build.json');
+  buildVersion = build.css || buildVersion;
+} catch (e) {}
+
 const pgPool = new Pool({
   host: process.env.PG_HOST || '127.0.0.1',
   port: process.env.PG_PORT || 5432,
@@ -67,7 +74,16 @@ app.use(
   express.static(path.join(__dirname, 'public/firmwares'))
 );
 
-app.use(BASE_PATH, express.static(path.join(__dirname, 'public')));
+app.use(BASE_PATH, express.static(path.join(__dirname, 'public'), {
+    maxAge: '1y',
+    immutable: true,
+    setHeaders: function(res, filePath) {
+      // HTML and config files: no cache
+      if (filePath.endsWith('.ejs') || filePath.endsWith('.json')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    }
+}));
 
 if (require('fs').existsSync(LIGHTSHOWLOL_DIR)) {
   app.use('/', express.static(LIGHTSHOWLOL_DIR));
@@ -108,6 +124,7 @@ app.use(flash());
 
 app.use((req, res, next) => {
     res.locals.basePath = BASE_PATH;
+    res.locals.buildVersion = buildVersion;
     res.locals.success_msg = req.flash('success');
     res.locals.error_msg = req.flash('error');
     res.locals.user = req.user || null;

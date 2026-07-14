@@ -3,21 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/layouts/base.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/layouts/main.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/components/alerts.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/components/buttons.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/components/footer.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/components/forms.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/components/header.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/components/modals.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/components/control-panel.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/partials/nav.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/partials/search.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/partials/lightshow.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/partials/mode-tile.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/partials/mode-tile-preview-lightshow.css">
-    <link rel="stylesheet" href="<%= basePath %>/css/partials/pat-tile.css">
+    <link rel="stylesheet" href="<%= basePath %>/css/bundle.min.css?v=<%= typeof buildVersion !== 'undefined' ? buildVersion : Date.now() %>">
     <script>
         window.LIGHTSHOWLOL_URL = '<%= lightshowUrl %>';
         window.LIGHTSHOWLOL_ORIGIN = '<%= lightshowOrigin %>';

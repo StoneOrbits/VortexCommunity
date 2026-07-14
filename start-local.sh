@@ -59,5 +59,8 @@ echo "Starting lightshow.lol dev server on http://localhost:8000..."
 LIGHTSHOW_PID=$!
 sleep 1
 
+echo "Building CSS bundle..."
+bash "$SCRIPT_DIR/scripts/bundle_css.sh"
+
 echo "Starting Vortex Community server on http://localhost:3000 (community at /community)..."
 npm start
