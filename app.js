@@ -89,6 +89,15 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use((req, res, next) => {
+    if (req.originalUrl.includes('/community')) {
+      console.log('[SESS]', req.method, req.originalUrl,
+        'cookie:', req.headers.cookie ? req.headers.cookie.substring(0, 60) : 'MISSING',
+        'user:', req.user ? req.user.id : 'none');
+    }
+    next();
+});
+
 app.use(flash());
 
 app.use((req, res, next) => {
@@ -99,12 +108,6 @@ app.use((req, res, next) => {
     const lightshowUrl = process.env.LIGHTSHOWLOL_URL || 'https://lightshow.lol';
     res.locals.lightshowUrl = lightshowUrl;
     res.locals.lightshowOrigin = new URL(lightshowUrl).origin;
-    if (req.path === '/' || req.path === '/login') {
-      console.log('[SESSION]', req.method, req.path,
-        'cookie:', req.headers.cookie ? 'present' : 'MISSING',
-        'sid:', req.session && req.session.id,
-        'user:', req.user ? req.user.id : 'none');
-    }
     next();
 });
 
