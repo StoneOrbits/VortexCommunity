@@ -46,28 +46,12 @@ document.querySelectorAll('.pat-item-submission').forEach(item => {
     clearHighlights();
   });
 
-  item.addEventListener('dblclick', function() {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
     const patternId = this.getAttribute('data-pattern-id');
     if (patternId) {
       window.location.href = (window.basePath || '') + '/pat/' + patternId;
     }
-  });
-});
-
-// --- Pattern click → yellow LEDs ---
-document.querySelectorAll('.pat-item-submission:not(.duplicate)').forEach(item => {
-  item.addEventListener('click', function(e) {
-    if (e.target.closest('.pat-item-link')) return;
-    e.stopPropagation();
-    const index = parseInt(this.dataset.index);
-
-    if (this.classList.contains('selected')) {
-      clearSelection();
-      return;
-    }
-
-    clearSelection();
-    selectPattern(index);
   });
 });
 
@@ -111,21 +95,6 @@ if (deviceType) {
         circle.addEventListener('mouseout', function() {
           clearHighlights();
         });
-
-        // LED click → yellow patterns + all matching LEDs
-        circle.addEventListener('click', function(e) {
-          e.stopPropagation();
-          const ledIdx = parseInt(this.getAttribute('data-index'));
-
-          if (this.classList.contains('selected')) {
-            clearSelection();
-            return;
-          }
-
-          clearSelection();
-          findPatternsForLed(ledIdx).forEach(p => p.classList.add('selected'));
-          findLedsForPattern(ledIdx).forEach(c => c.classList.add('selected'));
-        });
       });
     })
     .catch(error => {
@@ -135,27 +104,10 @@ if (deviceType) {
   console.error('Device type not found.');
 }
 
-function selectPattern(index) {
-  const item = document.querySelector('.pat-item-submission[data-index="' + index + '"]');
-  item.classList.remove('highlighted');
-  item.classList.add('selected');
-  findLedsForPattern(index).forEach(c => c.classList.add('selected'));
-}
-
 function clearHighlights() {
   document.querySelectorAll('.led-circle.active-highlight').forEach(c => c.classList.remove('active-highlight'));
   document.querySelectorAll('.pat-item-submission.highlighted').forEach(p => p.classList.remove('highlighted'));
 }
-
-function clearSelection() {
-  document.querySelectorAll('.led-circle.selected').forEach(c => c.classList.remove('selected'));
-  document.querySelectorAll('.pat-item-submission.selected').forEach(p => p.classList.remove('selected'));
-}
-
-// Clear on background click
-document.querySelector('.mode-patterns').addEventListener('click', function() {
-  clearSelection();
-});
 
 document.getElementById('openOnLightshow').addEventListener('click', async (event) => {
   event.preventDefault();

@@ -178,11 +178,6 @@
   background: #1a2230;
 }
 
-.pat-item-submission.selected {
-  border-color: #ad0;
-  background: #2a2a10;
-}
-
 .pat-item-submission-content {
   flex: 1;
   min-width: 0;
