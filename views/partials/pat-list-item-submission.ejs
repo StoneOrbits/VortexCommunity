@@ -15,6 +15,14 @@
             <% } else { %>
               <p class="pat-name"><%= patName %></p>
             <% } %>
+            <% const patData = pat.data || {}; %>
+            <% if (patData.colorset && patData.colorset.length) { %>
+              <div class="pat-colorset-swatches">
+                <% patData.colorset.forEach(hex => { %>
+                  <span class="colorset-swatch" style="background: <%= hex.replace('0x', '#') %>"></span>
+                <% }); %>
+              </div>
+            <% } %>
         </div>
         <%- include('submission-lightshow', { pat: pat, tempId: tempId }) %>
     </div>

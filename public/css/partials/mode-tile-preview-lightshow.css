@@ -21,16 +21,6 @@
   stroke-width: 3;
 }
 
-.led-circle.active-highlight {
-  stroke: #0ad;
-  stroke-width: 3;
-}
-
-.led-circle.selected {
-  stroke: #ad0;
-  stroke-width: 3;
-}
-
 .highlight-circle {
   fill: transparent;
   pointer-events: none;

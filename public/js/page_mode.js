@@ -5,49 +5,73 @@ const modeDataContainer = document.getElementById('mode-data-container');
 const mode = JSON.parse(modeDataContainer.getAttribute('data-mode'));
 const vortexMode = JSON.parse(modeDataContainer.getAttribute('data-vortex-mode'));
 
-const patternItems = document.querySelectorAll('.pat-item-submission');
+function patternsEqual(pat1, pat2) {
+  return JSON.stringify(pat1) === JSON.stringify(pat2);
+}
 
-patternItems.forEach(item => {
+function findPatternsForLed(ledIndex) {
+  const pat = vortexMode.single_pats[ledIndex];
+  const matches = [];
+  document.querySelectorAll('.pat-item-submission').forEach(item => {
+    const idx = parseInt(item.dataset.index);
+    if (patternsEqual(vortexMode.single_pats[idx], pat)) {
+      matches.push(item);
+    }
+  });
+  return matches;
+}
+
+function findLedsForPattern(patternIndex) {
+  const pat = vortexMode.single_pats[patternIndex];
+  const matches = [];
+  document.querySelectorAll('.led-circle').forEach(circle => {
+    const ledIndex = parseInt(circle.getAttribute('data-index'));
+    if (patternsEqual(vortexMode.single_pats[ledIndex], pat)) {
+      matches.push(circle);
+    }
+  });
+  return matches;
+}
+
+// --- Pattern hover → blue LEDs ---
+document.querySelectorAll('.pat-item-submission').forEach(item => {
   item.addEventListener('mouseover', function() {
-    const index = this.dataset.index;
-    highlightPattern(index);
+    const index = parseInt(this.dataset.index);
+    clearHighlights();
+    findLedsForPattern(index).forEach(c => c.classList.add('active-highlight'));
+    this.classList.add('highlighted');
+  });
+
+  item.addEventListener('mouseout', function() {
+    clearHighlights();
   });
 
   item.addEventListener('dblclick', function() {
-    const patternId = item.getAttribute('data-pattern-id');
+    const patternId = this.getAttribute('data-pattern-id');
     if (patternId) {
-      window.location.href = (window.basePath || '') + `/pat/${patternId}`;
+      window.location.href = (window.basePath || '') + '/pat/' + patternId;
     }
   });
 });
 
-const newItems = document.querySelectorAll('.pat-item-submission:not(.duplicate)');
-newItems.forEach(item => {
-  item.addEventListener('click', function() {
-    event.stopPropagation();
-    const index = this.dataset.index;
+// --- Pattern click → yellow LEDs ---
+document.querySelectorAll('.pat-item-submission:not(.duplicate)').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const index = parseInt(this.dataset.index);
+
+    if (this.classList.contains('selected')) {
+      clearSelection();
+      return;
+    }
+
+    clearSelection();
     selectPattern(index);
   });
 });
 
-const modePatternsContainer = document.querySelector('.mode-patterns');
-modePatternsContainer.addEventListener('mouseleave', function() {
-  const circles = document.querySelectorAll('.led-circle');
-  circles.forEach(circle => {
-    circle.classList.remove('active-highlight');
-  });
-  const highlights2 = document.querySelectorAll('.highlighted');
-  highlights2.forEach(highlight => {
-    highlight.classList.remove('highlighted');
-  });
-});
-modePatternsContainer.addEventListener('click', function() {
-  const circles = document.querySelectorAll('.led-circle');
-  circles.forEach(circle => {
-    circle.classList.remove('selected');
-  });
-});
-
+// --- LED hover → blue patterns ---
+// --- LED click → yellow patterns ---
 const svg = document.querySelector('.device-svg');
 const imageEl = svg.querySelector('image');
 const src = imageEl.getAttribute('href');
@@ -74,6 +98,33 @@ if (deviceType) {
         }
         circle.setAttribute('title', points[index].name);
         circle.setAttribute('data-index', index);
+
+        // LED hover → blue patterns
+        circle.addEventListener('mouseover', function() {
+          const ledIdx = parseInt(this.getAttribute('data-index'));
+          clearHighlights();
+          findPatternsForLed(ledIdx).forEach(p => p.classList.add('highlighted'));
+          this.classList.add('active-highlight');
+        });
+
+        circle.addEventListener('mouseout', function() {
+          clearHighlights();
+        });
+
+        // LED click → yellow patterns
+        circle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const ledIdx = parseInt(this.getAttribute('data-index'));
+
+          if (this.classList.contains('selected')) {
+            clearSelection();
+            return;
+          }
+
+          clearSelection();
+          findPatternsForLed(ledIdx).forEach(p => p.classList.add('selected'));
+          this.classList.add('selected');
+        });
       });
     })
     .catch(error => {
@@ -83,71 +134,33 @@ if (deviceType) {
   console.error('Device type not found.');
 }
 
-function highlightPattern(index) {
-  const modeDataContainer = document.getElementById('mode-data-container');
-  const mode = JSON.parse(modeDataContainer.getAttribute('data-mode'));
-
-  document.querySelectorAll('.pat-item-submission').forEach(i => i.classList.remove('highlighted'));
-  const patItem = document.querySelector(`.pat-item-submission[data-index="${index}"]`);
-  patItem.classList.add('highlighted');
-
-  const patternIndex = patItem.getAttribute('data-index')
-
-  highlightLEDs(patternIndex);
-}
-
-function patternsEqual(pat1, pat2) {
-  return JSON.stringify(pat1) === JSON.stringify(pat2);
-}
-
-function highlightLEDs(patternIndex) {
-  const pat = vortexMode.single_pats[patternIndex];
-  const circles = document.querySelectorAll('.led-circle');
-
-  circles.forEach(circle => {
-    const ledIndex = parseInt(circle.getAttribute('data-index'));
-    if (patternsEqual(vortexMode.single_pats[ledIndex], pat)) {
-      circle.classList.add('active-highlight');
-    } else {
-      circle.classList.remove('active-highlight');
-    }
-  });
-}
-
 function selectPattern(index) {
-  document.querySelectorAll('.pat-item-submission').forEach(i => {
-    i.classList.remove('selected');
-    i.classList.remove('highlighted');
-  });
-  document.querySelector(`.pat-item-submission[data-index="${index}"]`).classList.add('selected');
-
-  const modeDataContainer = document.getElementById('mode-data-container');
-  const mode = JSON.parse(modeDataContainer.getAttribute('data-mode'));
-
-  const ledPatternOrderIndex = mode.ledPatternOrder.indexOf(parseInt(index, 10));
-
-  const circles = document.querySelectorAll('.led-circle');
-  circles.forEach(circle => {
-    const ledIndex = parseInt(circle.getAttribute('data-index'));
-    circle.classList.remove('active-highlight');
-    circle.classList.remove('selected');
-
-    if (patternsEqual(vortexMode.single_pats[ledIndex], vortexMode.single_pats[ledPatternOrderIndex])) {
-      circle.classList.add('selected');
-    }
-  });
+  document.querySelector('.pat-item-submission[data-index="' + index + '"]').classList.add('selected');
+  findLedsForPattern(index).forEach(c => c.classList.add('selected'));
 }
+
+function clearHighlights() {
+  document.querySelectorAll('.led-circle.active-highlight').forEach(c => c.classList.remove('active-highlight'));
+  document.querySelectorAll('.pat-item-submission.highlighted').forEach(p => p.classList.remove('highlighted'));
+}
+
+function clearSelection() {
+  document.querySelectorAll('.led-circle.selected').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.pat-item-submission.selected').forEach(p => p.classList.remove('selected'));
+}
+
+// Clear on background click
+document.querySelector('.mode-patterns').addEventListener('click', function() {
+  clearSelection();
+});
 
 document.getElementById('openOnLightshow').addEventListener('click', async (event) => {
   event.preventDefault();
 
-  const modeDataContainer = document.getElementById('mode-data-container');
   const vortexMode = JSON.parse(modeDataContainer.getAttribute('data-vortex-mode'));
-
   const lightshowUrl = window.LIGHTSHOWLOL_URL || 'https://lightshow.lol';
   const lightshowOrigin = window.LIGHTSHOWLOL_ORIGIN || 'https://lightshow.lol';
 
-  // Try BroadcastChannel first (same-origin cross-tab communication)
   try {
     const channel = new BroadcastChannel('vortex-bridge');
     const found = await new Promise((resolve) => {
@@ -177,7 +190,6 @@ document.getElementById('openOnLightshow').addEventListener('click', async (even
     console.log('BroadcastChannel not available, falling back to postMessage');
   }
 
-  // Fallback: BroadcastChannel not available (cross-origin dev) — open new tab
   const modeDataEncoded = btoa(JSON.stringify(vortexMode));
   const lightshowWindow = window.open(lightshowUrl, '_blank');
   if (!lightshowWindow) {

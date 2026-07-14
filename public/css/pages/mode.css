@@ -174,13 +174,13 @@
 }
 
 .pat-item-submission.highlighted {
-  border-color: #1abc9c;
-  background: #1a2a22;
+  border-color: #3498db;
+  background: #1a2230;
 }
 
 .pat-item-submission.selected {
-  border-color: #3498db;
-  background: #1a2230;
+  border-color: #ad0;
+  background: #2a2a10;
 }
 
 .pat-item-submission-content {

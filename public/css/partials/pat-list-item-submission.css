@@ -58,6 +58,20 @@
   overflow: hidden;
 }
 
+.pat-colorset-swatches {
+  display: flex;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.colorset-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  display: inline-block;
+}
+
 .pat-title-input, .pat-description-input {
   width: 100%;
   padding: 8px;
