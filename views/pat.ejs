@@ -76,19 +76,12 @@
             <a href="<%= lightshowUrl %>" id="openOnLightshow" class="lightshow-btn">Open in lightshow.lol &rarr;</a>
           </div>
 
-          <% if (usedByModes && usedByModes.length > 0) { %>
+          <% if (usedByModesData && usedByModesData.length > 0) { %>
           <div class="pat-used-by">
             <h3 class="pat-used-by-title">Pattern Used By</h3>
-            <div class="pat-used-by-list">
-              <% usedByModes.forEach(mode => { %>
-                <a href="<%= basePath %>/mode/<%= mode.id %>" class="pat-used-by-item">
-                  <span class="pat-used-by-name"><%= mode.name %></span>
-                  <span class="pat-used-by-meta">
-                    by <%= mode.creator ? mode.creator.username : 'Unknown' %>
-                    &middot; <%= mode.deviceType %>
-                    &middot; <%= mode.votes %> votes
-                  </span>
-                </a>
+            <div class="modes-list">
+              <% usedByModesData.forEach(({ mode, orderedPatternSets }) => { %>
+                <%- include('partials/mode-tile', { mode: mode, orderedPatternSets: orderedPatternSets }) %>
               <% }); %>
             </div>
           </div>

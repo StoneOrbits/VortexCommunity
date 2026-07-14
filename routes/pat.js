@@ -61,6 +61,22 @@ router.get('/:patId', async (req, res) => {
       ]
     });
 
+    const usedByModesData = [];
+    for (const mode of usedByModes) {
+      const mpsEntries = await ModePatternSet.findAll({
+        where: { modeId: mode.id },
+        order: [['sortOrder', 'ASC']]
+      });
+      const psIds = mpsEntries.map(mps => mps.patternSetId);
+      const patternSets = await PatternSet.findAll({ where: { id: psIds } });
+      const patternSetMap = {};
+      patternSets.forEach(ps => { patternSetMap[ps.id] = ps; });
+      usedByModesData.push({
+        mode: mode,
+        orderedPatternSets: mpsEntries.map(mps => patternSetMap[mps.patternSetId]).filter(Boolean)
+      });
+    }
+
     res.render('pat', {
       pat: pat,
       uploadDate: uploadDate,
@@ -68,7 +84,7 @@ router.get('/:patId', async (req, res) => {
       lightshowUrl: lightshowUrl,
       isUpvoted: isUpvoted,
       isFavorited: isFavorited,
-      usedByModes: usedByModes
+      usedByModesData: usedByModesData
     });
   } catch (err) {
     console.error(err);
