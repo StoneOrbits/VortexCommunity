@@ -99,19 +99,19 @@ if (deviceType) {
         circle.setAttribute('title', points[index].name);
         circle.setAttribute('data-index', index);
 
-        // LED hover → blue patterns
+        // LED hover → blue patterns + all matching LEDs
         circle.addEventListener('mouseover', function() {
           const ledIdx = parseInt(this.getAttribute('data-index'));
           clearHighlights();
           findPatternsForLed(ledIdx).forEach(p => p.classList.add('highlighted'));
-          this.classList.add('active-highlight');
+          findLedsForPattern(ledIdx).forEach(c => c.classList.add('active-highlight'));
         });
 
         circle.addEventListener('mouseout', function() {
           clearHighlights();
         });
 
-        // LED click → yellow patterns
+        // LED click → yellow patterns + all matching LEDs
         circle.addEventListener('click', function(e) {
           e.stopPropagation();
           const ledIdx = parseInt(this.getAttribute('data-index'));
@@ -123,7 +123,7 @@ if (deviceType) {
 
           clearSelection();
           findPatternsForLed(ledIdx).forEach(p => p.classList.add('selected'));
-          this.classList.add('selected');
+          findLedsForPattern(ledIdx).forEach(c => c.classList.add('selected'));
         });
       });
     })
