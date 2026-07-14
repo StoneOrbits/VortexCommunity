@@ -94,6 +94,13 @@ app.use((req, res, next) => {
       console.log('[SESS]', req.method, req.originalUrl,
         'cookie:', req.headers.cookie ? req.headers.cookie.substring(0, 60) : 'MISSING',
         'user:', req.user ? req.user.id : 'none');
+      const origSetHeader = res.setHeader.bind(res);
+      res.setHeader = function(name, value) {
+        if (name.toLowerCase() === 'set-cookie') {
+          console.log('[SET-COOKIE]', value);
+        }
+        return origSetHeader(name, value);
+      };
     }
     next();
 });

@@ -12,6 +12,13 @@ const execAsync = util.promisify(exec);
 const spawn = require('child_process').spawn;
 require('dotenv').config();
 
+router.param('modeId', (req, res, next, val) => {
+  if (!/^\d+$/.test(val)) {
+    return res.status(404).render('not-found');
+  }
+  next();
+});
+
 const ledCounts = {
   'Gloves': 10,
   'Orbit': 28,

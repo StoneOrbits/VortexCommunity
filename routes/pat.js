@@ -13,6 +13,20 @@ const spawn = require('child_process').spawn;
 const sequelize = require('../config/database-pg');
 require('dotenv').config();
 
+router.param('patId', (req, res, next, val) => {
+  if (!/^\d+$/.test(val)) {
+    return res.status(404).render('not-found');
+  }
+  next();
+});
+
+router.param('patternId', (req, res, next, val) => {
+  if (!/^\d+$/.test(val)) {
+    return res.status(404).render('not-found');
+  }
+  next();
+});
+
 router.get('/:patId', async (req, res) => {
   try {
     const pat = await PatternSet.findByPk(req.params.patId, {
