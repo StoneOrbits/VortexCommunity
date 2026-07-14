@@ -6,9 +6,14 @@
     <%- include('partials/nav') %>
     <main>
         <div class="container">
-            <% if (error_msg) { %>
+            <% if (error_msg && error_msg.length) { %>
                 <div class="alert alert-danger">
                     <%= error_msg %>
+                </div>
+            <% } %>
+            <% if (success_msg && success_msg.length) { %>
+                <div class="alert alert-success">
+                    <%= success_msg %>
                 </div>
             <% } %>
             <section class="register-section">
