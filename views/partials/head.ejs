@@ -18,11 +18,6 @@
     <link rel="stylesheet" href="<%= basePath %>/css/partials/mode-tile.css">
     <link rel="stylesheet" href="<%= basePath %>/css/partials/mode-tile-preview-lightshow.css">
     <link rel="stylesheet" href="<%= basePath %>/css/partials/pat-tile.css">
-    <% if (typeof pageStyles !== 'undefined') { %>
-        <% pageStyles.forEach(function(style) { %>
-            <link rel="stylesheet" href="<%= style %>">
-        <% }); %>
-    <% } %>
     <script>
         window.LIGHTSHOWLOL_URL = '<%= lightshowUrl %>';
         window.LIGHTSHOWLOL_ORIGIN = '<%= lightshowOrigin %>';

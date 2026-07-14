@@ -52,6 +52,7 @@ Promise.all([
     import(bp + '/js/controlPanel.js'),
     import(bp + '/js/initLogo.js')
 ]).catch(function(e) {
+    if (e.name === 'AbortError' || (e instanceof TypeError)) return;
     console.error('Error loading scripts:', e);
 });
 

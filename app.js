@@ -73,8 +73,6 @@ if (require('fs').existsSync(LIGHTSHOWLOL_DIR)) {
   app.use('/', express.static(LIGHTSHOWLOL_DIR));
 }
 
-app.use(require('./middleware/setPageStyles'));
-
 app.use(session({
     store: new pgSession({
       pool: pgPool,
