@@ -18,9 +18,12 @@ const LIGHTSHOWLOL_DIR = path.join(__dirname, 'lightshow.lol');
 
 // Load build version for cache busting
 let buildVersion = Date.now().toString();
+let useBundle = false;
 try {
+  const fs = require('fs');
   const build = require('./public/build.json');
   buildVersion = build.css || buildVersion;
+  useBundle = fs.existsSync(path.join(__dirname, 'public/css/bundle.min.css'));
 } catch (e) {}
 
 const pgPool = new Pool({
@@ -125,6 +128,7 @@ app.use(flash());
 app.use((req, res, next) => {
     res.locals.basePath = BASE_PATH;
     res.locals.buildVersion = buildVersion;
+    res.locals.useBundle = useBundle;
     res.locals.success_msg = req.flash('success');
     res.locals.error_msg = req.flash('error');
     res.locals.user = req.user || null;
