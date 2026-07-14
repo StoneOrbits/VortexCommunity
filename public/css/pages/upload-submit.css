@@ -299,14 +299,12 @@
   cursor: pointer;
 }
 
-.submit-card .active-highlight {
+.active-highlight {
   background: rgba(102, 126, 234, 0.3) !important;
-  border-radius: 50%;
 }
 
-.submit-card .selected {
+.selected {
   background: rgba(102, 126, 234, 0.3) !important;
-  border-radius: 50%;
 }
 
 /* Pattern edit fields below preview */
