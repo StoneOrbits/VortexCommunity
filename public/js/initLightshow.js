@@ -1,38 +1,66 @@
-import VortexLib from './VortexLib.js';
 import Lightshow from './Lightshow.js';
 import SvgLightshow from './SvgLightshow.js';
 
-const vortexLibPromise = VortexLib();
+let vortexLibPromise = null;
+let vortexLib = null;
 
-['gloves','orbit','handle','spark','chromadeck','duo'].forEach(t => {
-    const cache = window._ledPositionsCache || (window._ledPositionsCache = {});
-    cache[t] = fetch((window.basePath || '') + `/data/${t}-led-positions.json`).then(r => r.json()).catch(() => {});
-});
+function getVortexLib() {
+    if (vortexLib) return Promise.resolve(vortexLib);
+    if (!vortexLibPromise) {
+        vortexLibPromise = import('./VortexLib.js').then(function(mod) {
+            return mod.default();
+        }).then(function(lib) {
+            vortexLib = lib;
+            return lib;
+        });
+    }
+    return vortexLibPromise;
+}
+
+var ledCache = window._ledPositionsCache || (window._ledPositionsCache = {});
 
 export function getLedPositions(deviceType) {
-    const cache = window._ledPositionsCache || (window._ledPositionsCache = {});
-    if (!cache[deviceType]) {
-        cache[deviceType] = fetch((window.basePath || '') + `/data/${deviceType}-led-positions.json`).then(r => r.json());
+    if (!ledCache[deviceType]) {
+        ledCache[deviceType] = fetch((window.basePath || '') + '/data/' + deviceType + '-led-positions.json').then(function(r) { return r.json(); });
     }
-    return cache[deviceType];
+    return ledCache[deviceType];
 }
 
 export function initLightshow() {
-    return vortexLibPromise.then(vortexLib => {
-        const tiles = document.querySelectorAll('.lightshow-canvas');
-        tiles.forEach(canvas => {
-            const canvasId = canvas.getAttribute('id');
-            const type = canvas.getAttribute('data-type') || 'scrolling';
-            const tile = canvas.closest('.pat-tile, .mode-tile, .pat-item');
-            const options = { type: type, hoverEl: tile || canvas.closest('[class*="led-strip"]') || canvas.parentElement };
-            new Lightshow(vortexLib, canvasId, options);
-        });
+    var canvases = document.querySelectorAll('.lightshow-canvas');
+    var circles = document.querySelectorAll('.led-circle');
 
-        const circles = document.querySelectorAll('.led-circle');
-        circles.forEach(circle => {
-            const type = circle.getAttribute('data-type') || 'flashing';
-            const options = { type: type };
-            new SvgLightshow(vortexLib, circle, options);
+    if (!canvases.length && !circles.length) return;
+
+    var pending = new Map();
+
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) return;
+            observer.unobserve(entry.target);
+
+            var el = entry.target;
+            var key = el;
+
+            if (pending.has(key)) return;
+            pending.set(key, true);
+
+            getVortexLib().then(function(lib) {
+                pending.delete(key);
+                if (el.classList.contains('lightshow-canvas')) {
+                    var canvasId = el.getAttribute('id');
+                    var type = el.getAttribute('data-type') || 'scrolling';
+                    var tile = el.closest('.pat-tile, .mode-tile, .pat-item');
+                    var options = { type: type, hoverEl: tile || el.closest('[class*="led-strip"]') || el.parentElement };
+                    new Lightshow(lib, canvasId, options);
+                } else if (el.classList.contains('led-circle')) {
+                    var type = el.getAttribute('data-type') || 'flashing';
+                    new SvgLightshow(lib, el, { type: type });
+                }
+            });
         });
-    });
+    }, { rootMargin: '200px' });
+
+    canvases.forEach(function(c) { observer.observe(c); });
+    circles.forEach(function(c) { observer.observe(c); });
 }

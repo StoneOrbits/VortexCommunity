@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var compression = require('compression');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 const passport = require('passport');
@@ -53,6 +54,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true,
 }));
+
+app.use(compression());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
