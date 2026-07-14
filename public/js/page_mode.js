@@ -135,7 +135,9 @@ if (deviceType) {
 }
 
 function selectPattern(index) {
-  document.querySelector('.pat-item-submission[data-index="' + index + '"]').classList.add('selected');
+  const item = document.querySelector('.pat-item-submission[data-index="' + index + '"]');
+  item.classList.remove('highlighted');
+  item.classList.add('selected');
   findLedsForPattern(index).forEach(c => c.classList.add('selected'));
 }
 
