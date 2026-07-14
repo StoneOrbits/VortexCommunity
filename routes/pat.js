@@ -14,14 +14,14 @@ const sequelize = require('../config/database-pg');
 require('dotenv').config();
 
 router.param('patId', (req, res, next, val) => {
-  if (!/^\d+$/.test(val)) {
+  if (!/^\d+$/.test(val) || parseInt(val, 10) > 2147483647) {
     return res.status(404).render('not-found');
   }
   next();
 });
 
 router.param('patternId', (req, res, next, val) => {
-  if (!/^\d+$/.test(val)) {
+  if (!/^\d+$/.test(val) || parseInt(val, 10) > 2147483647) {
     return res.status(404).render('not-found');
   }
   next();
@@ -59,6 +59,9 @@ router.get('/:patId', async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -99,6 +102,9 @@ router.post('/:patId/edit', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + `/pat/${patId}`);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -130,6 +136,9 @@ router.post('/:patternId/delete', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + '/pats');
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -154,6 +163,9 @@ router.post('/:patId/upvote', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + '/pat/' + pat.id);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -180,6 +192,9 @@ router.post('/:patId/unvote', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + '/pat/' + pat.id);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -199,6 +214,9 @@ router.post('/:patId/favorite', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + `/pat/${req.params.patId}`);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -213,6 +231,9 @@ router.post('/:patId/unfavorite', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + `/pat/${req.params.patId}`);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -294,6 +315,9 @@ router.get('/:patId/download', ensureAuthenticated, async (req, res) => {
     vortex.stdin.end();
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server error');
   }
 });

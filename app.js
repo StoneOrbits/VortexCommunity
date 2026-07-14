@@ -83,7 +83,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
-    cookie: { path: '/', maxAge: 30 * 24 * 60 * 60 * 1000 }
+    cookie: { path: '/', maxAge: 30 * 24 * 60 * 60 * 1000, secure: 'auto', sameSite: 'lax' }
 }));
 
 app.use(passport.initialize());

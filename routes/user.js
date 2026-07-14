@@ -3,6 +3,13 @@ const router = express.Router();
 const { User, PatternSet, Mode, ModePatternSet } = require('../models/pg/index');
 const { Op } = require('sequelize');
 
+router.param('userId', (req, res, next, val) => {
+  if (!/^\d+$/.test(val) || parseInt(val, 10) > 2147483647) {
+    return res.status(404).render('not-found');
+  }
+  next();
+});
+
 router.get('/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -35,6 +42,9 @@ router.get('/:userId', async (req, res) => {
     res.render('profile', { profileUser, userPats, userModes, modeCount, patCount, orderedPatternSetsArray });
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).render('error', { message: 'An error occurred while retrieving the user profile' });
   }
 });

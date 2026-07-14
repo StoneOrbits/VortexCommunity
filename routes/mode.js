@@ -13,7 +13,7 @@ const spawn = require('child_process').spawn;
 require('dotenv').config();
 
 router.param('modeId', (req, res, next, val) => {
-  if (!/^\d+$/.test(val)) {
+  if (!/^\d+$/.test(val) || parseInt(val, 10) > 2147483647) {
     return res.status(404).render('not-found');
   }
   next();
@@ -118,6 +118,9 @@ router.get('/:modeId', async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -134,6 +137,9 @@ router.get('/:modeId/edit', ensureAuthenticated, async (req, res) => {
     res.render('mode-edit', { mode, user: req.user });
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -158,6 +164,9 @@ router.post('/:modeId/edit', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + `/mode/${modeId}`);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -177,6 +186,9 @@ router.post('/:modeId/delete', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + '/modes');
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -201,6 +213,9 @@ router.post('/:modeId/upvote', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + '/mode/' + mode.id);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -227,6 +242,9 @@ router.post('/:modeId/unvote', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + '/mode/' + mode.id);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -246,6 +264,9 @@ router.post('/:modeId/favorite', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + `/mode/${req.params.modeId}`);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
@@ -260,6 +281,9 @@ router.post('/:modeId/unfavorite', ensureAuthenticated, async (req, res) => {
     res.redirect(basePath + `/mode/${req.params.modeId}`);
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeDatabaseError') {
+      return res.status(404).render('not-found');
+    }
     res.status(500).send('Server Error');
   }
 });
