@@ -80,10 +80,11 @@ app.use(session({
       pool: pgPool,
       tableName: 'user_sessions'
     }),
+    name: 'vc.sid',
     secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
-    cookie: { name: 'vc.sid', path: '/', maxAge: 30 * 24 * 60 * 60 * 1000, secure: 'auto', sameSite: 'lax' }
+    cookie: { path: '/', maxAge: 30 * 24 * 60 * 60 * 1000, secure: 'auto', sameSite: 'lax' }
 }));
 
 app.use(passport.initialize());
