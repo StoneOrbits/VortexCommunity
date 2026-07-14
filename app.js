@@ -81,8 +81,7 @@ app.use(BASE_PATH, express.static(path.join(__dirname, 'public'), {
     maxAge: '1y',
     immutable: true,
     setHeaders: function(res, filePath) {
-      // HTML and config files: no cache
-      if (filePath.endsWith('.ejs') || filePath.endsWith('.json')) {
+      if (filePath.endsWith('.ejs') || filePath.endsWith('build.json')) {
         res.setHeader('Cache-Control', 'no-cache');
       }
     }
