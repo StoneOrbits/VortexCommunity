@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main class="tournament-create-page">
+        <h1>Create Tournament</h1>
+        <form action="<%= basePath %>/tournaments/create" method="POST" class="tournament-form">
+            <div class="form-group">
+                <label for="name">Tournament Name</label>
+                <input type="text" id="name" name="name" required minlength="3" placeholder="Enter tournament name">
+            </div>
+            <div class="form-group">
+                <label for="description">Description (optional)</label>
+                <textarea id="description" name="description" rows="4" placeholder="Describe your tournament rules and theme..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="type">Tournament Type</label>
+                <select id="type" name="type">
+                    <option value="open">Open Registration — anyone can join</option>
+                    <option value="closed">Closed Registration — creator adds players</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Judging Method</label>
+            <div class="radio-group">
+                <label class="radio-option">
+                    <input type="radio" name="judging_type" value="closed" checked>
+                    <div class="radio-text">
+                        <span class="radio-label">Closed Judging</span>
+                        <span class="radio-desc">Organizer manually picks the winner through administration. SR is not affected.</span>
+                    </div>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="judging_type" value="youtube_likes">
+                    <div class="radio-text">
+                        <span class="radio-label">YouTube Likes</span>
+                        <span class="radio-desc">Winner determined by the number of YouTube likes. SR is updated based on match results.</span>
+                    </div>
+                </label>
+            </div>
+            </div>
+            <div class="form-group">
+                <label for="max_participants">Max Participants</label>
+                <select id="max_participants" name="max_participants">
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16" selected>16</option>
+                    <option value="32">32</option>
+                    <option value="64">64</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="registration_ends_at">Registration Ends (date bracket is announced, submission starts)</label>
+                <input type="date" id="registration_ends_at" name="registration_ends_at">
+            </div>
+            <div class="form-group">
+                <label for="submission_duration">Submission Duration (hours per round)</label>
+                <input type="number" id="submission_duration" name="submission_duration" min="1" value="72">
+            </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Tournament</button>
+                <a href="<%= basePath %>/tournaments" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+</body>
+</html>

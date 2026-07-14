@@ -5,6 +5,10 @@ const User = require('./User');
 const PatternSet = require('./PatternSet');
 const Mode = require('./Mode');
 const Download = require('./Download');
+const Tournament = require('./Tournament');
+const TournamentRegistration = require('./TournamentRegistration');
+const TournamentMatch = require('./TournamentMatch');
+const TournamentSRHistory = require('./TournamentSRHistory');
 
 /**
  * Join tables
@@ -125,6 +129,27 @@ PatternSet.belongsToMany(Mode, {
   otherKey: 'modeId'
 });
 
+// Tournament associations
+Tournament.belongsTo(User, { as: 'creator', foreignKey: 'created_by' });
+User.hasMany(Tournament, { foreignKey: 'created_by' });
+
+Tournament.belongsToMany(User, { through: TournamentRegistration, as: 'participants', foreignKey: 'tournament_id' });
+User.belongsToMany(Tournament, { through: TournamentRegistration, as: 'registrations', foreignKey: 'user_id' });
+
+TournamentRegistration.belongsTo(Tournament, { foreignKey: 'tournament_id' });
+TournamentRegistration.belongsTo(User, { foreignKey: 'user_id' });
+Tournament.hasMany(TournamentRegistration, { foreignKey: 'tournament_id' });
+
+TournamentMatch.belongsTo(Tournament, { foreignKey: 'tournament_id' });
+Tournament.hasMany(TournamentMatch, { foreignKey: 'tournament_id' });
+TournamentMatch.belongsTo(User, { as: 'competitor1', foreignKey: 'competitor1_id' });
+TournamentMatch.belongsTo(User, { as: 'competitor2', foreignKey: 'competitor2_id' });
+TournamentMatch.belongsTo(User, { as: 'winner', foreignKey: 'winner_id' });
+
+TournamentSRHistory.belongsTo(User, { foreignKey: 'user_id' });
+TournamentSRHistory.belongsTo(Tournament, { foreignKey: 'tournament_id' });
+User.hasMany(TournamentSRHistory, { foreignKey: 'user_id' });
+
 // Creator relations
 PatternSet.belongsTo(User, {
   as: 'creator',
@@ -159,6 +184,10 @@ module.exports = {
   PatternSet,
   Mode,
   Download,
+  Tournament,
+  TournamentRegistration,
+  TournamentMatch,
+  TournamentSRHistory,
   UserFavoritePattern,
   UserFavoriteMode,
   PatternSetUpvote,

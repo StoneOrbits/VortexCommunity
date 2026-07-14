@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/head') %>
+<body class="dark-theme">
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    <main class="tournament-detail-page">
+        <div class="td-header">
+            <div>
+                <h1><%= tournament.name %></h1>
+                <span class="tournament-status status-<%= tournament.status %>"><%= tournament.status.replace('_', ' ') %></span>
+                <span class="tournament-type-badge"><%= tournament.type %> SR</span>
+                <span class="tournament-judging-badge"><%= tournament.judging_type.replace('_', ' ') %></span>
+            </div>
+            <div class="td-header-actions">
+                <% if (isCreator) { %>
+                    <% if (tournament.status === 'draft') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/start-registration" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-primary">Open Registration</button>
+                        </form>
+                    <% } %>
+                    <% if (tournament.status === 'registration') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/generate-bracket" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-primary">Generate Bracket</button>
+                        </form>
+                    <% } %>
+                    <% if (tournament.status === 'in_progress' && tournament.current_phase === 'submission') { %>
+                        <% if (tournament.judging_type === 'youtube_likes') { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                                <button type="submit" class="btn btn-secondary">Advance Round</button>
+                            </form>
+                        <% } else { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                                <button type="submit" class="btn btn-secondary">Force Judging Phase</button>
+                            </form>
+                        <% } %>
+                    <% } %>
+                    <% if (tournament.status === 'in_progress' && tournament.current_phase === 'judging') { %>
+                        <% if (tournament.judging_type === 'youtube_likes') { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                                <button type="submit" class="btn btn-secondary">Advance Round</button>
+                            </form>
+                        <% } else { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/advance-phase" method="POST" style="display:inline">
+                                <button type="submit" class="btn btn-secondary">Advance Round</button>
+                            </form>
+                        <% } %>
+                    <% } %>
+                    <% if (tournament.status === 'in_progress') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/complete" method="POST" style="display:inline" onsubmit="return confirm('Complete this tournament?')">
+                            <button type="submit" class="btn btn-danger">Complete Tournament</button>
+                        </form>
+                    <% } %>
+                    <% if (tournament.status === 'completed') { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/archive" method="POST" style="display:inline" onsubmit="return confirm('Archive this tournament?')">
+                            <button type="submit" class="btn btn-secondary">Archive</button>
+                        </form>
+                    <% } %>
+                <% } %>
+            </div>
+        </div>
+
+        <% if (tournament.description) { %>
+            <p class="td-description"><%= tournament.description %></p>
+        <% } %>
+
+        <div class="td-meta">
+            <span><i class="fas fa-users"></i> <%= tournament.TournamentRegistrations.length %> / <%= tournament.max_participants %> participants</span>
+            <span><i class="fas fa-user"></i> Hosted by <%= tournament.creator.username %></span>
+            <span><i class="fas fa-tag"></i> <%= tournament.type %> tournament</span>
+            <span><i class="fas fa-gavel"></i> <%= tournament.judging_type.replace('_', ' ') %></span>
+            <% if (tournament.status === 'in_progress') { %>
+                <span><i class="fas fa-flag"></i> Round <%= tournament.current_round %> — <%= tournament.current_phase %></span>
+            <% } %>
+        </div>
+
+        <% if (tournament.status === 'draft') { %>
+            <div class="td-section">
+                <p>This tournament is in draft mode. The creator will open registration when ready.</p>
+            </div>
+        <% } %>
+
+        <% if (tournament.status === 'registration') { %>
+            <div class="td-section">
+                <h2>Registration</h2>
+                <% if (tournament.type === 'open' && user) { %>
+                    <% if (!isRegistered) { %>
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/register" method="POST">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Join Tournament</button>
+                        </form>
+                    <% } else { %>
+                        <p><i class="fas fa-check-circle"></i> You are registered!</p>
+                    <% } %>
+                <% } %>
+                <% if (isCreator && tournament.type === 'closed') { %>
+                    <div class="td-add-player">
+                        <form action="<%= basePath %>/tournaments/<%= tournament.id %>/add-player" method="POST" class="inline-form">
+                            <input type="text" name="username" placeholder="Enter username to add" required>
+                            <button type="submit" class="btn btn-primary">Add Player</button>
+                        </form>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+
+        <% if (tournament.status === 'in_progress' && userMatch) { %>
+            <div class="td-section td-current-match">
+                <h2><i class="fas fa-fist-raised"></i> Your Current Match — Round <%= tournament.current_round %></h2>
+                <div class="match-card">
+                    <div class="match-competitors">
+                        <span class="competitor <%= userMatch.competitor1_id === user.id ? 'you' : '' %>">
+                            <%= userMatch.competitor1 ? userMatch.competitor1.username : 'TBD' %>
+                        </span>
+                        <span class="vs">vs</span>
+                        <span class="competitor <%= userMatch.competitor2_id === user.id ? 'you' : '' %>">
+                            <%= userMatch.competitor2 ? userMatch.competitor2.username : 'TBD' %>
+                        </span>
+                    </div>
+                    <div class="match-status">Status: <%= userMatch.status %></div>
+                    <% if (tournament.current_phase === 'submission') { %>
+                        <% var userHasSubmitted = (userMatch.competitor1_id === user.id && userMatch.submission1_url) || (userMatch.competitor2_id === user.id && userMatch.submission2_url); %>
+                        <% if (!userHasSubmitted) { %>
+                            <form action="<%= basePath %>/tournaments/<%= tournament.id %>/matches/<%= userMatch.id %>/submit" method="POST" class="match-submit-form">
+                                <label for="youtube_url">Submit your YouTube video link:</label>
+                                <input type="url" name="youtube_url" placeholder="https://youtu.be/... or https://youtube.com/watch?v=..." required class="form-input">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        <% } %>
+                    <% } %>
+                    <% if (userMatch.submission1_url) { %>
+                        <p class="submission-status"><i class="fas fa-check"></i> <%= userMatch.competitor1 ? userMatch.competitor1.username : 'Player 1' %> has submitted</p>
+                    <% } %>
+                    <% if (userMatch.submission2_url) { %>
+                        <p class="submission-status"><i class="fas fa-check"></i> <%= userMatch.competitor2 ? userMatch.competitor2.username : 'Player 2' %> has submitted</p>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
+
+        <% if (Object.keys(matchesByRound).length > 0) { %>
+            <%
+            var roundKeys = Object.keys(matchesByRound).sort(function(a,b){return a-b});
+            var judgingLabel = 'Judge';
+            %>
+            <div class="tl-wrapper">
+                <% roundKeys.forEach(function(rk, idx) { %>
+                    <% var isLast = idx === roundKeys.length - 1; %>
+                    <% var roundNum = +rk; %>
+                    <% var roundLabel = isLast && matchesByRound[rk].length === 1 ? 'Finals' : 'Round ' + roundNum; %>
+                    <% var subDone = tournament.current_round > roundNum || (tournament.current_round === roundNum && tournament.status === 'in_progress' && tournament.current_phase !== 'submission') || tournament.status === 'completed'; %>
+                    <% var subActive = tournament.current_round === roundNum && tournament.status === 'in_progress' && tournament.current_phase === 'submission'; %>
+                    <% var judgeDone = tournament.current_round > roundNum || tournament.status === 'completed'; %>
+                    <% var judgeActive = tournament.current_round === roundNum && tournament.status === 'in_progress' && tournament.current_phase === 'judging'; %>
+                    <div class="tl-round">
+                        <div class="tl-round-label"><%= roundLabel %></div>
+                        <div class="tl-phases">
+                            <div class="tl-phase <%= subDone ? 'tl-done' : (subActive ? 'tl-active' : '') %>">Submission</div>
+                            <div class="tl-phase <%= judgeDone ? 'tl-done' : (judgeActive ? 'tl-active' : '') %>"><%= judgingLabel %></div>
+                        </div>
+                    </div>
+                    <% if (!isLast) { %><div class="tl-connector"></div><% } %>
+                <% }); %>
+                <% if (tournament.status === 'completed') { %>
+                    <div class="tl-connector"></div>
+                    <div class="tl-round">
+                        <div class="tl-round-label">Done</div>
+                        <div class="tl-phases">
+                            <div class="tl-phase tl-done">Complete</div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+            <%
+            /* Centered tree formula */
+            var SU = 72;
+            function marginTop(round, pos) {
+                if (+round === 1 && pos > 0) return 10;
+                if (+round === 2) return 110;
+                return (Math.pow(2, round - 1) * (2 * pos + 1) - 1) * SU;
+            }
+
+            for (var rk in matchesByRound) {
+                matchesByRound[rk].sort(function(a,b){return a.position - b.position});
+            }
+            %>
+
+            <div class="td-section">
+                <h2>Bracket</h2>
+                <div class="bc-container">
+                    <canvas id="bracket-canvas"></canvas>
+                    <div id="bc-admin-overlay" style="display:none"></div>
+                </div>
+            </div>
+        <% } %>
+
+        <div class="td-section">
+            <h2>Participants (<%= tournament.TournamentRegistrations.length %>)</h2>
+            <div class="participants-list">
+                <% tournament.TournamentRegistrations.forEach(function(r) { %>
+                    <a href="<%= basePath %>/user/<%= r.User.id %>" class="participant-item">
+                        <img src="<%= r.User.profilePic || basePath + '/images/default-profile.png' %>" alt="" class="participant-avatar">
+                        <span><%= r.User.username %></span>
+                    </a>
+                <% }); %>
+            </div>
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+    <%- include('partials/script') %>
+<% if (typeof roundKeys !== 'undefined' && roundKeys.length > 0) { %>
+<script>
+<%
+var bracketRounds = roundKeys.map(function(rk) {
+    return {
+        round: +rk,
+        matches: matchesByRound[rk].map(function(m) {
+            var ytId1 = null, ytId2 = null;
+            if (m.submission1_url) { var mm = m.submission1_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/); if (mm) ytId1 = mm[1]; }
+            if (m.submission2_url) { var mm = m.submission2_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/); if (mm) ytId2 = mm[1]; }
+            return {
+                id: m.id, position: m.position, status: m.status,
+                round: +rk,
+                c1: m.competitor1 ? m.competitor1.username : null,
+                c2: m.competitor2 ? m.competitor2.username : null,
+                c1id: m.competitor1_id, c2id: m.competitor2_id, wid: m.winner_id,
+                yt1: ytId1, yt2: ytId2,
+                l1: m.likes1, l2: m.likes2
+            };
+        })
+    };
+});
+%>
+(function(){
+    var CARD_W = 200, CARD_H = 80, GAP = 10, CONN_H = 30, COL_GAP = 60;
+    var FONT = '12px sans-serif';
+    var isCreator = <%= isCreator ? 'true' : 'false' %>;
+    var userId = <%= user ? user.id : 'null' %>;
+    var isCompleted = <%= tournament.status === 'completed' ? 'true' : 'false' %>;
+    var judgingType = '<%= tournament.judging_type %>';
+    var basePath = '<%= basePath %>/tournaments/<%= tournament.id %>';
+
+    var rounds = <%- JSON.stringify(bracketRounds) %>;
+
+    var canvas = document.getElementById('bracket-canvas');
+    var ctx = canvas.getContext('2d');
+    var container = canvas.parentElement;
+
+    var panX = 0, panY = 0, scale = 1;
+    var isDrag = false, dragSX, dragSY, dragPX, dragPY;
+    var loadedImages = {};
+    var pendingImages = 0;
+
+    function resize() {
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        autoFit();
+        draw();
+    }
+
+    function autoFit() {
+        var numRounds = rounds.length;
+        var numR1 = rounds[0].matches.length;
+        var maxX = (numRounds - 1) * (CARD_W + CONN_H + COL_GAP) + CARD_W;
+        if (isCompleted) {
+            maxX += CONN_H + COL_GAP + CARD_W;
+        }
+        var maxY = (numR1 - 1) * (CARD_H + GAP) + CARD_H;
+        var margin = 20;
+        var cw = canvas.width, ch = canvas.height;
+        if (cw === 0 || ch === 0) return;
+        var availW = cw - 2 * margin;
+        var availH = ch - 2 * margin;
+        scale = Math.min(availW / maxX, availH / maxY, 1.2);
+        scale = Math.max(scale, 0.2);
+        panX = margin + (availW - maxX * scale) / 2;
+        panY = margin + (availH - maxY * scale) / 2;
+    }
+
+    function computeY(round, pos) {
+        if (round === 1) return pos * (CARD_H + GAP);
+        var f1 = computeY(round - 1, pos * 2);
+        var f2 = computeY(round - 1, pos * 2 + 1);
+        return (f1 + f2) / 2;
+    }
+
+    function preloadImages() {
+        rounds.forEach(function(r) {
+            r.matches.forEach(function(m) {
+                [m.yt1, m.yt2].forEach(function(yt) {
+                    if (!yt || loadedImages[yt]) return;
+                    loadedImages[yt] = false;
+                    pendingImages++;
+                    var img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.onload = function() { loadedImages[yt] = img; pendingImages--; draw(); };
+                    img.onerror = function() { loadedImages[yt] = null; pendingImages--; draw(); };
+                    img.src = 'https://img.youtube.com/vi/' + yt + '/mqdefault.jpg';
+                });
+            });
+        });
+    }
+
+    function drawRoundLabel(x, y, text) {
+        ctx.fillStyle = '#666';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(text, x + CARD_W / 2, y - 6);
+    }
+
+    function drawCard(x, y, m) {
+        var bw = 1;
+        var colors = { pending: '#444', completed: '#27ae60', submission: '#2980b9', judging: '#f39c12' };
+        var borderColor = colors[m.status] || '#444';
+
+        ctx.fillStyle = '#1e1e1e';
+        ctx.beginPath();
+        ctx.roundRect(x, y, CARD_W, CARD_H, 6);
+        ctx.fill();
+
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = bw;
+        ctx.beginPath();
+        ctx.roundRect(x + bw/2, y + bw/2, CARD_W - bw, CARD_H - bw, 5);
+        ctx.stroke();
+
+        var pad = 6, rowH = 24, gap = 4;
+        var rowY = y + (CARD_H - 2 * rowH - gap - 14) / 2;
+
+        function drawCompetitor(name, yt, isWinner, isYou) {
+            if (yt && loadedImages[yt]) {
+                ctx.drawImage(loadedImages[yt], x + pad, rowY, 44, 24);
+                ctx.fillStyle = isWinner ? '#f1c40f' : (isYou ? '#1abc9c' : '#ccc');
+                ctx.font = FONT;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(name || '\u2014', x + pad + 48, rowY + 12);
+            } else {
+                ctx.fillStyle = isWinner ? '#f1c40f' : (isYou ? '#1abc9c' : '#ccc');
+                ctx.font = FONT;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(name || '\u2014', x + pad, rowY + 12);
+            }
+        }
+
+        drawCompetitor(m.c1, m.yt1, m.wid === m.c1id, m.c1id === userId);
+        if (m.l1 != null) {
+            ctx.fillStyle = '#999';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(Number(m.l1).toLocaleString(), x + CARD_W - pad, rowY + 12);
+        }
+
+        rowY += rowH + gap;
+
+        // Status line
+        ctx.fillStyle = '#777';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(m.status.replace('_', ' '), x + CARD_W - pad, rowY + 7);
+
+        rowY += 14 + gap;
+
+        drawCompetitor(m.c2, m.yt2, m.wid === m.c2id, m.c2id === userId);
+        if (m.l2 != null) {
+            ctx.fillStyle = '#999';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(Number(m.l2).toLocaleString(), x + CARD_W - pad, rowY + 12);
+        }
+    }
+
+    function drawConnectors() {
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+
+        for (var ri = 0; ri < rounds.length - 1; ri++) {
+            var cur = rounds[ri].matches;
+            for (var i = 0; i < cur.length; i += 2) {
+                var topM = cur[i], botM = cur[i + 1];
+                if (!botM) continue;
+
+                var colX = ri * (CARD_W + CONN_H + COL_GAP);
+                var topY = computeY(topM.round, topM.position);
+                var botY = computeY(botM.round, botM.position);
+                var topCY = topY + CARD_H / 2;
+                var botCY = botY + CARD_H / 2;
+                var branchY = (topCY + botCY) / 2;
+                var x1 = colX + CARD_W;
+                var x2 = x1 + CONN_H;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, topCY);
+                ctx.lineTo(x2, topCY);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(x1, botCY);
+                ctx.lineTo(x2, botCY);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(x2, topCY);
+                ctx.lineTo(x2, botCY);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(x2, branchY);
+                ctx.lineTo(x2 + COL_GAP, branchY);
+                ctx.stroke();
+            }
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(panX, panY);
+        ctx.scale(scale, scale);
+
+        drawConnectors();
+
+        rounds.forEach(function(r) {
+            var colX = (r.round - 1) * (CARD_W + CONN_H + COL_GAP);
+            var label = r.round === rounds.length && r.matches.length === 1 ? 'Finals' : 'Round ' + r.round;
+            drawRoundLabel(colX, 0, label);
+            r.matches.forEach(function(m) {
+                var y = computeY(m.round, m.position);
+                drawCard(colX, y, m);
+            });
+        });
+
+        if (isCompleted && rounds.length > 0) {
+            var lastR = rounds[rounds.length - 1];
+            var finalsM = lastR.matches[0];
+            if (finalsM && finalsM.wid) {
+                var champName = finalsM.wid === finalsM.c1id ? finalsM.c1 : finalsM.c2;
+                if (champName) {
+                    var champX = (lastR.round) * (CARD_W + CONN_H + COL_GAP);
+                    var finalsY = computeY(finalsM.round, finalsM.position);
+                    var champH = 50;
+
+                    ctx.strokeStyle = 'rgba(241, 196, 15, 0.6)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.roundRect(champX + 2, finalsY + (CARD_H - champH) / 2, CARD_W - 4, champH - 4, 8);
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'rgba(241, 196, 15, 0.05)';
+                    ctx.beginPath();
+                    ctx.roundRect(champX + 2, finalsY + (CARD_H - champH) / 2, CARD_W - 4, champH - 4, 8);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.font = 'bold 18px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('\u2605 ' + champName + ' \u2605', champX + CARD_W / 2, finalsY + CARD_H / 2);
+
+                    ctx.font = '11px sans-serif';
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText('WINNER', champX + CARD_W / 2, finalsY + (CARD_H - champH) / 2 - 4);
+
+                    var cx1 = (lastR.round - 1) * (CARD_W + CONN_H + COL_GAP) + CARD_W;
+                    var cx2 = champX;
+                    var cy = finalsY + CARD_H / 2;
+                    ctx.strokeStyle = 'rgba(241, 196, 15, 0.4)';
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(cx1, cy);
+                    ctx.lineTo(cx2, cy);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+        }
+
+        ctx.restore();
+    }
+
+    // Events
+    canvas.addEventListener('mousedown', function(e) {
+        isDrag = true;
+        var r = canvas.getBoundingClientRect();
+        dragSX = e.clientX - r.left;
+        dragSY = e.clientY - r.top;
+        dragPX = panX;
+        dragPY = panY;
+    });
+
+    canvas.addEventListener('mousemove', function(e) {
+        var r = canvas.getBoundingClientRect();
+        var mx = (e.clientX - r.left - panX) / scale;
+        var my = (e.clientY - r.top - panY) / scale;
+        var overThumb = false;
+        for (var ri = 0; ri < rounds.length && !overThumb; ri++) {
+            var colX = ri * (CARD_W + CONN_H + COL_GAP);
+            var matches = rounds[ri].matches;
+            for (var i = 0; i < matches.length && !overThumb; i++) {
+                var m = matches[i];
+                var y = computeY(m.round, m.position);
+                if (mx >= colX && mx <= colX + CARD_W && my >= y && my <= y + CARD_H) {
+                    var pad = 6, rowH = 24, gap = 4;
+                    var rowY = y + (CARD_H - 2 * rowH - gap - 14) / 2;
+                    var row2Y = rowY + rowH + gap + 14 + gap;
+                    if (m.yt1 && mx >= colX + pad && mx <= colX + pad + 44 && my >= rowY && my <= rowY + rowH) overThumb = true;
+                    if (m.yt2 && mx >= colX + pad && mx <= colX + pad + 44 && my >= row2Y && my <= row2Y + rowH) overThumb = true;
+                }
+            }
+        }
+        canvas.style.cursor = overThumb ? 'pointer' : '';
+    });
+
+    window.addEventListener('mousemove', function(e) {
+        if (!isDrag) return;
+        var r = canvas.getBoundingClientRect();
+        var mx = e.clientX - r.left;
+        var my = e.clientY - r.top;
+        panX = dragPX + (mx - dragSX);
+        panY = dragPY + (my - dragSY);
+        draw();
+    });
+
+    window.addEventListener('mouseup', function() { isDrag = false; });
+
+    canvas.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        var r = canvas.getBoundingClientRect();
+        var mx = e.clientX - r.left;
+        var my = e.clientY - r.top;
+
+        var oldS = scale;
+        var delta = e.deltaY > 0 ? 0.9 : 1.1;
+        scale = Math.max(0.3, Math.min(3, scale * delta));
+        var f = scale / oldS;
+
+        panX = mx - f * (mx - panX);
+        panY = my - f * (my - panY);
+        draw();
+    }, { passive: false });
+
+    canvas.addEventListener('click', function(e) {
+        if (isDrag) return;
+        var r = canvas.getBoundingClientRect();
+        var mx = (e.clientX - r.left - panX) / scale;
+        var my = (e.clientY - r.top - panY) / scale;
+
+        for (var ri = 0; ri < rounds.length; ri++) {
+            var colX = ri * (CARD_W + CONN_H + COL_GAP);
+            var matches = rounds[ri].matches;
+            for (var i = 0; i < matches.length; i++) {
+                var m = matches[i];
+                var y = computeY(m.round, m.position);
+                if (mx >= colX && mx <= colX + CARD_W && my >= y && my <= y + CARD_H) {
+                    var pad = 6, rowH = 24, gap = 4;
+                    var rowY = y + (CARD_H - 2 * rowH - gap - 14) / 2;
+                    var row2Y = rowY + rowH + gap + 14 + gap;
+                    if (m.yt1 && mx >= colX + pad && mx <= colX + pad + 44 && my >= rowY && my <= rowY + rowH) {
+                        window.open('https://www.youtube.com/watch?v=' + m.yt1, '_blank');
+                        return;
+                    }
+                    if (m.yt2 && mx >= colX + pad && mx <= colX + pad + 44 && my >= row2Y && my <= row2Y + rowH) {
+                        window.open('https://www.youtube.com/watch?v=' + m.yt2, '_blank');
+                        return;
+                    }
+                    if (isCreator && (m.status === 'judging' || m.status === 'submission')) {
+                        showAdmin(m);
+                    }
+                    return;
+                }
+            }
+        }
+        hideAdmin();
+    });
+
+    var adminOverlay = document.getElementById('bc-admin-overlay');
+
+    function showAdmin(m) {
+        var html = '<form action="' + basePath + '/matches/' + m.id + '/winner" method="POST">';
+        html += '<select name="winner_id" required><option value="">' + (m.status === 'judging' ? 'Pick winner' : 'Force winner') + '</option>';
+        if (m.c1) html += '<option value="' + m.c1id + '">' + m.c1 + '</option>';
+        if (m.c2) html += '<option value="' + m.c2id + '">' + m.c2 + '</option>';
+        html += '</select>';
+        html += '<button type="submit" class="btn btn-sm ' + (m.status === 'judging' ? 'btn-primary' : 'btn-danger') + '">' + (m.status === 'judging' ? 'Declare' : 'Force') + '</button>';
+        html += ' <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById(\'bc-admin-overlay\').style.display=\'none\'">Cancel</button>';
+        html += '</form>';
+        adminOverlay.innerHTML = html;
+        adminOverlay.style.display = 'block';
+
+        var colX = (m.round - 1) * (CARD_W + CONN_H + COL_GAP);
+        var my = computeY(m.round, m.position);
+        var sx = colX + CARD_W + 10;
+        var sy = my;
+        var osx = sx * scale + panX;
+        var osy = sy * scale + panY;
+        adminOverlay.style.left = Math.min(osx, container.offsetWidth - 220) + 'px';
+        adminOverlay.style.top = Math.min(osy, container.offsetHeight - 80) + 'px';
+    }
+
+    function hideAdmin() { adminOverlay.style.display = 'none'; }
+
+    window.addEventListener('resize', resize);
+    preloadImages();
+    resize();
+})();
+</script>
+<% } %>
+</body>
+</html>
