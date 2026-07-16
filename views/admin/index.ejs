@@ -39,12 +39,60 @@
       <% } else if (section === 'users') { %>
         <h2>Users</h2>
         <form class="admin-search" method="GET">
-          <input type="text" name="q" placeholder="Search by username or email..." value="<%= typeof q !== 'undefined' ? q : '' %>">
+          <input type="text" name="q" placeholder="Search by username or email..." value="<%= typeof filters !== 'undefined' && filters.q ? filters.q : '' %>">
           <button type="submit">Search</button>
         </form>
+        <details class="admin-filters" <%= (typeof filters !== 'undefined' && (filters.noContent || filters.createdAfter || filters.createdBefore || filters.emailDomain || filters.verified)) ? 'open' : '' %>>
+          <summary>Filters</summary>
+          <form method="GET">
+            <input type="hidden" name="q" value="<%= typeof filters !== 'undefined' && filters.q ? filters.q : '' %>">
+            <div class="admin-filter-row">
+              <label>
+                <span>No content (no patterns/modes)</span>
+                <select name="noContent">
+                  <option value="">Any</option>
+                  <option value="yes" <%= typeof filters !== 'undefined' && filters.noContent === 'yes' ? 'selected' : '' %>>Yes</option>
+                </select>
+              </label>
+              <label>
+                <span>Verified email</span>
+                <select name="verified">
+                  <option value="">Any</option>
+                  <option value="yes" <%= typeof filters !== 'undefined' && filters.verified === 'yes' ? 'selected' : '' %>>Yes</option>
+                  <option value="no" <%= typeof filters !== 'undefined' && filters.verified === 'no' ? 'selected' : '' %>>No</option>
+                </select>
+              </label>
+              <label>
+                <span>Email domain</span>
+                <input type="text" name="emailDomain" placeholder="e.g. gmail.com" value="<%= typeof filters !== 'undefined' && filters.emailDomain ? filters.emailDomain : '' %>">
+              </label>
+            </div>
+            <div class="admin-filter-row">
+              <label>
+                <span>Created after</span>
+                <input type="date" name="createdAfter" value="<%= typeof filters !== 'undefined' && filters.createdAfter ? filters.createdAfter : '' %>">
+              </label>
+              <label>
+                <span>Created before</span>
+                <input type="date" name="createdBefore" value="<%= typeof filters !== 'undefined' && filters.createdBefore ? filters.createdBefore : '' %>">
+              </label>
+              <div class="admin-filter-actions">
+                <button type="submit" class="btn-small">Apply</button>
+                <a href="<%= basePath %>/control/users" class="btn-small btn-secondary">Clear</a>
+              </div>
+            </div>
+          </form>
+        </details>
+        <div class="admin-bulk-bar" id="bulkBar" style="display:none;">
+          <span id="bulkCount">0 selected</span>
+          <form action="<%= basePath %>/control/users/bulk-delete" method="POST" id="bulkDeleteForm" onsubmit="return confirm('Delete selected users?');">
+          </form>
+          <button type="submit" form="bulkDeleteForm" class="btn-small btn-danger">Delete Selected</button>
+        </div>
         <table class="admin-table">
           <thead>
             <tr>
+              <th class="col-check"><input type="checkbox" id="selectAll"></th>
               <th>ID</th>
               <th>Username</th>
               <th>Email</th>
@@ -57,6 +105,7 @@
           <tbody>
             <% users.forEach(u => { %>
             <tr>
+              <td class="col-check"><input type="checkbox" name="userIds" value="<%= u.id %>" form="bulkDeleteForm" class="user-check"></td>
               <td><%= u.id %></td>
               <td><a href="<%= basePath %>/user/<%= u.id %>"><%= u.username %></a></td>
               <td><%= u.email || '-' %></td>
@@ -277,6 +326,33 @@
     </div>
   </div>
   </main>
+  <script>
+  (function() {
+    var selectAll = document.getElementById('selectAll');
+    var bulkBar = document.getElementById('bulkBar');
+    var bulkCount = document.getElementById('bulkCount');
+    var checks = document.querySelectorAll('.user-check');
+    var form = document.getElementById('bulkDeleteForm');
+    function sync() {
+      var n = 0;
+      checks.forEach(function(c) { if (c.checked) n++; });
+      if (n > 0) { bulkBar.style.display = ''; bulkCount.textContent = n + ' selected'; }
+      else { bulkBar.style.display = 'none'; }
+    }
+    if (selectAll) {
+      selectAll.addEventListener('change', function() {
+        checks.forEach(function(c) { c.checked = selectAll.checked; });
+        sync();
+      });
+    }
+    checks.forEach(function(c) {
+      c.addEventListener('change', function() {
+        selectAll.checked = checks.length === document.querySelectorAll('.user-check:checked').length;
+        sync();
+      });
+    });
+  })();
+  </script>
   <%- include('../partials/footer') %>
   <%- include('../partials/script') %>
 </body>

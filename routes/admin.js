@@ -20,10 +20,53 @@ router.get('/', isAdmin, async (req, res) => {
 });
 
 router.get('/users', isAdmin, async (req, res) => {
-  const { q } = req.query;
-  const where = q
-    ? { [Op.or]: [{ username: { [Op.iLike]: `%${q}%` } }, { email: { [Op.iLike]: `%${q}%` } }] }
-    : {};
+  const { q, noContent, createdAfter, createdBefore, emailDomain, verified } = req.query;
+  const where = {};
+
+  if (q) {
+    where[Op.or] = [
+      { username: { [Op.iLike]: `%${q}%` } },
+      { email: { [Op.iLike]: `%${q}%` } }
+    ];
+  }
+  if (createdAfter) {
+    where.createdAt = { ...(where.createdAt || {}), [Op.gte]: new Date(createdAfter) };
+  }
+  if (createdBefore) {
+    where.createdAt = { ...(where.createdAt || {}), [Op.lte]: new Date(createdBefore + 'T23:59:59') };
+  }
+  if (emailDomain) {
+    where.email = { ...where.email, [Op.iLike]: `%@${emailDomain}` };
+  }
+  if (verified === 'yes') {
+    where.emailVerified = true;
+  } else if (verified === 'no') {
+    where.emailVerified = false;
+  }
+
+  if (noContent === 'yes') {
+    const emptyUserIds = [];
+    const patEmpty = await PatternSet.findAll({
+      attributes: ['createdBy'],
+      group: ['createdBy'],
+      raw: true
+    });
+    const modEmpty = await Mode.findAll({
+      attributes: ['createdBy'],
+      group: ['createdBy'],
+      raw: true
+    });
+    const contentCreatorIds = new Set([
+      ...patEmpty.map(r => r.createdBy),
+      ...modEmpty.map(r => r.createdBy)
+    ]);
+    const allUserIds = (await User.findAll({ attributes: ['id'], where, raw: true })).map(u => u.id);
+    for (const id of allUserIds) {
+      if (!contentCreatorIds.has(id)) emptyUserIds.push(id);
+    }
+    where.id = { [Op.in]: emptyUserIds };
+  }
+
   const users = await User.findAll({ where, order: [['id', 'DESC']] });
 
   const userIds = users.map(u => u.id);
@@ -52,7 +95,8 @@ router.get('/users', isAdmin, async (req, res) => {
     u.dataValues.modeCount = modCounts[u.id] || 0;
   });
 
-  res.render('admin/index', { users, section: 'users' });
+  const filters = { q, noContent, createdAfter, createdBefore, emailDomain, verified };
+  res.render('admin/index', { users, section: 'users', filters });
 });
 
 router.post('/users/update-username', isAdmin, async (req, res) => {
@@ -79,6 +123,22 @@ router.post('/users/delete', isAdmin, async (req, res) => {
   res.redirect(basePath + '/control/users');
 });
 
+router.post('/users/bulk-delete', isAdmin, async (req, res) => {
+  const { userIds } = req.body;
+  const basePath = req.app.locals.basePath || '';
+  if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+    req.flash('error', 'No users selected.');
+    return res.redirect(basePath + '/control/users');
+  }
+  try {
+    const count = await User.destroy({ where: { id: { [Op.in]: userIds } } });
+    req.flash('success', `${count} user(s) deleted.`);
+  } catch (err) {
+    req.flash('error', 'Failed to delete users.');
+  }
+  res.redirect(basePath + '/control/users');
+});
+
 router.get('/patterns', isAdmin, async (req, res) => {
   const { q } = req.query;
   const page = Math.max(1, parseInt(req.query.page || 1, 10));
@@ -89,7 +149,7 @@ router.get('/patterns', isAdmin, async (req, res) => {
     offset: (page - 1) * pageSize, limit: pageSize,
     include: [{ model: User, as: 'creator', attributes: ['id', 'username'] }]
   });
-  res.render('admin/index', { patterns, section: 'patterns', currentPage: page, pageCount: Math.ceil(totalCount / pageSize), totalCount });
+  res.render('admin/index', { patterns, section: 'patterns', currentPage: page, pageCount: Math.ceil(totalCount / pageSize), totalCount, q });
 });
 
 router.post('/patterns/delete', isAdmin, async (req, res) => {
@@ -114,7 +174,7 @@ router.get('/modes', isAdmin, async (req, res) => {
     offset: (page - 1) * pageSize, limit: pageSize,
     include: [{ model: User, as: 'creator', attributes: ['id', 'username'] }]
   });
-  res.render('admin/index', { modes, section: 'modes', currentPage: page, pageCount: Math.ceil(totalCount / pageSize), totalCount });
+  res.render('admin/index', { modes, section: 'modes', currentPage: page, pageCount: Math.ceil(totalCount / pageSize), totalCount, q });
 });
 
 router.post('/modes/delete', isAdmin, async (req, res) => {

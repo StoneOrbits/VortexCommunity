@@ -341,6 +341,98 @@ main.admin-page {
   background: #1e8449;
 }
 
+/* Checkboxes */
+.col-check {
+  width: 36px;
+  text-align: center;
+}
+
+.col-check input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+/* Filters panel */
+.admin-filters {
+  margin-bottom: 16px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.admin-filters summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #ddd;
+  padding: 4px 0;
+}
+
+.admin-filter-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.admin-filter-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85em;
+  color: #888;
+}
+
+.admin-filter-row input,
+.admin-filter-row select {
+  padding: 6px 10px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background: #1a1a1a;
+  color: #ddd;
+  font-size: 0.9em;
+}
+
+.admin-filter-row input:focus,
+.admin-filter-row select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.admin-filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.btn-secondary {
+  background: #444;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}
+
+/* Bulk action bar */
+.admin-bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 10px 16px;
+  background: #1a1a1a;
+  border: 1px solid #c0392b;
+  border-radius: 8px;
+}
+
+.admin-bulk-bar span {
+  color: #ddd;
+  font-size: 0.95em;
+  font-weight: 600;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .admin-layout {
