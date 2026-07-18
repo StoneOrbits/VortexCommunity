@@ -6,6 +6,8 @@
     <%- include('partials/nav') %>
     <main>
         <div class="container">
+            <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length) { %><div class="alert alert-error"><%= error_msg %></div><% } %>
+            <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
             <section class="pat-edit-section">
                 <form class="form-group" action="<%= basePath %>/pat/<%= pat.id %>/edit" method="post">
                     <h2>Edit Mode: <%= pat.name %></h2>

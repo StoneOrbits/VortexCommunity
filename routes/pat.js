@@ -5,6 +5,7 @@ const path = require('path');
 const { User, PatternSet, Mode, ModePatternSet, PatternSetUpvote, UserFavoritePattern } = require('../models/pg/index');
 const { Op } = require('sequelize');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
+const { validatePatInput } = require('../middleware/validate');
 const tmp = require('tmp-promise');
 const { exec } = require('child_process');
 const util = require('util');
@@ -111,7 +112,7 @@ router.get('/:patId/edit', ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.post('/:patId/edit', ensureAuthenticated, async (req, res) => {
+router.post('/:patId/edit', ensureAuthenticated, validatePatInput, async (req, res) => {
   try {
     const patId = req.params.patId;
     const pat = await PatternSet.findByPk(patId);
@@ -133,6 +134,14 @@ router.post('/:patId/edit', ensureAuthenticated, async (req, res) => {
     console.error(err);
     if (err.name === 'SequelizeDatabaseError') {
       return res.status(404).render('not-found');
+    }
+    if (err.name === 'SequelizeValidationError') {
+      const basePath = req.app.locals.basePath || '';
+      req.flash('error', err.errors.map(e => e.message).join(', '));
+      if (req.params.patId) {
+        return res.redirect(basePath + '/pat/' + req.params.patId + '/edit');
+      }
+      return res.redirect(basePath + '/pats');
     }
     res.status(500).send('Server Error');
   }
@@ -267,7 +276,7 @@ router.post('/:patId/unfavorite', ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create', validatePatInput, async (req, res) => {
   try {
     await PatternSet.create({
       name: req.body.name,
@@ -278,6 +287,11 @@ router.post('/create', async (req, res) => {
     res.redirect(basePath + '/pats');
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeValidationError') {
+      const basePath = req.app.locals.basePath || '';
+      req.flash('error', err.errors.map(e => e.message).join(', '));
+      return res.redirect(basePath + '/pats');
+    }
     res.status(500).send('Server Error');
   }
 });

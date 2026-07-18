@@ -6,6 +6,8 @@
     <%- include('partials/nav') %>
     <main>
       <div class="container" id="mode-data-container" data-mode='<%= JSON.stringify(mode) %>' data-vortex-mode='<%= JSON.stringify(vortexMode) %>'>
+        <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length) { %><div class="alert alert-error"><%= error_msg %></div><% } %>
+        <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
         <div class="mode-detail">
           <div class="mode-detail-header">
             <div class="mode-detail-info">

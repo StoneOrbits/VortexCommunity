@@ -7,6 +7,7 @@ const router = express.Router();
 const { PatternSet, Mode, ModePatternSet } = require('../models/pg/index');
 const { Op } = require('sequelize');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
+const { validateUploadSubmit, sanitizeSessionModeData } = require('../middleware/validate');
 const { execSync } = require('child_process');
 const fs = require('fs').promises;
 const sequelize = require('../config/database-pg');
@@ -151,7 +152,7 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         normalizedJson = { modes: [jsonData] };
       }
 
-      req.session.modeData = {
+      req.session.modeData = sanitizeSessionModeData({
         name: modeName || fileName,
         description: '',
         deviceType,
@@ -161,7 +162,7 @@ router.post('/', ensureAuthenticated, upload.array('modeFile'), async (req, res)
         duplicateNames,
         patNames,
         patDescriptions
-      };
+      });
     }
 
     res.redirect(basePath + '/upload/submit');
@@ -215,7 +216,7 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
       patDescriptions.push('');
     }
 
-    req.session.modeData = {
+    req.session.modeData = sanitizeSessionModeData({
       name: jsonData.name || modeName,
       description: jsonData.description || '',
       deviceType,
@@ -225,7 +226,7 @@ router.get('/json', ensureAuthenticated, async (req, res) => {
       duplicateNames,
       patNames,
       patDescriptions
-    };
+    });
 
     res.redirect(basePath + '/upload/submit');
   } catch (error) {
@@ -283,7 +284,7 @@ router.get('/submit', ensureAuthenticated, async (req, res) => {
   res.render('upload-submit', { modeData });
 });
 
-router.post('/submit', ensureAuthenticated, async (req, res) => {
+router.post('/submit', ensureAuthenticated, validateUploadSubmit, async (req, res) => {
   const createdPatternSets = [];
   const basePath = req.app.locals.basePath || '';
   try {

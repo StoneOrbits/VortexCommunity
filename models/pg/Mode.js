@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database-pg');
+const { sanitize, NAME_MAX_LENGTH, DESCRIPTION_MAX_LENGTH } = require('../../middleware/validate');
 
 const Mode = sequelize.define('Mode', {
   id: {
@@ -9,11 +10,18 @@ const Mode = sequelize.define('Mode', {
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: { msg: 'Name is required.' },
+      len: { args: [1, NAME_MAX_LENGTH], msg: `Name must be between 1 and ${NAME_MAX_LENGTH} characters.` }
+    }
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: true
+    allowNull: true,
+    validate: {
+      len: { args: [0, DESCRIPTION_MAX_LENGTH], msg: `Description must be ${DESCRIPTION_MAX_LENGTH} characters or less.` }
+    }
   },
   deviceType: {
     type: DataTypes.STRING,
@@ -38,7 +46,13 @@ const Mode = sequelize.define('Mode', {
   }
 }, {
   tableName: 'modes',
-  timestamps: true
+  timestamps: true,
+  hooks: {
+    beforeValidate: (mode) => {
+      if (mode.name) mode.name = sanitize(mode.name);
+      if (mode.description) mode.description = sanitize(mode.description);
+    }
+  }
 });
 
 module.exports = Mode;

@@ -5,6 +5,7 @@ const path = require('path');
 const { User, PatternSet, Mode, ModePatternSet, ModeUpvote, UserFavoriteMode } = require('../models/pg/index');
 const { Op } = require('sequelize');
 const { ensureAuthenticated } = require('../middleware/checkAuth');
+const { validateModeInput } = require('../middleware/validate');
 const tmp = require('tmp-promise');
 const { exec } = require('child_process');
 const util = require('util');
@@ -144,7 +145,7 @@ router.get('/:modeId/edit', ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.post('/:modeId/edit', ensureAuthenticated, async (req, res) => {
+router.post('/:modeId/edit', ensureAuthenticated, validateModeInput, async (req, res) => {
   try {
     const modeId = req.params.modeId;
     const mode = await Mode.findByPk(modeId);
@@ -166,6 +167,14 @@ router.post('/:modeId/edit', ensureAuthenticated, async (req, res) => {
     console.error(err);
     if (err.name === 'SequelizeDatabaseError') {
       return res.status(404).render('not-found');
+    }
+    if (err.name === 'SequelizeValidationError') {
+      const basePath = req.app.locals.basePath || '';
+      req.flash('error', err.errors.map(e => e.message).join(', '));
+      if (req.params.modeId) {
+        return res.redirect(basePath + '/mode/' + req.params.modeId + '/edit');
+      }
+      return res.redirect(basePath + '/modes');
     }
     res.status(500).send('Server Error');
   }
@@ -288,7 +297,7 @@ router.post('/:modeId/unfavorite', ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create', validateModeInput, async (req, res) => {
   try {
     await Mode.create({
       name: req.body.name,
@@ -299,6 +308,11 @@ router.post('/create', async (req, res) => {
     res.redirect(basePath + '/modes');
   } catch (err) {
     console.error(err);
+    if (err.name === 'SequelizeValidationError') {
+      const basePath = req.app.locals.basePath || '';
+      req.flash('error', err.errors.map(e => e.message).join(', '));
+      return res.redirect(basePath + '/modes');
+    }
     res.status(500).send('Server Error');
   }
 });

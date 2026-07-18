@@ -4,6 +4,8 @@
 <body class="dark-theme">
   <main class="submit-main">
     <div class="submit-card" id="mode-data-container" data-mode-data='<%= JSON.stringify(modeData) %>' data-mode='<%= JSON.stringify(modeData) %>'>
+      <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length) { %><div class="alert alert-error"><%= error_msg %></div><% } %>
+      <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
       <div class="submit-card-header">
         <div class="submit-icon">
           <i class="fas fa-magic"></i>
